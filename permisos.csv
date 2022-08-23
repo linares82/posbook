@@ -1,0 +1,8 @@
+id,slug,name,created,update
+88,movements.index,web,NULL,NULL
+89,movements.create,web,NULL,NULL
+90,movements.show,web,NULL,NULL
+91,movements.edit,web,NULL,NULL
+92,movements.store,web,NULL,NULL
+93,movements.update,web,NULL,NULL
+94,movements.destroy,web,NULL,NULL
