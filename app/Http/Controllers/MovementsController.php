@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Inertia\Inertia;
+use App\Models\Reason;
+use App\Models\Plantel;
+use App\Models\Product;
 use App\Models\Movement;
+use App\Models\TypeMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\MovementsCreateRequest;
@@ -30,22 +34,72 @@ class MovementsController extends Controller
      */
     public function index(Request $request)
     {
-        
+        //dd($request->all());
         $sysMessage=$request->session()->get('sysMessage');
-        $movements=Movement::query()
-        ->when($request->input('name'), function($query, $item){
-            $query->where('name','like','%'.$item.'%');
-        })->orderBy('id','desc')
+        $filtros=$request->input('search');
+        //dd($filtros);
+        $m=Movement::query();
+        if(isset($filtros['plantel_id'])){
+            $m->when($filtros['plantel_id'], function($query, $plantel_id){
+                $query->where('plantel_id',$plantel_id);
+            });
+        }
+        if(isset($filtros['reason_id'])){
+            $m->when($filtros['reason_id'], function($query, $reason_id){
+                $query->where('reason_id',$reason_id);
+            });
+        }
+        if(isset($filtros['type_movement_id'])){
+            $m->when($filtros['type_movement_id'], function($query, $type_movement_id){
+                $query->where('type_movement_id',$type_movement_id);
+            });
+        }
+        if(isset($filtros['product_id'])){
+            $m->when($filtros['product_id'], function($query, $product_id){
+                $query->where('product_id',$product_id);
+            });
+        }
+        $movements=$m->orderBy('id','desc')
+        ->with('plantel')
+        //->where('id',1)->first();
         ->paginate(100)
         ->withQueryString()
         ->through(fn($movement)=>[
             'id'=>$movement->id,
-            'name'=>$movement->name
+            'plantel'=>$movement->plantel->name,
+            'motivo'=>$movement->reason->name,
+            'tipo_movimiento'=>$movement->typeMovement->name,
+            'producto'=>$movement->product->name,
+            'costo'=>$movement->costo,
+            'precio'=>$movement->precio,
+            'entrada'=>$movement->cantidad_entrada,
+            'salida'=>$movement->cantidad_salida
         ]);
-        //dd($users);
+        //dd($movements->plantel);
 
+        $planteles=Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        $motivos=Reason::get()->map(fn ($reason) => [
+            'value' => $reason->id,
+            'label' => $reason->name,
+        ]);
+        $tipo_movimientos=TypeMovement::get()->map(fn ($typeMovement) => [
+            'value' => $typeMovement->id,
+            'label' => $typeMovement->name,
+        ]);
+        $productos=Product::get()->map(fn ($producto) => [
+            'value' => $producto->id,
+            'label' => $producto->name,
+        ]);
+        
         return Inertia::render('Movements/Index',[
             'movements'=>$movements,
+            'planteles'=>$planteles,
+            'motivos'=>$motivos,
+            'tipo_movimientos'=>$tipo_movimientos,
+            'productos'=>$productos,
             'filters'=>$request->only(['name']),
             'sysMessage'=>$sysMessage,
             'permissions'=>$this->getPermissions()
@@ -59,7 +113,25 @@ class MovementsController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Movements/Create');
+        $planteles=Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        $motivos=Reason::get()->map(fn ($reason) => [
+            'value' => $reason->id,
+            'label' => $reason->name,
+        ]);
+        $tipo_movimientos=TypeMovement::get()->map(fn ($typeMovement) => [
+            'value' => $typeMovement->id,
+            'label' => $typeMovement->name,
+        ]);
+        $productos=Product::get()->map(fn ($producto) => [
+            'value' => $producto->id,
+            'label' => $producto->name,
+        ]);
+        
+        return Inertia::render('Movements/Create', 
+        ['planteles'=>$planteles,'motivos'=>$motivos,'tipo_movimientos'=>$tipo_movimientos,'productos'=>$productos]);
     }
 
     /**
@@ -103,6 +175,23 @@ class MovementsController extends Controller
     public function edit($id)
     {
         $movement=Movement::findOrfail($id);
+        $planteles=Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        $motivos=Reason::get()->map(fn ($reason) => [
+            'value' => $reason->id,
+            'label' => $reason->name,
+        ]);
+        $tipo_movimientos=TypeMovement::get()->map(fn ($typeMovement) => [
+            'value' => $typeMovement->id,
+            'label' => $typeMovement->name,
+        ]);
+        $productos=Product::get()->map(fn ($producto) => [
+            'value' => $producto->id,
+            'label' => $producto->name,
+        ]);
+        
         return Inertia::render('Movements/Edit', ['movement'=>$movement]);
     }
 

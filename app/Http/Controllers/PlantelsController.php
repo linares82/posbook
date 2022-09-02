@@ -144,6 +144,9 @@ class PlantelsController extends Controller
         try{
             $plantel=Plantel::findOrFail($id);
             $plantel->name=$datos['name'];
+            $plantel->address=$datos['address'];
+            $plantel->phone=$datos['phone'];
+            $plantel->director=$datos['director'];
             $plantel->save();
             
         }catch(Exception $e){

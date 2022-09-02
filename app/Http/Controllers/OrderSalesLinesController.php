@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\Stock;
 use App\Models\Movement;
 use Illuminate\Http\Request;
 use App\Models\OrderSalesLine;
@@ -109,20 +110,33 @@ class OrderSalesLinesController extends Controller
     }
 
     public function receiveOCPlantel($id){
-        $linea=OrderSalesLine::findOrFail($id);
-        $linea->bnd_entrada_registrada=1;
-        $linea->save();
+        try{
+            $linea=OrderSalesLine::findOrFail($id);
+            $linea->bnd_entrada_registrada=1;
+            $linea->save();
 
-        $input['plantel_id']=$linea->plantel_id;
-        $input['reason_id']=2;
-        $input['type_movement_id']=1;
-        $input['product_id']=$linea->product_id;
-        $input['costo']=$linea->product->costo;
-        $input['precio']=$linea->product->precio;
-        $input['cantidad_entrada']=$linea->cantidad;
-        $input['order_sales_line_id']=$linea->id;
+            $input['plantel_id']=$linea->plantel_id;
+            $input['reason_id']=2;
+            $input['type_movement_id']=1;
+            $input['product_id']=$linea->product_id;
+            $input['costo']=$linea->product->costo;
+            $input['precio']=$linea->product->precio;
+            $input['cantidad_entrada']=$linea->cantidad;
+            $input['order_sales_line_id']=$linea->id;
 
-        $movement=Movement::create($input);
+            $movement=Movement::create($input);
+
+            $stock=Stock::where('product_id', $linea->product_id)
+            ->where('plantel_id', $linea->plantel_id)
+            ->first();
+
+            $stock->current_stock=$stock->current_stock+$linea->cantidad;
+            $stock->save();
+            
+        }catch(Exception $e){
+            dd($e);
+        }
+        
 
     }
 }

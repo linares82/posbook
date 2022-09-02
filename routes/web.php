@@ -8,11 +8,17 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\StocksController;
 use App\Http\Controllers\PeriodsController;
 use App\Http\Controllers\ReasonsController;
+use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\PlantelsController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\CashBoxesController;
 use App\Http\Controllers\MovementsController;
 use App\Http\Controllers\OrderSalesController;
+use App\Http\Controllers\StPaymentsController;
+use App\Http\Controllers\LnCashBoxesController;
+use App\Http\Controllers\StCashBoxesController;
 use App\Http\Controllers\TypeMovementsController;
+use App\Http\Controllers\PaymentMethodsController;
 use App\Http\Controllers\OrderSalesLinesController;
 use App\Http\Controllers\Auth\AutenticationsController;
 
@@ -160,6 +166,7 @@ Route::prefix('/products')
     Route::get('/create', 'create')->name('create')->middleware('can:products.create');
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:products.edit');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:products.show');
+    Route::get('/findById', 'findById')->name('findById');
     Route::post('/store', 'store')->name('store')->middleware('can:products.create');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:products.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:products.destroy');
@@ -214,11 +221,96 @@ Route::prefix('/movements')
 ->name('movements.')
 ->controller(MovementsController::class)
 ->group(function () {
-    Route::get('', 'index')->name('index')->middleware('can:movementss.index');
-    Route::get('/create', 'create')->name('create')->middleware('can:movementss.create');
-    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:movementss.edit');
-    Route::get('/show/{id}', 'show')->name('show')->middleware('can:movementss.show');
-    Route::post('/store', 'store')->name('store')->middleware('can:movementss.create');
-    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:movementss.update');
-    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:movementss.destroy');
+    Route::get('', 'index')->name('index')->middleware('can:movements.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:movements.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:movements.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:movements.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:movements.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:movements.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:movements.destroy');
 });
+
+Route::prefix('/stPayments')
+->middleware('auth')
+->name('stPayments.')
+->controller(StPaymentsController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:stPayments.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:stPayments.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:stPayments.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:stPayments.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:stPayments.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:stPayments.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:stPayments.destroy');
+});
+
+Route::prefix('/stCashBoxes')
+->middleware('auth')
+->name('stCashBoxes.')
+->controller(StCashBoxesController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:stCashBoxes.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:stCashBoxes.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:stCashBoxes.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:stCashBoxes.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:stCashBoxes.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:stCashBoxes.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:stCashBoxes.destroy');
+});
+
+Route::prefix('/paymentMethods')
+->middleware('auth')
+->name('paymentMethods.')
+->controller(PaymentMethodsController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:paymentMethods.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:paymentMethods.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:paymentMethods.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:paymentMethods.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:paymentMethods.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:paymentMethods.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:paymentMethods.destroy');
+});
+
+Route::prefix('/cashBoxes')
+->middleware('auth')
+->name('cashBoxes.')
+->controller(CashBoxesController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:cashBoxes.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:cashBoxes.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:cashBoxes.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:cashBoxes.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:cashBoxes.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:cashBoxes.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:cashBoxes.destroy');
+});
+
+Route::prefix('/lnCashBoxes')
+->middleware('auth')
+->name('lnCashBoxes.')
+->controller(LnCashBoxesController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:lnCashBoxes.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:lnCashBoxes.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:lnCashBoxes.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:lnCashBoxes.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:lnCashBoxes.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:lnCashBoxes.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:lnCashBoxes.destroy');
+});
+
+Route::prefix('/payments')
+->middleware('auth')
+->name('payments.')
+->controller(PaymentsController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:payments.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:payments.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:payments.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:payments.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:payments.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:payments.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:payments.destroy');
+});
+

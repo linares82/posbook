@@ -209,4 +209,10 @@ class ProductsController extends Controller
 		return redirect()->route('products.index')->with('sysMessage', 'Registro Borrado.');
     }
 
+    public function findById(Request $request){
+        //dd($request->all());
+        $producto=Product::find($request->input('producto'));
+        return response($producto, 200);
+    }
+
 }

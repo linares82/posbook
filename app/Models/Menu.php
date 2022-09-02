@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Menu extends Model
 {
-	use HasFactory, SoftDeletes, AuditTrait;
+	use HasFactory, SoftDeletes;
 
-	/*
+	
 	public static function boot()
 	{
 		parent::boot();
@@ -27,8 +27,13 @@ class Menu extends Model
 			// Remember that $model here is an instance of Article
 			$model->usu_mod_id = Auth::user()->id;
 		});
+
+		static::deleting(function ($model) {
+			// Remember that $model here is an instance of Article
+			$model->usu_delete_id = Auth::user()->id;
+		});
 	}
-*/
+
 	//Mass Assignment
 	protected $fillable = ['item', 'order', 'depende_de', 'link', 'permiso', 'target', 'imagen', 'activo', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
 
