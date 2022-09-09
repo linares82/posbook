@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -32,9 +33,11 @@ class LnCashBox extends Model
 		});
 	}
 
-    protected $fillable = ['cash_box_id','product_id','quantity','precio','total','usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
+    protected $fillable = ['cash_box_id','product_id','quantity','precio','total','usu_alta_id', 'usu_mod_id', 'usu_delete_id','movement_id'];
 
 	protected $dates = ['deleted_at'];
+
+	
 
 	public function usu_alta()
 	{
@@ -50,4 +53,21 @@ class LnCashBox extends Model
 	{
 		return $this->hasOne('App\Models\User', 'id', 'usu_delete_id');
 	} // end
+
+	public function cashBox()
+	{
+		return $this->belongsTo('App\Models\CashBox');
+	} // end
+
+	public function product()
+	{
+		return $this->belongsTo('App\Models\Product');
+	} // end
+
+	public function paymentMethod()
+	{
+		return $this->belongsTo('App\Models\PaymentMethod');
+	} // end
+
+	
 }

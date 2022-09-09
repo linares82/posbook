@@ -24,7 +24,20 @@ class CashBoxsCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'plantel_id'=>"required",
+            'fecha'=>'required',
+            'customer'=>'required',
+            'total'=>'required'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'plantel_id.required'=>"Campo obligatorio",
+            'fecha.required'=>'Campo obligatorio',
+            'customer.required'=>'Campo obligatorio',
+            'total.required'=>'Campo obligatorio'
         ];
     }
 }

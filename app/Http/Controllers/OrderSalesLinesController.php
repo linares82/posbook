@@ -122,10 +122,12 @@ class OrderSalesLinesController extends Controller
             $input['costo']=$linea->product->costo;
             $input['precio']=$linea->product->precio;
             $input['cantidad_entrada']=$linea->cantidad;
+            $input['cantidad_salida']=0;
             $input['order_sales_line_id']=$linea->id;
 
             $movement=Movement::create($input);
 
+            
             $stock=Stock::where('product_id', $linea->product_id)
             ->where('plantel_id', $linea->plantel_id)
             ->first();

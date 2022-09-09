@@ -1,88 +1,697 @@
 <template>
-  <a-row>
+<a-row>
     <a-col :span="12">
-      <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Periodos" sub-title="Editar" />
+        <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Caja" sub-title="Editar" />
     </a-col>
     <a-col :span="12">
-      <Link href="/periods" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button">Regresar</Link>
+        <Link href="/cashBoxes" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button">Buscar</Link>
+        <Link href="/cashBoxes/create" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button">Nuevo</Link>
     </a-col>
-  </a-row>
-  <a-form :model="formPeriod" @submit.prevent="submitF" autocomplete="off" layout="vertical">
+</a-row>
+<a-form :model="formCashBox" @submit.prevent="submitF" autocomplete="off" layout="vertical">
     <a-row>
-      <a-col :md="7">
-        <a-form-item label="Nombre" name="name">
-          <a-input v-model:value="formPeriod.name"> </a-input>
-          <div v-if="errors.name">
-            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.item"></div>
-          </div>
-        </a-form-item>
-      </a-col>
+        <a-col :md="1">
+            <a-form-item label="No. Unico">
+                {{formCashBox.id}}
+            </a-form-item>
+        </a-col>
+        <a-col :md="2">
+            <a-form-item label="Estatus">
+                {{formCashBox.st_cash_box}}
+            </a-form-item>
+        </a-col>
+        <a-col :md="7">
+            <a-form-item compact label="Plantel" name="plantel_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                <a-select :options="planteles" show-search v-model:value="formCashBox.plantel_id" style="width: 300px" placeholder="Seleccionar Opción">
 
-      <a-col :span="1"></a-col>
+                </a-select>
+                <div v-if="errors.plantel_id">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.plantel_id"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+        <a-col :md="3">
+            <a-form-item compact label="Fecha" name="fecha" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                <a-date-picker v-model:value="formCashBox.fecha" :bordered="true" />
+                <div v-if="errors.fecha">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fecha"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+        <a-col :md="6">
+            <a-form-item label="Cliente" name="customer" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                <a-input v-model:value="formCashBox.customer"> </a-input>
+                <div v-if="errors.customer">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.customer"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+        <a-col :span="1"></a-col>
+        <a-col :md="4">
+            <a-form-item label="Total" name="total">
+                <a-input v-model:value="formCashBox.total" readonly> </a-input>
+                <div v-if="errors.total">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.total"></div>
+                </div>
+            </a-form-item>
+        </a-col>
 
-      <a-col :span="1"></a-col>
+        <div>
+            <a-modal v-model:visible="visibleLinea" title="Agregar Linea" @ok="addLinea">
+                <template #footer>
+                    <a-button key="back" @click="handleCancelLinea">Cancelar</a-button>
+                    <a-button key="submit" type="primary" :loading="loadingLinea" @click="addLinea">Agregar</a-button>
+                </template>
+                <a-col :md="10">
+                    <a-form-item label="Producto" name="product_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                        <a-select @change="handleChangeProducto" show-search :options="productos" v-model:value="formCashBox.product_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        </a-select>
+                        <div v-if="errors.product_id">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.product_id"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+                <a-col :md="8">
+                        <a-form-item label="Existencia" name="existencia" >
+                            <a-input v-model:value="formCashBox.existencia" readonly> </a-input>
+                        </a-form-item>
+                    </a-col>
+                <a-col :md="4">
+                    <a-form-item label="Cantidad" name="quantity" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                        <a-input v-model:value="formCashBox.quantity"> </a-input>
+                        <div v-if="errors.quantity">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.quantity"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+                <a-col :md="1"></a-col>
+                <a-col :md="4">
+                    <a-form-item label="Precio" name="precio" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                        <a-input v-model:value="formCashBox.precio" readonly> </a-input>
+                        <div v-if="errors.precio">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.precio"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+            </a-modal>
+        </div>
 
-      <a-col :span="1"></a-col>
+        <div>
+            <a-modal v-model:visible="visibleEditLinea" title="Editar Linea" @ok="handleOkEditLinea">
+                <template #footer>
+                    <a-button key="back" @click="handleCancelEditLinea">Cancelar</a-button>
+                    <a-button key="submit" type="primary" :loading="loadingEditLinea" @click="handleOkEditLinea">Actualizar</a-button>
+                </template>
+                <a-col :md="10">
+                    <a-form-item label="Producto" name="product_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                        <a-select @change="handleChangeProducto" show-search :options="productos" v-model:value="formCashBox.product_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        </a-select>
+                        <div v-if="errors.product_id">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.product_id"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+                <a-col :md="1"></a-col>
+                <a-col :md="4">
+                    <a-form-item label="Cantidad" name="quantity" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                        <a-input v-model:value="formCashBox.quantity"> </a-input>
+                        <div v-if="errors.quantity">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.quantity"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+                <a-col :md="1"></a-col>
+                <a-col :md="4">
+                    <a-form-item label="Precio" name="precio" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                        <a-input v-model:value="formCashBox.precio" readonly> </a-input>
+                        <div v-if="errors.precio">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.precio"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+            </a-modal>
+        </div>
 
-      <a-col :span="1"></a-col>
+        <a-col :md="12" :xs="16" style="border: solid 1px; padding:5px;">
+            <a-form-item>
+                <a-button type="dashed" block @click="showModalLinea">
+                    <PlusOutlined />
+                    Agregar Linea
+                </a-button>
+            </a-form-item>
+            <a-col :span="16">
 
-      <a-col :span="1"></a-col>
+                <table style="table-layout: auto;" class="ant-table-striped">
+                    <thead class="ant-table-thead">
+                        <th class="ant-table-cell">Id</th>
+                        <th class="ant-table-cell">Producto</th>
+                        <th class="ant-table-cell">Total</th>
+                        <th class="ant-table-cell"></th>
+                    </thead>
+                    <tbody class="ant-table-tbody">
+                        <!--<a-space v-for="(linea, index) in formCashBox.lineas" :key="linea.tiempo_id" style="display: flex; margin-bottom: 8px" align="baseline">-->
+                            <tr class="ant-table-row ant-table-row-level-0" v-for="(linea, index) in formCashBox.lineas" :key="linea.tiempo_id">
+                            <td>
+                                {{linea.id}}
+                                <!--
+                                <a-form-item :name="['id', index, 'id']" label="">
+                                    <a-input v-model:value="linea.id" style="width: 100px" readonly />
+                                </a-form-item>
+                                -->
+                            </td>
+                            <td>
+                                {{linea.product}}
+                                <!--
+                                <a-form-item :name="['linea', index, 'product_id']" label="">
+                                    <a-select v-model:value="linea.product_id" :options="productos" disabled style="width: 250px" show-search></a-select>
+                                </a-form-item>
+                                -->
+                            </td>
+                            <td>
+                                {{ linea.totalLinea}}
+                                <!--<a-form-item :name="['linea', index, 'totalLinea']" label="">
+                                    <a-input v-model:value="linea.totalLinea" style="width: 100px" readonly />
+                                </a-form-item>
+                                -->
+                            </td>
+                            <td>
+                                <a-popconfirm title="Estas seguro de la operación?" ok-text="Si" cancel-text="No" @confirm="removeLinea(linea)">
+                                    <MinusCircleOutlined />
+                                </a-popconfirm>
+                                <!--<EditOutlined @click="editarLinea(linea)" />-->
+                            </td>
+                        </tr>
+                        <!--</a-space>-->
+                    </tbody>
+                </table>
 
-      <a-col :span="1"></a-col>
+            </a-col>
+        </a-col>
 
-      <a-col :span="1"></a-col>
+        <div>
+            <a-modal v-model:visible="visiblePayment" title="Agregar Pago" @ok="addPayment">
+                <template #footer>
+                    <a-button key="back" @click="handleCancelPayment">Cancelar</a-button>
+                    <a-button key="submit" type="primary" :loading="loadingPayment" @click="addPayment">Agregar</a-button>
+                </template>
+                <a-col :md="24">
+                    <a-form-item label="Metodo de Pago" name="payment_method_id">
+                        <a-select :options="paymentMethods" show-search v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        </a-select>
+                        <div v-if="errors.payment_method_id">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.payment_method_id"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+                <a-col :md="24">
+                    <a-form-item label="Monto" name="monto">
+                        <a-input v-model:value="formCashBox.monto"> </a-input>
+                        <div v-if="errors.monto">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.monto"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+                <a-col :md="24">
+                    <a-form-item label="Fecha" name="fechaPago">
+                        <a-date-picker v-model:value="formCashBox.fechaPago" :bordered="true" />
+                        <div v-if="errors.fechaPago">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fechaPago"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+            </a-modal>
+        </div>
+
+        <div>
+            <a-modal v-model:visible="visibleEditPayment" title="Editar Pago" @ok="handleOkEditPayment">
+                <template #footer>
+                    <a-button key="back" @click="handleCancelPayment">Cancelar</a-button>
+                    <a-button key="submit" type="primary" :loading="loadingEditPayment" @click="handleOkEditPayment">Actualizar</a-button>
+                </template>
+                <a-col :md="24">
+                    <a-form-item label="Metodo de Pago" name="payment_method_id">
+                        <a-select :options="paymentMethods" show-search v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        </a-select>
+                        <div v-if="errors.payment_method_id">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.payment_method_id"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+                <a-col :md="24">
+                    <a-form-item label="Monto" name="monto">
+                        <a-input v-model:value="formCashBox.monto"> </a-input>
+                        <div v-if="errors.monto">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.monto"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+                <a-col :md="24">
+                    <a-form-item label="Fecha" name="fechaPago">
+                        <a-date-picker v-model:value="formCashBox.fechaPago" :bordered="true" />
+                        <div v-if="errors.fechaPago">
+                            <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fechaPago"></div>
+                        </div>
+                    </a-form-item>
+                </a-col>
+            </a-modal>
+        </div>
+
+        <a-col :md="12" :xs="16" style="border: solid 1px; padding:5px;">
+            <a-form-item>
+                <a-button type="dashed" block @click="showModalPayment">
+                    <PlusOutlined />
+                    Agregar Pago
+                </a-button>
+            </a-form-item>
+
+            <a-col :span="16">
+                <table>
+                    <thead class="ant-table-thead">
+                        <th class="ant-table-cell">Id</th>
+                        <th class="ant-table-cell">Metodo Pago</th>
+                        <th class="ant-table-cell">Monto</th>
+                        <th class="ant-table-cell">Fecha</th>
+                        <th class="ant-table-cell"></th>
+                    </thead>
+                    <tbody class="ant-table-tbody">
+                        <tr class="ant-table-row ant-table-row-level-0" v-for="(payment, index) in formCashBox.payments" :key="payment.tiempo_id">
+                            <td>
+                                {{payment.id}}
+                                <!--<a-form-item :name="['payment', index, 'id']" label="">
+                                    <a-input v-model:value="payment.id" style="width: 100px" readonly />
+                                </a-form-item>
+                                -->
+                            </td>
+                            <td>
+                                {{payment.payment_method}}
+                                <!--
+                                <a-form-item :name="['payment', index, 'payment_method_id']" label="">
+                                    <a-select v-model:value="payment.payment_method_id" :options="paymentMethods" disabled style="width: 250px" show-search></a-select>
+                                </a-form-item>-->
+                            </td>
+                            <td>
+                                {{payment.monto}}
+                                <!--
+                                <a-form-item :name="['payment', index, 'monto']" label="">
+                                    <a-input v-model:value="payment.monto" style="width: 100px" readonly />
+                                </a-form-item>-->
+                            </td>
+                            <td>
+                                {{payment.fecha.format('YYYY-MM-DD')}}
+                                <!--
+                                <a-form-item :name="['fecha', index, 'fecha']" label="">
+                                    <a-date-picker v-model:value="payment.fecha" style="width: 150px" disabled :bordered="true" />
+                                </a-form-item>
+                                -->
+                            </td>
+                            <td>
+                                <a-popconfirm title="Estas seguro de la operación?" ok-text="Si" cancel-text="No" @confirm="removePayment(payment)">
+                                    <MinusCircleOutlined />
+                                </a-popconfirm>
+                                <EditOutlined @click="editarPayment(payment)" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--<a-space v-for="(payment, index) in formCashBox.payments" :key="payment.tiempo_id" style="display: flex; margin-bottom: 8px" align="baseline">    </a-space>-->
+            </a-col>
+        </a-col>
+
+        <a-col :span="1"></a-col>
     </a-row>
+    <a-row></a-row>
 
     <a-form-item>
-      <a-button type="primary" html-type="submit" :disabled="processing">Actualizar</a-button>
+        <a-button type="primary" html-type="submit" :disabled="processingPayment">Actualizar</a-button>
     </a-form-item>
-  </a-form>
+</a-form>
 </template>
+
 <script>
 import Layout from "../../shared/Layout";
-import { Link } from "@inertiajs/inertia-vue3";
-import { reactive, ref } from "vue";
-import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
-import { Inertia } from "@inertiajs/inertia";
-
-
-export default {
-  layout: Layout,
-  components: {
-    Link,
+import {
+    Link
+} from "@inertiajs/inertia-vue3";
+import {
+    defineComponent,
+    reactive,
+    ref,
+    watch,
+    watchEffect
+} from "vue";
+import {
+    MinusCircleOutlined,
+    PlusOutlined,
     UserOutlined,
     LockOutlined,
-  },
+    EditOutlined
+} from "@ant-design/icons-vue";
+import {
+    Inertia
+} from "@inertiajs/inertia";
+import axios from 'axios';
+import dayjs from 'dayjs';
+import debounce from "lodash/debounce";
 
-  props: ["errors", "period"],
+export default {
+    layout: Layout,
+    components: {
+        Link,
+        UserOutlined,
+        LockOutlined,
+        MinusCircleOutlined,
+        PlusOutlined,
+        EditOutlined
+    },
 
-  setup(props) {
-    let formPeriod = reactive({
-      id: props.period.id,
-      name: props.period.name,
-    });
+    props: ['ruta_destroy_ln', 'ruta_update_ln', 'cashBox', "errors", 'productos', 'planteles',
+        'estatus', 'productos', 'plantel', 'paymentMethods', 'ruta_productos_findById',
+        'ruta_update_payment', 'ruta_destroy_payment', 'ruta_update_cashBox'
+    ],
 
-    let processing = ref(false);
+    setup(props) {
+        const formRef = ref();
 
-    let submitF = () => {
-      Inertia.post("", formPeriod, {
-        onStart: () => {
-          processing.value = true;
-        },
-        onFinish: () => {
-          processing.value = false;
-        },
-      });
-    };
+        let formCashBox = reactive({
+            id: props.cashBox.id,
+            plantel_id: props.cashBox.plantel_id,
+            plantel: props.cashBox.plantel,
+            fecha: dayjs(props.cashBox.fecha, 'YYYY/MM/DD'),
+            customer: props.cashBox.customer,
+            st_cash_box_id: props.cashBox.st_cash_box_id,
+            st_cash_box: props.cashBox.st_cash_box,
+            total: props.cashBox.total,
+            linea_id: undefined,
+            product_id: undefined,
+            existencia: undefined,
+            precio: 0,
+            quantity: 1,
+            payment_id: undefined,
+            method_payment_id: undefined,
+            monto: 0,
+            fechaPago: undefined,
+            lineas: [],
+            payments: []
+        });
 
+        for (let linea in props.cashBox.lineas) {
+            formCashBox.lineas.push(props.cashBox.lineas[linea])
+        }
 
-    return {
-      formPeriod,
-      submitF,
-      processing,
-    };
-  },
+        for (let payment in props.cashBox.payments) {
+            formCashBox.payments.push({
+                id: props.cashBox.payments[payment].id,
+                cash_box_id: props.cashBox.payments[payment].cash_box_id,
+                fecha: dayjs(props.cashBox.payments[payment].fecha, 'YYYY/MM/DD'),
+                id: props.cashBox.payments[payment].id,
+                monto: props.cashBox.payments[payment].monto,
+                payment_method: props.cashBox.payments[payment].payment_method,
+                payment_method_id: props.cashBox.payments[payment].payment_method_id,
+                st_payment: props.cashBox.payments[payment].st_payment,
+                st_payment_id: props.cashBox.payments[payment].st_payment_id
+            });
+            //formCashBox.payments.push(props.cashBox.payments[payment])
+        }
+
+        let consultaProductos;
+        let processingLinea = ref(false);
+        const loadingLinea = ref(false);
+        const visibleLinea = ref(false);
+        let le = undefined;
+
+        let processingEditLinea = ref(false);
+        const loadingEditLinea = ref(false);
+        const visibleEditLinea = ref(false);
+
+        //Guardado de Fomrulario completo
+        let submitF = () => {
+            Inertia.post(props.ruta_update_cashBox, formCashBox, {
+                onStart: () => {
+                    processingLinea.value = true;
+                },
+                onFinish: () => {
+                    processingLinea.value = false;
+                    location.reload();
+                },
+            });
+        };
+
+        //trabajo con Lineas
+        const showModalLinea = () => {
+            visibleLinea.value = true;
+        };
+
+        const addLinea = () => {
+            //console.log(consultaProductos);
+            loadingLinea.value = true;
+            formCashBox.lineas.push({
+                product_id: formCashBox.product_id,
+                product:consultaProductos.name,
+                quantity: formCashBox.quantity,
+                precio: formCashBox.precio,
+                totalLinea: formCashBox.quantity * formCashBox.precio
+            });
+            //console.log(formCashBox);
+            if (consultaProductos.product_id > 0 && consultaProductos.product_id !== null) {
+                axios.get(props.ruta_productos_findById + 
+                        "?producto=" + consultaProductos.product_id +
+                        "&plantel="+formCashBox.plantel_id)
+                    .then(response => {
+                        //formCashBox.precio = response.data.precio;
+                        //consultaProductos=response.data;
+                        console.log(response.data);
+                        formCashBox.lineas.push({
+                            product_id: response.data.id,
+                            quantity: 1,
+                            precio: 0,
+                            totalLinea: 0
+                        });
+                    });
+            }
+            let total = 0;
+            for (let linea in formCashBox.lineas) {
+                total = total + parseFloat(formCashBox.lineas[linea].totalLinea);
+            }
+            formCashBox.total = total;
+            formCashBox.monto = total;
+
+            formCashBox.product_id = null;
+            formCashBox.precio = 0;
+
+            loadingLinea.value = false;
+            visibleLinea.value = false;
+        };
+
+        const showModalEditLinea = () => {
+            visibleLinea.value = true;
+        };
+
+        const removeLinea = item => {
+            if (item.hasOwnProperty('id')) {
+
+                Inertia.delete(props.ruta_destroy_ln + "?id=" + item.id, null, {
+                    onStart: () => {
+                        processingLinea.value = true;
+                    },
+                    onFinish: () => {
+                        processingLinea.value = false;
+                        location.reload();
+                    },
+                })
+
+            }
+            let index = formCashBox.lineas.indexOf(item);
+
+            if (index !== -1) {
+                formCashBox.lineas.splice(index, 1);
+            }
+
+            let total = 0;
+            for (let linea in formCashBox.lineas) {
+                total = total + parseFloat(formCashBox.lineas[linea].totalLinea);
+            }
+            formCashBox.total = total;
+            formCashBox.monto = total;
+
+        };
+
+        const editarLinea = (linea) => {
+            formCashBox.linea_id = linea.id;
+            formCashBox.product_id = linea.product_id;
+            formCashBox.precio = linea.precio;
+            formCashBox.quantity = linea.quantity;
+            visibleEditLinea.value = true;
+        };
+
+        const handleOkEditLinea = () => {
+            loadingEditLinea.value = true;
+
+            Inertia.post(props.ruta_update_ln, formCashBox, {
+                onStart: () => {
+                    processingLinea.value = true;
+                },
+                onFinish: () => {
+                    processingLinea.value = false;
+                    location.reload();
+                },
+            });
+            loadingEditLinea.value = false;
+            visibleEditLinea.value = false;
+
+        };
+
+        const handleChangeProducto = value => {
+            //console.log("{{$ruta_productos_findById}}");
+            axios.get(props.ruta_productos_findById + 
+                        "?producto=" + value +
+                        "&plantel="+formCashBox.plantel_id)
+                    .then(response => {
+                    formCashBox.existencia=response.data.existencia;
+                    formCashBox.precio = response.data.producto.precio;
+                    consultaProductos = response.data.producto;
+                });
+
+        };
+
+        const handleCancelLinea = () => {
+            visibleLinea.value = false;
+        };
+
+        const handleCancelEditLinea = () => {
+            visibleEditLinea.value = false;
+        };
+
+        //Fin trabajo con lineas
+
+        //Trabajo con pagos
+        let processingPayment = ref(false);
+        const loadingPayment = ref(false);
+        const visiblePayment = ref(false);
+
+        let processingEditPayment = ref(false);
+        const loadingEditPayment = ref(false);
+        const visibleEditPayment = ref(false);
+
+        const showModalPayment = () => {
+            visiblePayment.value = true;
+        };
+
+        const showModalEditPayment = () => {
+            visiblePayment.value = true;
+        };
+
+        const removePayment = item => {
+            if (item.hasOwnProperty('id')) {
+
+                Inertia.delete(props.ruta_destroy_payment + "?id=" + item.id, null, {
+                    onStart: () => {
+                        processingLinea.value = true;
+                    },
+                    onFinish: () => {
+                        processingLinea.value = false;
+                        location.reload();
+                    },
+                })
+
+            }
+
+            let index = formCashBox.payments.indexOf(item);
+
+            if (index !== -1) {
+                formCashBox.payments.splice(index, 1);
+            }
+        };
+
+        const editarPayment = (payment) => {
+            //console.log(payment.fecha.toDate())
+
+            formCashBox.payment_id = payment.id;
+            formCashBox.payment_method_id = payment.payment_method_id;
+            formCashBox.monto = payment.monto;
+            formCashBox.fechaPago = payment.fecha;
+            visibleEditPayment.value = true;
+        };
+
+        const handleOkEditPayment = () => {
+            loadingEditPayment.value = true;
+            Inertia.post(props.ruta_update_payment, formCashBox, {
+                onStart: () => {
+                    processingEditPayment.value = true;
+                },
+                onFinish: () => {
+                    processingEditPayment.value = false;
+                    location.reload();
+                },
+            });
+            loadingEditPayment.value = false;
+            visibleEditPayment.value = false;
+        };
+
+        const addPayment = () => {
+            loadingPayment.value = true;
+            formCashBox.payments.push({
+                payment_method_id: formCashBox.payment_method_id,
+                monto: formCashBox.monto,
+                fecha: formCashBox.fechaPago
+            });
+            loadingPayment.value = false;
+            visiblePayment.value = false;
+        };
+
+        const handleCancelPayment = () => {
+            visibleLinea.value = false;
+        };
+
+        const handleCancelEditPayment = () => {
+            visibleEdit.value = false;
+        };
+
+        //Fin trabajo con pagos
+
+        return {
+            addLinea,
+            addPayment,
+            consultaProductos,
+            editarLinea,
+            editarPayment,
+            formCashBox,
+            formRef,
+            //handleOkLinea,
+            handleOkEditLinea,
+            handleOkEditPayment,
+            //handleCancel,
+            handleCancelLinea,
+            handleCancelEditLinea,
+            handleCancelPayment,
+            handleCancelEditPayment,
+            handleChangeProducto,
+            loadingLinea,
+            loadingEditLinea,
+            loadingPayment,
+            loadingEditPayment,
+            //onFinish,
+            //processing,
+            processingLinea,
+            processingPayment,
+            removeLinea,
+            //removeEditLinea,
+            removePayment,
+            //removeEditPayment,
+            submitF,
+            //showModal,
+            //showModalEdit,
+            showModalLinea,
+            showModalEditLinea,
+            showModalPayment,
+            showModalEditPayment,
+            visibleLinea,
+            visibleEditLinea,
+            visiblePayment,
+            visibleEditPayment,
+        };
+    },
 };
 </script>
+
 <style>
 </style>

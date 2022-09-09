@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,6 +37,10 @@ class CashBox extends Model
 
 	protected $dates = ['deleted_at'];
 
+	public function setFechaAttribute($value){
+		$this->attributes['fecha']= Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$value)->toDateString();
+	}
+
 	public function usu_alta()
 	{
 		return $this->hasOne('App\Models\User', 'id', 'usu_alta_id');
@@ -58,8 +63,19 @@ class CashBox extends Model
 
 	public function plantel()
 	{
-		return $this->hasOne('App\Models\StCashBox', 'id', 'plantel_id');
+		return $this->hasOne('App\Models\Plantel', 'id', 'plantel_id');
 	} // end
+
+	public function lnCashBoxes()
+	{
+		return $this->hasMany('App\Models\LnCashBox');
+	} // end
+
+	public function payments()
+	{
+		return $this->hasMany('App\Models\Payment');
+	} // end
+
 }
 
 

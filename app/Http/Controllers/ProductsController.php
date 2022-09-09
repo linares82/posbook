@@ -8,6 +8,7 @@ use App\Models\Stock;
 use App\Models\Period;
 use App\Models\Plantel;
 use App\Models\Product;
+use App\Models\Movement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ProductsCreateRequest;
@@ -212,7 +213,20 @@ class ProductsController extends Controller
     public function findById(Request $request){
         //dd($request->all());
         $producto=Product::find($request->input('producto'));
-        return response($producto, 200);
+
+        $totalEntradas=Movement::where('plantel_id', $request->input('plantel'))
+            ->where('product_id', $producto->id)
+            ->where('cantidad_entrada','>','cantidad_salida')
+            ->sum('cantidad_entrada');
+
+        $totalSalidas=Movement::where('plantel_id', $request->input('plantel'))
+            ->where('product_id', $producto->id)
+            ->where('cantidad_entrada','>','cantidad_salida')
+            ->sum('cantidad_salida');
+        //dd($totalEntradas."-".$totalSalidas);
+        $existencia=$totalEntradas-$totalSalidas;
+
+        return response(json_encode(array('producto'=>$producto, 'existencia'=>$existencia)), 200);
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,6 +37,10 @@ class Payment extends Model
 
 	protected $dates = ['deleted_at'];
 
+	public function setFechaAttribute($value){
+		$this->attributes['fecha']= Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$value)->toDateString();
+	}
+
 	public function usu_alta()
 	{
 		return $this->hasOne('App\Models\User', 'id', 'usu_alta_id');
@@ -49,5 +54,20 @@ class Payment extends Model
 	public function usu_delete()
 	{
 		return $this->hasOne('App\Models\User', 'id', 'usu_delete_id');
+	} // end
+
+	public function paymentMethod()
+	{
+		return $this->belongsTo('App\Models\PaymentMethod');
+	} // end
+
+	public function stPayment()
+	{
+		return $this->belongsTo('App\Models\StPayment');
+	} // end
+
+	public function cashBox()
+	{
+		return $this->belongsTo('App\Models\CashBox');
 	} // end
 }

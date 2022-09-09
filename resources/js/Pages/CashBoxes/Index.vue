@@ -1,76 +1,72 @@
 <template>
-    <a-row>
-        <a-col :span="12">
-            <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Caja" sub-title="Lista" />
-        </a-col>
-        <a-col :span="12">
-            <div v-if="permissions.cashBoxesCreate">
-                <Link href="/cashBoxs/create" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button">Crear
-                </Link>
-            </div>
+<a-row>
+    <a-col :span="12">
+        <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Caja" sub-title="Lista" />
+    </a-col>
+    <a-col :span="12">
+        <div v-if="permissions.cashBoxesCreate">
+            <Link href="/cashBoxes/create" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button">Crear
+            </Link>
+        </div>
 
+    </a-col>
+</a-row>
 
-        </a-col>
-    </a-row>
+<a-collapse>
+    <a-collapse-panel key="1" header="Buscar">
+        <a-row>
+            <a-col :span="6">
+                <a-input v-model:value="name" size="small" placeholder="Buscar Tipo Movimiento">
+                    <template #prefix>
+                        <search-outlined />
+                    </template>
+                    <template #suffix>
+                        <a-tooltip title="Buscar Tipo Movimiento">
+                            <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                        </a-tooltip>
+                    </template>
+                </a-input>
+            </a-col>
+        </a-row>
+    </a-collapse-panel>
+</a-collapse>
 
-    <a-collapse>
-        <a-collapse-panel key="1" header="Buscar">
-            <a-row>
-                <a-col :span="6">
-                    <a-input v-model:value="name" size="small" placeholder="Buscar Tipo Movimiento">
-                        <template #prefix>
-                            <search-outlined />
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Buscar Tipo Movimiento">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                </a-col>
-            </a-row>
-        </a-collapse-panel>
-    </a-collapse>
-
-    <div class="ant-table-wrapper ant-table-striped">
-        <div class="ant-spin-nested-loading">
-            <div class="ant-spin-container">
-                <div class="ant-table ant-table-small ant-table-bordered">
-                    <!---->
-                    <div class="ant-table-container">
-                        <div class="ant-table-content">
-                            <table style="table-layout: auto;" class="ant-table-striped">
-                                <colgroup></colgroup>
-                                <thead class="ant-table-thead">
-                                    <th class="ant-table-cell" colstart="0" colend="0">Id</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Plantel</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Cliente</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Fecha</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Total</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Estatus</th>
-                                    <th class="ant-table-cell" colstart="3" colend="4">Acciones</th>
-                                </thead>
-                                <tbody class="ant-table-tbody">
-                                    <tr class="ant-table-row ant-table-row-level-0" v-for="cashBox in cashBoxes.data"
-                                        :key="cashBox.id">
-                                        <td class="ant-table-cell" colstart="0" colend="0">{{ cashBox.id }}</td>
-                                        <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.plantel }}</td>
-                                        <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.cliente }}</td>
-                                        <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.fecha }}</td>
-                                        <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.total }}</td>
-                                        <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.estatus }}</td>
-                                        <td class="ant-table-cell" colstart="3" colend="4">
-                                            <a-dropdown-button>
-                                                Acciones
-                                                <template #overlay>
-                                                    <a-menu>
-                                                        <a-menu-item key="1" v-if="permissions.cashBoxsEdit">
-                                                            <form-outlined />
-                                                            <Link :href="`/cashBoxs/edit/${cashBox.id}`"
-                                                                class="ant-btn ant-btn-default ant-btn-round ant-btn-sm"
-                                                                as="button">Editar</Link>
-                                                        </a-menu-item>
-                                                        <a-menu-item key="2" v-if="permissions.cashBoxsDestroy">
+<div class="ant-table-wrapper ant-table-striped">
+    <div class="ant-spin-nested-loading">
+        <div class="ant-spin-container">
+            <div class="ant-table ant-table-small ant-table-bordered">
+                <!---->
+                <div class="ant-table-container">
+                    <div class="ant-table-content">
+                        <table style="table-layout: auto;" class="ant-table-striped">
+                            <colgroup></colgroup>
+                            <thead class="ant-table-thead">
+                                <th class="ant-table-cell" colstart="0" colend="0">Id</th>
+                                <th class="ant-table-cell" colstart="1" colend="1">Plantel</th>
+                                <th class="ant-table-cell" colstart="1" colend="1">Cliente</th>
+                                <th class="ant-table-cell" colstart="1" colend="1">Fecha</th>
+                                <th class="ant-table-cell" colstart="1" colend="1">Total</th>
+                                <th class="ant-table-cell" colstart="1" colend="1">Estatus</th>
+                                <th class="ant-table-cell" colstart="3" colend="4">Acciones</th>
+                            </thead>
+                            <tbody class="ant-table-tbody">
+                                <tr class="ant-table-row ant-table-row-level-0" v-for="cashBox in cashBoxes.data" :key="cashBox.id">
+                                    <td class="ant-table-cell" colstart="0" colend="0">{{ cashBox.id }}</td>
+                                    <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.plantel }}</td>
+                                    <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.cliente }}</td>
+                                    <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.fecha }}</td>
+                                    <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.total }}</td>
+                                    <td class="ant-table-cell" colstart="1" colend="1">{{ cashBox.estatus }}</td>
+                                    <td class="ant-table-cell" colstart="3" colend="4">
+                                        <a-dropdown-button>
+                                            Acciones
+                                            <template #overlay>
+                                                <a-menu>
+                                                    <a-menu-item key="1" v-if="permissions.cashBoxesEdit && cashBox.st_cash_box_id!==4">
+                                                        <form-outlined />
+                                                        <Link :href="`/cashBoxes/edit/${cashBox.id}`" class="ant-btn ant-btn-default ant-btn-round ant-btn-sm" as="button">Editar</Link>
+                                                    </a-menu-item>
+                                                    <!--<a-menu-item key="2" v-if="permissions.cashBoxesDestroy">
                                                             <delete-outlined />
                                                             <a-popconfirm title="Estas seguro de la operación?"
                                                                 ok-text="Si" cancel-text="No"
@@ -78,30 +74,36 @@
                                                                 <button
                                                                     class="ant-btn ant-btn-default ant-btn-round ant-btn-sm">Borrar</button>
                                                             </a-popconfirm>
-                                                        </a-menu-item>
-                                                        <a-menu-item key="3" v-if="permissions.cashBoxsShow">
-                                                            <eye-outlined />
+                                                            
+                                                    </a-menu-item>
+                                                    -->
+                                                    <a-menu-item key="3" v-if="permissions.cashBoxesCancelCashBox">
+                                                        <delete-outlined />
 
-                                                            <Link :href="`/cashBoxs/show/${cashBox.id}`"
-                                                                class="ant-btn ant-btn-default ant-btn-round ant-btn-sm"
-                                                                as="button">Ver</Link>
+                                                        <Link :href="`/cashBoxes/cancelCashBox/${cashBox.id}`" class="ant-btn ant-btn-default ant-btn-round ant-btn-sm" as="button">Cancelar</Link>
 
-                                                        </a-menu-item>
-                                                    </a-menu>
-                                                </template>
-                                            </a-dropdown-button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                                    </a-menu-item>
+                                                    <a-menu-item key="4" v-if="permissions.cashBoxesShow">
+                                                        <eye-outlined />
+
+                                                        <Link :href="`/cashBoxes/show/${cashBox.id}`" class="ant-btn ant-btn-default ant-btn-round ant-btn-sm" as="button">Ver</Link>
+
+                                                    </a-menu-item>
+                                                </a-menu>
+                                            </template>
+                                        </a-dropdown-button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <paginator :datos="cashBoxs"> </paginator>
+<paginator :datos="cashBoxes"> </paginator>
 </template>
 
 <script>
@@ -118,7 +120,9 @@ import {
     DeleteOutlined,
     EyeOutlined
 } from "@ant-design/icons-vue";
-import { message } from 'ant-design-vue';
+import {
+    message
+} from 'ant-design-vue';
 import {
     watch,
     ref
@@ -154,7 +158,7 @@ export default {
 
         const borrar = (id) => {
             //if (confirm("estas seguro?")) {
-            Inertia.delete(`/cashBoxs/delete/${id}`)
+            Inertia.delete(`/cashBoxes/delete/${id}`)
             //}
         };
 
@@ -164,11 +168,11 @@ export default {
             debounce(function (value) {
                 Inertia.get(
                     "/cashBoxes", {
-                    name: value
-                }, {
-                    preserveState: true,
-                    replace: true,
-                }
+                        name: value
+                    }, {
+                        preserveState: true,
+                        replace: true,
+                    }
                 );
             }, 500)
         );

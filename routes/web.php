@@ -281,8 +281,9 @@ Route::prefix('/cashBoxes')
     Route::get('/create', 'create')->name('create')->middleware('can:cashBoxes.create');
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:cashBoxes.edit');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:cashBoxes.show');
+    Route::get('/cancelCashBox/{id}', 'cancelCashBox')->name('cancelCashBox')->middleware('can:cashBoxes.cancelCashBox');
     Route::post('/store', 'store')->name('store')->middleware('can:cashBoxes.create');
-    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:cashBoxes.update');
+    Route::post('/update', 'update')->name('update')->middleware('can:cashBoxes.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:cashBoxes.destroy');
 });
 
@@ -296,8 +297,8 @@ Route::prefix('/lnCashBoxes')
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:lnCashBoxes.edit');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:lnCashBoxes.show');
     Route::post('/store', 'store')->name('store')->middleware('can:lnCashBoxes.create');
-    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:lnCashBoxes.update');
-    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:lnCashBoxes.destroy');
+    Route::post('/update', 'update')->name('update')->middleware('can:lnCashBoxes.update');
+    Route::delete('/delete', 'destroy')->name('destroy')->middleware('can:lnCashBoxes.destroy');
 });
 
 Route::prefix('/payments')
@@ -310,7 +311,7 @@ Route::prefix('/payments')
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:payments.edit');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:payments.show');
     Route::post('/store', 'store')->name('store')->middleware('can:payments.create');
-    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:payments.update');
-    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:payments.destroy');
+    Route::post('/update', 'update')->name('update')->middleware('can:payments.update');
+    Route::delete('/delete', 'destroy')->name('destroy')->middleware('can:payments.destroy');
 });
 
