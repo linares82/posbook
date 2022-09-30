@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 class CashBox extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RevisionableTrait;
 
     public static function boot()
 	{
@@ -33,7 +34,7 @@ class CashBox extends Model
 		});
 	}
 
-    protected $fillable = ['plantel_id','customer','fecha','reference','st_cash_box_id','total', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
+    protected $fillable = ['plantel_id','customer','fecha','reference','st_cash_box_id','total', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','matricula','bnd_entregado'];
 
 	protected $dates = ['deleted_at'];
 

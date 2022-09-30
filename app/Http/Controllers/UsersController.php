@@ -235,5 +235,37 @@ class UsersController extends Controller
 
         return redirect()->route('users.show', $datos['user'])->with('sysMessage', 'Planteles Actualizados.');
     }
+
+    public function editPerfil($id)
+    {
+        $user=User::findOrfail($id);
+        return Inertia::render('Users/EditPerfil', ['user'=>$user]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updatePerfil(UsersUpdateRequest $request, $id)
+    {
+        $datos=$request->all();
+        //dd($datos);
+        try{
+            $user=User::findOrFail($id);
+            $user->name=$datos['name'];
+            $user->email=$datos['email'];
+            if(!is_null($datos['password'])){
+                $user->password=$datos['password'];
+            }
+            $user->save();
+        }catch(Exception $e){
+            dd($e);
+        }
+
+        return redirect()->route('welcome')->with('sysMessage', 'Registro Actualizado.');
+    }
 }
 

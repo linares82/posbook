@@ -18,6 +18,15 @@
             </a-form-item>
         </a-col>
 
+        <a-col :md="7">
+            <a-form-item label="Nombre" name="name">
+                <a-input v-model:value="formOrderSale.name" :bordered="true" />
+                <div v-if="errors.name">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.name"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+
         <a-col :span="24">
             <a-space v-for="(linea, index) in formOrderSale.lineas" :key="linea.tiempo_id" style="display: flex; margin-bottom: 8px" align="baseline">
                 <a-form-item :name="['linea', index, 'plantel_id']" label="Plantel">

@@ -236,4 +236,15 @@ class MovementsController extends Controller
 		return redirect()->route('movements.index')->with('sysMessage', 'Registro Borrado.');
     }
 
+    public function consultaExistencias(){
+        $existencias=Movement::select('movements.id','p.name as plantel','p.id as plantel_id','pro.name as producto', 
+        'pro.id as producto_id','cantidad_entrada','cantidad_salida')
+        ->join('plantels as p', 'p.id','movements.plantel_id')
+        ->join('products as pro', 'pro.id','movements.product_id')
+        ->where('movements.type_movement_id',1)
+        ->whereColumn('movements.cantidad_entrada','>','movements.cantidad_salida')
+        ->get();
+
+        return response(json_encode(array('existencias'=>$existencias)), 200);
+    }
 }

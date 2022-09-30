@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class StCashBox extends Model
 {
     use HasFactory, SoftDeletes;
-
+	//protected $table="st_cash_boxes";
 	public static function boot()
 	{
 		parent::boot();

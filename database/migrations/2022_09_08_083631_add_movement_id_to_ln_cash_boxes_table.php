@@ -14,7 +14,7 @@ class AddMovementIdToLnCashBoxesTable extends Migration
     public function up()
     {
         Schema::table('ln_cash_boxes', function (Blueprint $table) {
-            $table->bigInteger('movement_id')->unsigend()->nullable();
+            $table->bigInteger('movement_id')->unsigned()->nullable();
             $table->index('movement_id');
         });
     }

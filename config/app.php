@@ -166,7 +166,7 @@ return [
          * Package Service Providers...
          */
         Spatie\Permission\PermissionServiceProvider::class,
-
+        Venturecraft\Revisionable\RevisionableServiceProvider::class,
         /*
          * Application Service Providers...
          */

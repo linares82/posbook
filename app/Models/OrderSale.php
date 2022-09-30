@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 class OrderSale extends Model
 {
+	use RevisionableTrait;
     use HasFactory, SoftDeletes;
 
 	public static function boot()
@@ -36,7 +38,7 @@ class OrderSale extends Model
 	}
 
 
-    protected $fillable = ['fecha', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
+    protected $fillable = ['fecha', 'usu_alta_id','name', 'usu_mod_id', 'usu_delete_id'];
 
 	protected $dates = ['deleted_at'];
 

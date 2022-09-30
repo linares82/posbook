@@ -20,7 +20,9 @@ use App\Http\Controllers\StCashBoxesController;
 use App\Http\Controllers\TypeMovementsController;
 use App\Http\Controllers\PaymentMethodsController;
 use App\Http\Controllers\OrderSalesLinesController;
+use App\Http\Controllers\OrderDevolutionsController;
 use App\Http\Controllers\Auth\AutenticationsController;
+use App\Http\Controllers\OrderDevolutionLinesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,11 +66,13 @@ Route::prefix('/users')
     Route::get('', 'index')->name('index');//->middleware('can:users.index');
     Route::get('/create', 'create')->name('create')->middleware('can:users.create');
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:users.edit');
+    Route::get('/editPerfil/{id}', 'editPerfil')->name('editPerfil')->middleware('can:users.editPerfil');
     Route::post('/assignRolesToAUser', 'assignRolesToAUser');//->middleware('can:users.assignRolesToAUser');
     Route::post('/assignPlantelsToAUser', 'assignPlantelsToAUser')->middleware('can:users.assignPlantelsToAUser');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:users.show');
     Route::post('/store', 'store')->name('store')->middleware('can:users.store');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:users.update');
+    Route::post('/editPerfil/{id}', 'updatePerfil')->name('updatePerfil')->middleware('can:users.editPerfil');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:roles.destroy');
 });
 
@@ -221,6 +225,7 @@ Route::prefix('/movements')
 ->name('movements.')
 ->controller(MovementsController::class)
 ->group(function () {
+    Route::get('consultaExistencias', 'consultaExistencias')->name('consultaExistencias');
     Route::get('', 'index')->name('index')->middleware('can:movements.index');
     Route::get('/create', 'create')->name('create')->middleware('can:movements.create');
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:movements.edit');
@@ -282,6 +287,7 @@ Route::prefix('/cashBoxes')
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:cashBoxes.edit');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:cashBoxes.show');
     Route::get('/cancelCashBox/{id}', 'cancelCashBox')->name('cancelCashBox')->middleware('can:cashBoxes.cancelCashBox');
+    Route::get('/ticket/{id}', 'ticket')->name('ticket')->middleware('can:cashBoxes.ticket');
     Route::post('/store', 'store')->name('store')->middleware('can:cashBoxes.create');
     Route::post('/update', 'update')->name('update')->middleware('can:cashBoxes.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:cashBoxes.destroy');
@@ -315,3 +321,33 @@ Route::prefix('/payments')
     Route::delete('/delete', 'destroy')->name('destroy')->middleware('can:payments.destroy');
 });
 
+Route::prefix('/orderDevolutions')
+->middleware('auth')
+->name('orderDevolutions.')
+->controller(OrderDevolutionsController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:orderDevolutions.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:orderDevolutions.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:orderDevolutions.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:orderDevolutions.show');
+    Route::get('/registrarDevolucion/{id}', 'registrarDevolucion')->name('registrarDevolucion')->middleware('can:orderDevolutions.registrarDevolucion');
+    Route::post('/store', 'store')->name('store')->middleware('can:orderDevolutions.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:orderDevolutions.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:orderDevolutions.destroy');
+});
+
+Route::prefix('/orderDevolutionLines')
+->middleware('auth')
+->name('orderDevolutionLines.')
+->controller(OrderDevolutionLinesController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:orderDevolutionLines.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:orderDevolutionLines.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:orderDevolutionLines.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:orderDevolutionLines.show');
+    Route::get('/registrarDevolucion/{id}', 'registrarDevolucion')->name('registrarDevolucion')->middleware('can:orderDevolutionLines.registrarDevolucion');
+    Route::post('/store', 'store')->name('store')->middleware('can:orderDevolutionLines.create');
+    Route::post('/storeLines', 'storeLines')->name('storeLines')->middleware('can:orderDevolutionLines.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:orderDevolutionLines.update');
+    Route::delete('/delete', 'destroy')->name('destroy')->middleware('can:orderDevolutionLines.destroy');
+});

@@ -43,7 +43,8 @@ class OrderSalesController extends Controller
         ->withQueryString()
         ->through(fn($orderSale)=>[
             'id'=>$orderSale->id,
-            'fecha'=>$orderSale->fecha
+            'fecha'=>$orderSale->fecha,
+            'name'=>$orderSale->name
         ]);
         //dd($users);
 
@@ -83,7 +84,7 @@ class OrderSalesController extends Controller
      */
     public function store(OrderSalesCreateRequest $request)
     {
-        $datos_order_sale=$request->only('fecha');
+        $datos_order_sale=$request->only('fecha','name');
         $datos_lineas=$request->input('lineas');
         //dd($datos_lineas);
         try{
@@ -118,9 +119,6 @@ class OrderSalesController extends Controller
         ->whereIn('plantel_id', Auth::user()->plantels->pluck('id'))
         ->get();
 
-        
-        
-        
         //dd($lineas);
         
         return Inertia::render('OrderSales/Show', ['orderSale'=>$orderSale, 'lineas'=>$lineas]);
@@ -187,6 +185,7 @@ class OrderSalesController extends Controller
         try{
             $orderSale=OrderSale::findOrFail($id);
             $orderSale->fecha=$datos['fecha'];
+            $orderSale->name=$datos['name'];
             $orderSale->save();
 
             if(isset($datos['lineas'])){

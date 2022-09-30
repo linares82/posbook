@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use App\Models\LnCashBox;
+use App\Models\OrderDevolutionLine;
 use App\Observers\LnCashBoxObserver;
+use App\Models\OrderDevolutionLineBox;
+use App\Observers\OrderDevolutionLineObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -30,5 +33,6 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         LnCashBox::observe(LnCashBoxObserver::class);
+        OrderDevolutionLine::observe(OrderDevolutionLineObserver::class);
     }
 }

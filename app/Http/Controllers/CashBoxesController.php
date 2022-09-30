@@ -48,6 +48,7 @@ class CashBoxesController extends Controller
             ->withQueryString()
             ->through(fn ($cashBox) => [
                 'id' => $cashBox->id,
+                'plantel'=>$cashBox->plantel->name,
                 'cliente' => $cashBox->customer,
                 'fecha' => $cashBox->fecha,
                 'estatus' => $cashBox->stCashBox->name,
@@ -123,7 +124,14 @@ class CashBoxesController extends Controller
         $inputCaja['plantel_id'] = $datos['plantel_id'];
         $inputCaja['fecha'] = $datos['fecha'];
         $inputCaja['customer'] = $datos['customer'];
+        $inputCaja['matricula'] = $datos['matricula'];
         $inputCaja['total'] = $datos['total'];
+        if(!isset($datos['bnd_entregado'])){
+            $inputCaja['bnd_entregado']=0;    
+        }else{
+            $inputCaja['bnd_entregado'] = $datos['bnd_entregado'];
+        }
+        
         $inputCaja['st_cash_box_id'] = 1;
 
         try {
@@ -139,6 +147,7 @@ class CashBoxesController extends Controller
             foreach ($datos['payments'] as $payment) {
                 $inputPayment['cash_box_id'] = $cashBox->id;
                 $inputPayment['payment_method_id'] = $payment['payment_method_id'];
+                $inputPayment['porcentaje_descuento'] = $payment['porcentaje_descuento'];
                 $inputPayment['monto'] = $payment['monto'];
                 $inputPayment['fecha'] = $payment['fecha'];
                 $inputPayment['st_payment_id'] = 2;
@@ -190,12 +199,14 @@ class CashBoxesController extends Controller
         $cashBox = array(
             'id' => $caja->id,
             'customer' => $caja->customer,
+            'matricula'=> $caja->matricula,
             'fecha' => $caja->fecha,
             'st_cash_box_id' => $caja->st_cash_box_id,
             'st_cash_box' => $caja->stCashBox->name,
             'total' => $caja->total,
             'plantel' => $caja->plantel->name,
-            'plantel_id' => $caja->plantel_id
+            'plantel_id' => $caja->plantel_id,
+            'bnd_entregado'=>$caja->bnd_entregado
         );
         $cashBox['lineas'] = array();
         foreach ($lnCaja as $ln) {
@@ -220,6 +231,7 @@ class CashBoxesController extends Controller
                 'cash_box_id' => $pago->cash_box_id,
                 'payment_method_id' => $pago->payment_method_id,
                 'payment_method' => $pago->paymentMethod->name,
+                'porcentaje_descuento' => $pago->porcentaje_descuento,
                 'monto' => $pago->monto,
                 'fecha' => $pago->fecha,
                 'st_payment_id' => $pago->st_payment_id,
@@ -292,7 +304,13 @@ class CashBoxesController extends Controller
             $cashBox->plantel_id = $datos['plantel_id'];
             $cashBox->fecha = $datos['fecha'];
             $cashBox->customer = $datos['customer'];
+            $cashBox->matricula = $datos['matricula'];
             $cashBox->total = $datos['total'];
+            if(!isset($datos['bnd_entregado'])){
+                $cashBox->bnd_entregado=0;
+            }else{
+                $cashBox->bnd_entregado=$datos['bnd_entregado'];
+            }
             $cashBox->save();
 
             foreach ($datos['lineas'] as $linea) {
@@ -310,6 +328,7 @@ class CashBoxesController extends Controller
                 if (!isset($payment['id'])) {
                     $inputPayment['cash_box_id'] = $cashBox['id'];
                     $inputPayment['payment_method_id'] = $payment['payment_method_id'];
+                    $inputPayment['porcentaje_descuento'] = $payment['porcentaje_descuento'];
                     $inputPayment['monto'] = $payment['monto'];
                     $inputPayment['fecha'] = $payment['fecha'];
                     $inputPayment['st_payment_id'] = 2;
@@ -369,5 +388,37 @@ class CashBoxesController extends Controller
             //dd($payment);
             $payment->delete();
         }
+    }
+
+    public function ticket($id){
+        
+        $cashBox =cashBox::select('cash_boxes.*', 'p.name as plantel','st.name as estatus','p.address','p.director','phone')
+        ->join('plantels as p','p.id','cash_boxes.plantel_id')
+        ->join('st_cash_boxes as st','st.id','cash_boxes.st_cash_box_id')->where('cash_boxes.id',$id)->first();
+
+        $cashBoxLns=LnCashBox::where('cash_box_id',$cashBox->id)->get()->map(fn ($ln) => [
+            'id' => $ln->id,
+            'cash_box_id' => $ln->cash_box_id,
+            'product_id' => $ln->product_id,
+            'product' => $ln->product->name,
+            'quantity' => $ln->quantity,
+            'precio' => $ln->precio,
+            'total' => $ln->total,
+            'movement_id' => $ln->movement_id
+        ]);
+
+        $payments= Payment::select('payments.*','pm.name as payment_method')
+        ->join('payment_methods as pm','pm.id','payments.payment_method_id')
+        ->where('cash_box_id', $cashBox->id)
+        ->get();
+
+        return Inertia::render(
+            'CashBoxes/Ticket',
+            [
+                'cashBox' => $cashBox,
+                'cashBoxLns'=>$cashBoxLns,
+                'payments'=>$payments
+            ]
+        );
     }
 }
