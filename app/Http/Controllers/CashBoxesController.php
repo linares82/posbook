@@ -208,6 +208,7 @@ class CashBoxesController extends Controller
             'plantel_id' => $caja->plantel_id,
             'bnd_entregado'=>$caja->bnd_entregado
         );
+        //dd($cashBox);
         $cashBox['lineas'] = array();
         foreach ($lnCaja as $ln) {
             array_push($cashBox['lineas'], array(
@@ -218,7 +219,8 @@ class CashBoxesController extends Controller
                 'quantity' => $ln->quantity,
                 'precio' => $ln->precio,
                 'totalLinea' => $ln->total,
-                'deleted' => 0
+                'deleted' => 0,
+                'movement_id'  => $ln->movement_id,
             ));
         }
         $pagos = Payment::where('cash_box_id', $id)->get();

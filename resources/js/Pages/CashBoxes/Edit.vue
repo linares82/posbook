@@ -63,7 +63,7 @@
             </a-form-item>
         </a-col>
         <a-col :md="1"></a-col>
-        <a-col :md="7">
+        <a-col :md="3">
             <a-form-item label="Total" name="total">
                 <a-input v-model:value="formCashBox.total" readonly> </a-input>
                 <div v-if="errors.total">
@@ -80,7 +80,10 @@
                 </div>
             </a-form-item>
         </a-col>
-        
+        <a-col :md="1"></a-col>
+        <a-col :md="3" v-show="formCashBox.movement_id" >
+            <a-alert message="Apartado, sin stock" type="info" show-icon />
+        </a-col>
 
         <div>
             <a-modal v-model:visible="visibleLinea" title="Agregar Linea" @ok="addLinea">
@@ -439,13 +442,19 @@ export default {
             porcentaje_descuento:0,
             monto: 0,
             fechaPago: undefined,
+            movement_id: false,
             lineas: [],
             payments: []
         });
 
         for (let linea in props.cashBox.lineas) {
             formCashBox.lineas.push(props.cashBox.lineas[linea])
+            //console.log(props.cashBox.lineas[linea].movement_id===null);
+            if(props.cashBox.lineas[linea].movement_id===null){
+                formCashBox.movement_id = true;
+            }
         }
+        //console.log(formCashBox);
         
         for (let payment in props.cashBox.payments) {
             formCashBox.payments.push({
@@ -459,6 +468,7 @@ export default {
                 payment_method_id: props.cashBox.payments[payment].payment_method_id,
                 st_payment: props.cashBox.payments[payment].st_payment,
                 st_payment_id: props.cashBox.payments[payment].st_payment_id
+                
             });
             //formCashBox.payments.push(props.cashBox.payments[payment])
         }

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Stock;
+use App\Models\CashBox;
 use App\Models\Movement;
+use App\Models\LnCashBox;
 use Illuminate\Http\Request;
 use App\Models\OrderSalesLine;
 use App\Http\Requests\OrderSalesLinesUpdateRequest;
@@ -115,6 +117,14 @@ class OrderSalesLinesController extends Controller
             $linea->bnd_entrada_registrada=1;
             $linea->save();
 
+            /*$movement_apartados=Movement::where('plantel_id',$linea->plantel_id)
+            ->where('product_id',$linea->product_id)
+            ->where('reason_id',4)
+            ->whereColumn('cantidad_entrada','<','cantidad_salida')
+            ->first();
+*/
+            
+
             $input['plantel_id']=$linea->plantel_id;
             $input['reason_id']=2;
             $input['type_movement_id']=1;
@@ -126,14 +136,21 @@ class OrderSalesLinesController extends Controller
             $input['order_sales_line_id']=$linea->id;
 
             $movement=Movement::create($input);
-
             
-            $stock=Stock::where('product_id', $linea->product_id)
-            ->where('plantel_id', $linea->plantel_id)
-            ->first();
-
-            $stock->current_stock=$stock->current_stock+$linea->cantidad;
-            $stock->save();
+            $lnCashBoxes=CashBox::select('ln.*')->join('ln_cash_boxes as ln','ln.cash_box_id','cash_boxes.id')
+            ->where('cash_boxes.plantel_id', $linea->plantel_id)
+            ->where('ln.product_id', $linea->product_id)
+            ->whereNull('ln.movement_id')
+            ->get();
+            if(count($lnCashBoxes)>0){
+                foreach($lnCashBoxes as $ln){
+                    $linea=LnCashBox::find($ln->id);
+                    $linea->movement_id=$movement->id;
+                    $linea->save();
+                    $movement->cantidad_salida=$movement->cantidad_salida+$ln->quantity;
+                    $movement->save();
+                }
+            }
             
         }catch(Exception $e){
             dd($e);
