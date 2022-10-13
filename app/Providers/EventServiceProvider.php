@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Models\LnCashBox;
+use App\Models\Movement;
 use App\Models\OrderDevolutionLine;
 use App\Observers\LnCashBoxObserver;
+use App\Observers\MovementObserver;
 use App\Models\OrderDevolutionLineBox;
 use App\Observers\OrderDevolutionLineObserver;
 use Illuminate\Auth\Events\Registered;
@@ -33,6 +35,8 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         LnCashBox::observe(LnCashBoxObserver::class);
+        Movement::observe(MovementObserver::class);
         OrderDevolutionLine::observe(OrderDevolutionLineObserver::class);
+        
     }
 }

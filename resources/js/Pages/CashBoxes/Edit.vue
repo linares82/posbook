@@ -45,7 +45,7 @@
             </a-form-item>
         </a-col>
         <a-col :md="1"></a-col>
-        <a-col :md="7">
+        <a-col :md="3">
             <a-form-item label="Matricula" name="matricula" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
                 <a-input v-model:value="formCashBox.matricula"> </a-input>
                 <div v-if="errors.matricula">
@@ -83,6 +83,24 @@
         <a-col :md="1"></a-col>
         <a-col :md="3" v-show="formCashBox.movement_id" >
             <a-alert message="Apartado, sin stock" type="info" show-icon />
+        </a-col>
+        <a-col :md="1"></a-col>
+        <a-col :md="3">
+            <a-form-item label="Referencia" name="reference">
+                <a-input v-model:value="formCashBox.reference" > </a-input>
+                <div v-if="errors.reference">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.reference"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+        <a-col :md="1"></a-col>
+        <a-col :md="3">
+            <a-form-item label="Referencia Revisada" name="bnd_referencia_revisada">
+                <a-checkbox v-model:checked="formCashBox.bnd_referencia_revisada"></a-checkbox>
+                <div v-if="errors.bnd_referencia_revisada">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.bnd_referencia_revisada"></div>
+                </div>
+            </a-form-item>
         </a-col>
 
         <div>
@@ -225,16 +243,16 @@
                 </template>
                 <a-col :md="24">
                     <a-form-item label="Metodo de Pago" name="payment_method_id">
-                        <a-select :options="paymentMethods" show-search v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        <a-select :options="paymentMethods" show-search @change="consultaPorcentajeDescuento" v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción" >
                         </a-select>
                         <div v-if="errors.payment_method_id">
                             <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.payment_method_id"></div>
                         </div>
                     </a-form-item>
                 </a-col>
-                <a-col :md="24" v-show="formCashBox.payment_method_id==4">
+                <a-col :md="24">
                     <a-form-item label="Porcejate Descuento(formato decimal 0.00)" name="porcentaje_descuento">
-                        <a-input v-model:value="formCashBox.porcentaje_descuento"> </a-input>
+                        <a-input v-model:value="formCashBox.porcentaje_descuento" readonly> </a-input>
                         <div v-if="errors.porcentaje_descuento">
                             <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.porcentaje_descuento"></div>
                         </div>
@@ -414,7 +432,7 @@ export default {
 
     props: ['ruta_destroy_ln', 'ruta_update_ln', 'cashBox', "errors", 'productos', 'planteles',
         'estatus', 'productos', 'plantel', 'paymentMethods', 'ruta_productos_findById',
-        'ruta_update_payment', 'ruta_destroy_payment', 'ruta_update_cashBox'
+        'ruta_update_payment', 'ruta_destroy_payment', 'ruta_update_cashBox', 'ruta_consulta_porcentaje_descuento'
     ],
 
     setup(props) {
@@ -432,6 +450,8 @@ export default {
             st_cash_box: props.cashBox.st_cash_box,
             total: props.cashBox.total,
             bnd_entregado:props.cashBox.bnd_entregado,
+            reference:props.cashBox.reference,
+            bnd_referencia_revisada:props.cashBox.bnd_referencia_revisada,
             linea_id: undefined,
             product_id: undefined,
             existencia: undefined,
@@ -694,6 +714,11 @@ export default {
 
         const addPayment = () => {
             loadingPayment.value = true;
+
+            if(formCashBox.porcentaje_descuento>0){
+                formCashBox.monto=formCashBox.total*formCashBox.porcentaje_descuento;
+            }
+
             formCashBox.payments.push({
                 payment_method_id: formCashBox.payment_method_id,
                 porcentaje_descuento: formCashBox.porcentaje_descuento,
@@ -714,7 +739,20 @@ export default {
 
         //Fin trabajo con pagos
 
+        const consultaPorcentajeDescuento = value => {
+            //console.log(props.ruta_consulta_porcentaje_descuento);
+            axios.get(props.ruta_consulta_porcentaje_descuento + 
+                        "?id=" + value )
+                    .then(response => {
+                        //console.log(response);
+                    formCashBox.porcentaje_descuento=response.data.porcentaje_descuento;
+                });
+
+        };
+
+
         return {
+            consultaPorcentajeDescuento,
             addLinea,
             addPayment,
             consultaProductos,

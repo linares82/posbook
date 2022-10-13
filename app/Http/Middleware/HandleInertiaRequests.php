@@ -102,11 +102,13 @@ class HandleInertiaRequests extends Middleware
                         'title'=>$item->item,
                         'link'=>$link,
                         'imagen'=>$item->imagen,
+                        'target'=>$item->target,
                         'children'=>$this->armaMenuPrincipal($item->id)));
                     } else {
                         array_push($construccionMenu, array('key'=>$item->id,
                         'title'=>$item->item,
                         'link'=>$link,
+                        'target'=>$item->target,
                         'imagen'=>$item->imagen));
                     }
                     //Log::info($construccionMenu);

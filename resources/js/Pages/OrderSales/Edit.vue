@@ -198,6 +198,7 @@ export default {
         let formOrderSale = reactive({
             id: props.orderSale.id,
             fecha: dayjs(props.orderSale.fecha, 'YYYY/MM/DD'),
+            name: props.orderSale.name,
             lineas: []
         });
 

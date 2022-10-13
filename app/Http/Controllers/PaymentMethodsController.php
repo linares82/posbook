@@ -121,6 +121,7 @@ class PaymentMethodsController extends Controller
         try{
             $paymentMethod=PaymentMethod::findOrFail($id);
             $paymentMethod->name=$datos['name'];
+            $paymentMethod->porcentaje_descuento=$datos['porcentaje_descuento'];
             $paymentMethod->bnd_exempt=$datos['bnd_exempt']==true ? 1 : 0;
             $paymentMethod->save();
             
@@ -149,4 +150,9 @@ class PaymentMethodsController extends Controller
 		return redirect()->route('paymentMethods.index')->with('sysMessage', 'Registro Borrado.');
     }
 
+    public function consultaPorcentajeDescuento(Request $request){
+        //dd($request->all());
+        $registro=PaymentMethod::findOrFail($request->input('id'));
+        return $registro->toJson();
+    }
 }

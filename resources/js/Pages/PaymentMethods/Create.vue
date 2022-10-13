@@ -55,6 +55,19 @@
 
       <a-col :span="1"></a-col>
 
+      <a-col :md="7">
+        <a-form-item label="% Descuento" name="porcentaje_descuento">
+          <a-input v-model:value="formPaymentMethod.porcentaje_descuento"> </a-input>
+          <div v-if="errors.porcentaje_descuento">
+            <div
+              role="alert"
+              class="ant-form-item-explain-error"
+              style=""
+              v-text="errors.porcentaje_descuento"
+            ></div>
+          </div>
+        </a-form-item>
+      </a-col>
 
       <a-col :span="1"></a-col>
 
@@ -100,7 +113,8 @@ export default {
   setup() {
     let formPaymentMethod = reactive({
       name: "",
-      bnd_exempt: ref(false)
+      bnd_exempt: ref(false),
+      porcentaje_descuento:0
     });
 
     let processing = ref(false);

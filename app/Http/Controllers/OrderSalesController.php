@@ -8,10 +8,11 @@ use App\Models\Plantel;
 use App\Models\Product;
 use App\Models\OrderSale;
 use Illuminate\Http\Request;
+use App\Models\OrderSalesLine;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\OrderSalesCreateRequest;
 use App\Http\Requests\OrderSalesUpdateRequest;
-use App\Models\OrderSalesLine;
 
 class OrderSalesController extends Controller
 {
@@ -112,16 +113,24 @@ class OrderSalesController extends Controller
     public function show($id)
     {
         $orderSale=OrderSale::findOrfail($id);
-        $lineas=OrderSalesLine::select('order_sales_lines.*','p.name as plantel','pro.name as product')
+        $lineas=OrderSalesLine::select('order_sales_lines.*','p.name as plantel','pro.name as product',
+        DB::raw('(select sum(m.cantidad_entrada) 
+        from movements as m where m.order_sales_line_id=order_sales_lines.id and 
+        m.deleted_at is null) as total_entradas'))
         ->join('plantels as p','p.id','order_sales_lines.plantel_id')
         ->join('products as pro','pro.id','order_sales_lines.product_id')
         ->where('order_sale_id', $orderSale->id)
         ->whereIn('plantel_id', Auth::user()->plantels->pluck('id'))
         ->get();
 
+        $route_verObservaciones=route('obsEntries.verObservaciones');
+        $route_verEntradas=route('movements.verEntradas');
+
         //dd($lineas);
         
-        return Inertia::render('OrderSales/Show', ['orderSale'=>$orderSale, 'lineas'=>$lineas]);
+        return Inertia::render('OrderSales/Show', 
+        ['orderSale'=>$orderSale, 'lineas'=>$lineas, 'route_verObservaciones'=>$route_verObservaciones,
+        'route_verEntradas'=>$route_verEntradas]);
     }
 
     public function print($id)

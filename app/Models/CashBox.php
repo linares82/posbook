@@ -34,7 +34,7 @@ class CashBox extends Model
 		});
 	}
 
-    protected $fillable = ['plantel_id','customer','fecha','reference','st_cash_box_id','total', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','matricula','bnd_entregado'];
+    protected $fillable = ['plantel_id','customer','fecha','reference','st_cash_box_id','total', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','matricula','bnd_entregado','bnd_referencia_revisada'];
 
 	protected $dates = ['deleted_at'];
 

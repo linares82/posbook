@@ -40,7 +40,7 @@
                                     <template #icon>
                                         <PieChartOutlined />
                                     </template>
-                                    <Link :href="item.link">{{ item.title }}</Link>
+                                    <Link :href="item.link" target="_blank">{{ item.title }}</Link>
                                 </a-menu-item>
                             </template>
                             <template v-else>
@@ -103,7 +103,8 @@
             <template #icon>
               <PieChartOutlined />
             </template>
-            <Link :href="item.link">{{ item.title }}</Link>
+            <a v-if="item.target" :href="item.link" target='_blank'>{{ item.title }}</a>
+            <Link v-else :href="item.link" >{{ item.title }}</>
           </a-menu-item>
         </template>
         <template v-else>

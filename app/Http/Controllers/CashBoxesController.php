@@ -206,7 +206,9 @@ class CashBoxesController extends Controller
             'total' => $caja->total,
             'plantel' => $caja->plantel->name,
             'plantel_id' => $caja->plantel_id,
-            'bnd_entregado'=>$caja->bnd_entregado
+            'bnd_entregado'=>$caja->bnd_entregado,
+            'reference'=>$caja->reference,
+            'bnd_referencia_revisada' => $caja->bnd_referencia_revisada
         );
         //dd($cashBox);
         $cashBox['lineas'] = array();
@@ -275,7 +277,8 @@ class CashBoxesController extends Controller
         $ruta_update_payment = route('payments.update');
         $ruta_destroy_payment = route('payments.destroy');
         $ruta_update_cashBox = route('cashBoxes.update');
-        //dd($ruta_productos_findById);
+        $ruta_consulta_porcentaje_descuento = route('paymentMethods.consultaPorcentajeDescuento'); //
+        //dd($ruta_consulta_porcentaje_descuento);
 
 
         return Inertia::render(
@@ -285,7 +288,8 @@ class CashBoxesController extends Controller
                 'paymentMethods' => $paymentMethods, 'ruta_productos_findById' => $ruta_productos_findById,
                 'cashBox' => $cashBox, 'ruta_update_ln' => $ruta_update_ln, 'ruta_destroy_ln' => $ruta_destroy_ln,
                 'ruta_update_payment' => $ruta_update_payment, 'ruta_destroy_payment' => $ruta_destroy_payment,
-                'ruta_update_cashBox' => $ruta_update_cashBox
+                'ruta_update_cashBox' => $ruta_update_cashBox, 
+                'ruta_consulta_porcentaje_descuento' => $ruta_consulta_porcentaje_descuento,
             ]
         );
     }
@@ -308,11 +312,18 @@ class CashBoxesController extends Controller
             $cashBox->customer = $datos['customer'];
             $cashBox->matricula = $datos['matricula'];
             $cashBox->total = $datos['total'];
+            $cashBox->reference = $datos['reference'];
             if(!isset($datos['bnd_entregado'])){
                 $cashBox->bnd_entregado=0;
             }else{
                 $cashBox->bnd_entregado=$datos['bnd_entregado'];
             }
+            if(!isset($datos['bnd_referencia_revisada'])){
+                $cashBox->bnd_referencia_revisada=0;
+            }else{
+                $cashBox->bnd_referencia_revisada=$datos['bnd_referencia_revisada'];
+            }
+            //dd($cashBox);
             $cashBox->save();
 
             foreach ($datos['lineas'] as $linea) {
@@ -420,6 +431,51 @@ class CashBoxesController extends Controller
                 'cashBox' => $cashBox,
                 'cashBoxLns'=>$cashBoxLns,
                 'payments'=>$payments
+            ]
+        );
+    }
+
+    public function rptCajasApartadasF(Request $request){
+
+        $planteles = Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        $planteles->prepend(["value" => null, 'label' => "Selecionar Opción"]);
+        return Inertia::render(
+            'CashBoxes/reportes/RptCajasApartadasF',
+            [
+                'planteles' => $planteles
+            ]
+        );
+    }
+
+    public function rptCajasApartadasR(Request $request){
+        $datos=$request->all();
+        //dd($datos);
+        $cajasApartadas=CashBox::select('cash_boxes.id','cash_boxes.customer','st_cash_box_id','stcb.name as stcb', 
+        'cash_boxes.total as total_caja', 'cash_boxes.matricula', 'cash_boxes.bnd_entregado','cash_boxes.fecha as fecha_caja',
+        'cash_boxes.bnd_referencia_revisada', 'cash_boxes.reference',
+        'p.name as producto', 'ln.quantity', 'ln.precio', 'ln.total as total_ln', 'ln.movement_id') 
+        /*'pm.name as payment_method',
+        'pay.monto', 'pay.porcentaje_descuento', 'pay.fecha as fecha_pago')*/
+        ->join('ln_cash_boxes as ln','ln.cash_box_id','cash_boxes.id')
+        ->join('st_cash_boxes as stcb', 'stcb.id','cash_boxes.st_cash_box_id')
+        ->join('products as p','p.id','ln.product_id')
+        //->join('payments as pay', 'pay.cash_box_id', 'cash_boxes.id')
+        //->join('payment_methods as pm','pm.id','pay.payment_method_id')
+        ->whereBetween('cash_boxes.fecha', array($datos['fecha_f'], $datos['fecha_t']))
+        ->whereIn('cash_boxes.plantel_id', $datos['plantel_id'])
+        ->where('st_cash_box_id', 2)
+        //->whereNull('pay.deleted_at')
+        ->whereNull('ln.deleted_at')
+        ->whereRaw('(bnd_entregado is null or bnd_entregado=0)')
+        ->get();
+        //dd($cajasApartadas->toArray());
+        return Inertia::render(
+            'CashBoxes/reportes/RptCajasApartadasR',
+            [
+                'cajasApartadas' => $cajasApartadas
             ]
         );
     }

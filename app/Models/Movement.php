@@ -73,5 +73,13 @@ class Movement extends Model
     {
         return $this->hasOne('App\Models\Reason','id','reason_id');
     }
+
+	public function lnCashBoxes(){
+		return $this->hasMany('App\Models\LnCashBox');
+	}
+
+	public function orderSalesLine(){
+		return $this->belongsTo('App\Models\OrderSalesLine');
+	}
 	
 }

@@ -70,5 +70,10 @@ class LnCashBox extends Model
 		return $this->belongsTo('App\Models\PaymentMethod');
 	} // end
 
+	public function movement()
+	{
+		return $this->belongsTo('App\Models\Movement');
+	} // end
+
 	
 }

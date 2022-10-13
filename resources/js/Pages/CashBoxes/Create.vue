@@ -441,7 +441,7 @@ export default {
 
         const handleOk = () => {
             loading.value = true;
-            if(formCashBox.payment_method_id==4 && formCashBox.porcentaje_descuento>0){
+            if(formCashBox.porcentaje_descuento>0){
                 formCashBox.monto=formCashBox.total*formCashBox.porcentaje_descuento;
             }
 
