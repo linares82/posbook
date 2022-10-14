@@ -98,13 +98,17 @@ class CashBoxesController extends Controller
         $paymentMethods->prepend(["value" => null, 'label' => "Selecionar Opción"]);
 
         $ruta_productos_findById = route('products.findById');
+        $ruta_consulta_porcentaje_descuento = route('paymentMethods.consultaPorcentajeDescuento'); //
         //dd($ruta_productos_findById);
 
 
 
         return Inertia::render(
             'CashBoxes/Create',
-            ['planteles' => $planteles, 'estatus' => $estatus, 'productos' => $productos, 'plantel' => $plantel, 'paymentMethods' => $paymentMethods, 'ruta_productos_findById' => $ruta_productos_findById]
+            ['planteles' => $planteles, 'estatus' => $estatus, 'productos' => $productos, 
+            'plantel' => $plantel, 'paymentMethods' => $paymentMethods, 
+            'ruta_productos_findById' => $ruta_productos_findById,
+            'ruta_consulta_porcentaje_descuento'=>$ruta_consulta_porcentaje_descuento]
         );
         //->withViewData(['ruta_productos_findById'=>$ruta_productos_findById]);
     }

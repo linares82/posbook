@@ -21,8 +21,8 @@ class CreateMovementsTable extends Migration
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->float('costo',9,2)->nullable();
             $table->float('precio',9,2)->nullable();
-            $table->integer('cantidad_entrada')->nullable();
-            $table->integer('cantidad_salida')->nullable();
+            $table->integer('cantidad_entrada')->default(0);
+            $table->integer('cantidad_salida')->default(0);
             $table->bigInteger('order_sales_line_id')->unsigned()->nullable();
             $table->bigInteger('usu_alta_id')->unsigned()->nullable();
             $table->bigInteger('usu_mod_id')->unsigned()->nullable();

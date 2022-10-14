@@ -253,7 +253,7 @@ export default {
             formEntrada.product_id = record.product_id;
             formEntrada.cantidad_entrada = record.cantidad - record.total_entradas;
             formEntrada.total_order_line = record.cantidad;
-            formEntrada.total_acumulado = record.total_entradas;
+            formEntrada.total_acumulado = record.total_entradas ? record.total_entradas : 0;
             formEntrada.order_sales_line_id = record.id;
         };
 
@@ -261,7 +261,8 @@ export default {
             console.log(formEntrada)
             //dataSource.value = dataSource.value.filter(item => item.id !== key);
             //Inertia.get("/orderSalesLines/receiveOCPlantel/"+key);
-            if (formEntrada.total_order_line <= (formEntrada.total_acumulado + formEntrada.cantidad_entrada)) {
+
+            if (parseInt(formEntrada.total_order_line) >= (parseInt(formEntrada.total_acumulado) + parseInt(formEntrada.cantidad_entrada))) {
                 Inertia.post("/movements/store", formEntrada, {
                     onStart: () => {
                         processing.value = true;
@@ -271,11 +272,13 @@ export default {
                     },
                 });
                 visibleEntrada.value = false;
+                formEntrada.total_acumulado = parseInt(formEntrada.total_acumulado) + parseInt(formEntrada.cantidad_entrada);
+                location.reload();
             } else {
                 
                 alert("La suma de entradas ya registradas y la cantidad nueva de entradas es superior a la orden de compra");
             }
-
+            //location.reload();
         };
 
         const handleCancelEntrada = () => {
