@@ -45,6 +45,7 @@
                                     <th class="ant-table-cell" colstart="0" colend="0">Id</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Fecha</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Nombre</th>
+                                    <th class="ant-table-cell" colstart="1" colend="1">Plantel</th>
                                     <th class="ant-table-cell" colstart="3" colend="4">Acciones</th>
                                 </thead>
                                 <tbody class="ant-table-tbody">
@@ -53,6 +54,7 @@
                                         <td class="ant-table-cell" colstart="0" colend="0">{{ orderSale.id }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ orderSale.fecha }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ orderSale.name }}</td>
+                                        <td class="ant-table-cell" colstart="1" colend="1">{{ orderSale.plantel }}</td>
                                         <td class="ant-table-cell" colstart="3" colend="4">
                                             <a-dropdown-button>
                                                 Acciones

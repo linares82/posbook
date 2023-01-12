@@ -41,6 +41,7 @@ class CashBoxesController extends Controller
 
         $sysMessage = $request->session()->get('sysMessage');
         $cashBoxes = CashBox::query()
+            ->whereIn('plantel_id', Auth::user()->plantels->pluck('id'))
             ->when($request->input('name'), function ($query, $item) {
                 $query->where('name', 'like', '%' . $item . '%');
             })->orderBy('id', 'desc')
@@ -71,7 +72,7 @@ class CashBoxesController extends Controller
      */
     public function create()
     {
-        $planteles = Plantel::get()->map(fn ($plantel) => [
+        $planteles = Plantel::whereIn('id', Auth::user()->plantels->pluck('id'))->get()->map(fn ($plantel) => [
             'value' => $plantel->id,
             'label' => $plantel->name,
         ]);
@@ -249,7 +250,7 @@ class CashBoxesController extends Controller
             $posicion++;
         }
         //dd(json_encode($cashBox));
-        $planteles = Plantel::get()->map(fn ($plantel) => [
+        $planteles = Plantel::whereIn('id', Auth::user()->plantels->pluck('id'))->get()->map(fn ($plantel) => [
             'value' => $plantel->id,
             'label' => $plantel->name,
         ]);

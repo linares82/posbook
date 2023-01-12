@@ -232,6 +232,8 @@ Route::prefix('/movements')
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:movements.edit');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:movements.show');
     Route::get('/verEntradas', 'verEntradas')->name('verEntradas');
+    Route::get('/verEntradasSalidasF', 'verEntradasSalidasF')->name('verEntradasSalidasF')->middleware('can:movements.verEntradasSalidasF');
+    Route::get('/verEntradasSalidasR', 'verEntradasSalidasR')->name('verEntradasSalidasR')->middleware('can:movements.verEntradasSalidasF');;
     Route::post('/store', 'store')->name('store')->middleware('can:movements.create');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:movements.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:movements.destroy');

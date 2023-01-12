@@ -88,8 +88,8 @@ class OrderSalesLinesController extends Controller
         }catch(Exception $e){
             dd($e);
         }
-
-        return redirect()->route('orderSales.edit',$id)->with('sysMessage', 'Registro Actualizado.');
+        
+        return redirect()->route('orderSales.edit',$period->order_sale_id)->with('sysMessage', 'Registro Actualizado.');
     }
 
     /**

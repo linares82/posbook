@@ -35,19 +35,25 @@ class OrderSalesController extends Controller
     public function index(Request $request)
     {
         //dd($request->all());
+        //dd(Auth::user()->plantels->pluck('id'));
         $sysMessage=$request->session()->get('sysMessage');
         $orderSales=OrderSale::query()
+        ->select('order_sales.id','order_sales.fecha','order_sales.name', 'p.name as plantel')
+        ->join('plantels as p','p.id','order_sales.plantel_id')
+        ->whereIn('order_sales.plantel_id', Auth::user()->plantels->pluck('id'))
         ->when($request->input('fecha'), function($query, $fecha){
             $query->whereDate('fecha',$fecha);
-        })->orderBy('id','desc')
+        })
+        ->orderBy('order_sales.id','desc')
         ->paginate(100)
         ->withQueryString()
         ->through(fn($orderSale)=>[
             'id'=>$orderSale->id,
             'fecha'=>$orderSale->fecha,
-            'name'=>$orderSale->name
+            'name'=>$orderSale->name,
+            'plantel'=>$orderSale->plantel
         ]);
-        //dd($users);
+        //dd($orderSales);
 
         return Inertia::render('OrderSales/Index',[
             'orderSales'=>$orderSales,
@@ -64,17 +70,23 @@ class OrderSalesController extends Controller
      */
     public function create()
     {
-        $planteles=Plantel::get()->map(fn ($plantel) => [
+        $planteles = Plantel::whereIn('id', Auth::user()->plantels->pluck('id'))->get()->map(fn ($plantel) => [
             'value' => $plantel->id,
             'label' => $plantel->name,
         ]);
+
+        $plantel = Auth::user()->plantels->first()->id;
+        //dd($plantel);
+
         $planteles->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
         $productos=Product::get()->map(fn ($product) => [
             'value' => $product->id,
             'label' => $product->name,
         ]);
         $productos->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
-        return Inertia::render('OrderSales/Create',['planteles'=>$planteles,'productos'=>$productos]);
+        return Inertia::render('OrderSales/Create',['planteles'=>$planteles,
+        'plantel'=>$plantel,
+        'productos'=>$productos]);
     }
 
     /**
@@ -85,7 +97,8 @@ class OrderSalesController extends Controller
      */
     public function store(OrderSalesCreateRequest $request)
     {
-        $datos_order_sale=$request->only('fecha','name');
+        
+        $datos_order_sale=$request->only('fecha','name','plantel_id');
         $datos_lineas=$request->input('lineas');
         //dd($datos_lineas);
         try{
@@ -161,7 +174,7 @@ class OrderSalesController extends Controller
     public function edit($id)
     {
         $orderSale=OrderSale::findOrfail($id);
-        $planteles=Plantel::get()->map(fn ($plantel) => [
+        $planteles = Plantel::whereIn('id', Auth::user()->plantels->pluck('id'))->get()->map(fn ($plantel) => [
             'value' => $plantel->id,
             'label' => $plantel->name,
         ]);
@@ -190,11 +203,12 @@ class OrderSalesController extends Controller
     public function update(OrderSalesUpdateRequest $request, $id)
     {
         $datos=$request->all();
-        //dd($datos);
+        dd($datos);
         try{
             $orderSale=OrderSale::findOrFail($id);
             $orderSale->fecha=$datos['fecha'];
             $orderSale->name=$datos['name'];
+            $orderSale->name=$datos['plantel_id'];
             $orderSale->save();
 
             if(isset($datos['lineas'])){

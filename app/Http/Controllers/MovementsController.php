@@ -279,4 +279,24 @@ class MovementsController extends Controller
         ->get();
         return $movements;
     }
+
+    public function verEntradasSalidasF(){
+        $planteles=Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        $productos=Product::get()->map(fn ($producto) => [
+            'value' => $producto->id,
+            'label' => $producto->name,
+        ]);
+        
+        
+        return Inertia::render('Movements/RptEntradasSalidasF', [
+            'planteles'=>$planteles,
+            'productos'=>$productos]);        
+    }
+
+    public function verEntradasSalidasR(){
+
+    }
 }

@@ -38,7 +38,7 @@ class OrderSale extends Model
 	}
 
 
-    protected $fillable = ['fecha', 'usu_alta_id','name', 'usu_mod_id', 'usu_delete_id'];
+    protected $fillable = ['fecha', 'usu_alta_id','name','plantel_id', 'usu_mod_id', 'usu_delete_id'];
 
 	protected $dates = ['deleted_at'];
 

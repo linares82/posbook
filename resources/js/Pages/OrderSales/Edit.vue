@@ -28,6 +28,17 @@
             </a-form-item>
         </a-col>
 
+        <a-col :md="7">
+            <a-form-item compact label="Plantel" name="plantel_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                <a-select :options="planteles" show-search v-model:value="formOrderSale.plantel_id" style="width: 300px" placeholder="Seleccionar Opción">
+
+                </a-select>
+                <div v-if="errors.plantel_id">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.plantel_id"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+
         <a-col :span="24">
             <a-space v-for="(linea, index) in formOrderSale.lineas" :key="linea.tiempo_id" style="display: flex; margin-bottom: 8px" align="baseline">
                 <a-form-item :name="['linea', index, 'plantel_id']" label="Plantel">
@@ -199,6 +210,7 @@ export default {
             id: props.orderSale.id,
             fecha: dayjs(props.orderSale.fecha, 'YYYY/MM/DD'),
             name: props.orderSale.name,
+            plantel_id: props.orderSale.plantel_id,
             lineas: []
         });
 
