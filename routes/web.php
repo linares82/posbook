@@ -226,7 +226,7 @@ Route::prefix('/movements')
 ->name('movements.')
 ->controller(MovementsController::class)
 ->group(function () {
-    Route::get('consultaExistencias/{id}', 'consultaExistencias')->name('consultaExistencias');
+    Route::get('consultaExistencias', 'consultaExistencias')->name('consultaExistencias');
     Route::get('', 'index')->name('index')->middleware('can:movements.index');
     Route::get('/create', 'create')->name('create')->middleware('can:movements.create');
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:movements.edit');

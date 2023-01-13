@@ -85,7 +85,7 @@ export default {
     LockOutlined,
   },
 
-  props: ["errors", "orderDevolution",'orderSales'],
+  props: ["errors", "orderDevolution",'orderSales', 'orderSale'],
 
   setup(props) {
     let formOrderDevolution = reactive({
@@ -93,7 +93,7 @@ export default {
       name: props.orderDevolution.name,
       fecha: dayjs(props.orderDevolution.fecha, 'YYYY/MM/DD'),
       motivo: props.orderDevolution.motivo,
-      order_sale_id:props.orderDevolution.order_sale_id
+      order_sale_id:props.orderSale.id
     });
 
     let processing = ref(false);

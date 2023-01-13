@@ -156,7 +156,7 @@ class OrderDevolutionsController extends Controller
         $route_storeLines=route('orderDevolutionLines.storeLines');
         $route_destroy_ln=route('orderDevolutionLines.destroy');
         //dd($route_consultaExistencias);
-        $route_consultaExistencias=route('movements.consultaExistencias', $orderSale->id);
+        $route_consultaExistencias=route('movements.consultaExistencias', array('id'=>$orderSale->id));
         //dd($route_consultaExistencias);
         return Inertia::render('OrderDevolutions/Show', 
         ['orderDevolution'=>$orderDevolution,
@@ -176,6 +176,7 @@ class OrderDevolutionsController extends Controller
     public function edit($id)
     {
         $orderDevolution=OrderDevolution::findOrfail($id);
+        $orderSale=$orderDevolution->orderSale;
 
         $orderSales=OrderSale::select('order_sales.id',DB::raw('concat(order_sales.id," - ",order_sales.fecha," - ",order_sales.name) as nombre'))
             ->join('order_sales_lines as osl','osl.order_sale_id','order_sales.id')
@@ -189,7 +190,7 @@ class OrderDevolutionsController extends Controller
                 'label' => $registro->nombre,
             ]);
 
-        return Inertia::render('OrderDevolutions/Edit', ['orderDevolution'=>$orderDevolution, 'orderSales'=>$orderSales]);
+        return Inertia::render('OrderDevolutions/Edit', ['orderDevolution'=>$orderDevolution, 'orderSales'=>$orderSales, 'orderSale'=>$orderSale]);
     }
 
     /**
