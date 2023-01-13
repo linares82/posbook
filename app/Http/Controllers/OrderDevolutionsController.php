@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Inertia\Inertia;
+use App\Models\Plantel;
+use App\Models\OrderSale;
 use Illuminate\Http\Request;
 use App\Models\OrderDevolution;
+use Illuminate\Support\Facades\DB;
+use App\Models\OrderDevolutionLine;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\OrderDevolutionsCreateRequest;
 use App\Http\Requests\OrderDevolutionsUpdateRequest;
-use App\Models\OrderDevolutionLine;
 
 class OrderDevolutionsController extends Controller
 {
@@ -60,9 +63,49 @@ class OrderDevolutionsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($orderSale=0)
     {
-        return Inertia::render('OrderDevolutions/Create');
+        
+            $orderSales=OrderSale::select('order_sales.id',DB::raw('concat(order_sales.id," - ",order_sales.fecha," - ",order_sales.name) as nombre'))
+            ->join('order_sales_lines as osl','osl.order_sale_id','order_sales.id')
+            ->join('movements as m','m.order_sales_line_id','osl.id')
+            ->whereIn('order_sales.plantel_id', Auth::user()->plantels->pluck('id'))
+            ->whereColumn('m.cantidad_salida','<','cantidad_entrada')
+            ->distinct()
+            //->pluck('nombre','order_sales.id')
+            ->get()->map(fn ($registro) => [
+                'value' => $registro->id,
+                'label' => $registro->nombre,
+            ]);
+            //dd($orderSales->toArray());
+            if($orderSale==0){
+                foreach($orderSales as $order){
+                    //dd($order);
+                    $orderSale=$order;
+                    break;
+                }
+                return Inertia::render('OrderDevolutions/Create',['orderSale'=>$orderSale, 'orderSales'=>$orderSales]);
+            }else{
+                $orderSaleSelected=OrderSale::select('order_sales.id',DB::raw('concat(order_sales.id," - ",order_sales.fecha," - ",order_sales.name) as nombre'))
+                ->join('order_sales_lines as osl','osl.order_sale_id','order_sales.id')
+                ->join('movements as m','m.order_sales_line_id','osl.id')
+                ->where('order_sales.id', $orderSale)
+                ->whereIn('order_sales.plantel_id', Auth::user()->plantels->pluck('id'))
+                ->whereColumn('m.cantidad_salida','<','cantidad_entrada')
+                ->distinct()
+                //->pluck('nombre','order_sales.id')
+                ->get()->map(fn ($registro) => [
+                    'value' => $registro->id,
+                    'label' => $registro->nombre,
+                ]); 
+                return Inertia::render('OrderDevolutions/Create',['orderSale'=>$orderSaleSelected, 'orderSales'=>$orderSales]);
+            }
+            //dd($orderSaleSelected);
+
+
+            
+        
+        
     }
 
     /**
@@ -93,6 +136,8 @@ class OrderDevolutionsController extends Controller
     public function show($id)
     {
         $orderDevolution=OrderDevolution::findOrfail($id);
+        $orderSale=$orderDevolution->orderSale;
+        //dd($orderSale->name);
         $orderDevolutionLines=OrderDevolutionLine::where('order_devolution_id',$id)
         ->get()
         ->map(fn ($linea) => [
@@ -104,16 +149,18 @@ class OrderDevolutionsController extends Controller
             'product'=>$linea->product->name,
             'cantidad' => $linea->cantidad,
             'contacto' => $linea->contacto,
-            'bnd_salida_registrada'=> $linea->bnd_salida_registrada
+            'bnd_salida_registrada' => $linea->bnd_salida_registrada,
         ]);
         //dd($orderDevolutionLines);
-        $route_consultaExistencias=route('movements.consultaExistencias');
+        //$route_consultaExistencias=route('movements.consultaExistencias');
         $route_storeLines=route('orderDevolutionLines.storeLines');
         $route_destroy_ln=route('orderDevolutionLines.destroy');
         //dd($route_consultaExistencias);
-        
+        $route_consultaExistencias=route('movements.consultaExistencias', $orderSale->id);
+        //dd($route_consultaExistencias);
         return Inertia::render('OrderDevolutions/Show', 
         ['orderDevolution'=>$orderDevolution,
+        'orderSale'=>$orderSale,
          'orderDevolutionLines'=>$orderDevolutionLines,
          'route_consultaExistencias'=>$route_consultaExistencias,
         'route_storeLines'=>$route_storeLines,
@@ -129,7 +176,20 @@ class OrderDevolutionsController extends Controller
     public function edit($id)
     {
         $orderDevolution=OrderDevolution::findOrfail($id);
-        return Inertia::render('OrderDevolutions/Edit', ['orderDevolution'=>$orderDevolution]);
+
+        $orderSales=OrderSale::select('order_sales.id',DB::raw('concat(order_sales.id," - ",order_sales.fecha," - ",order_sales.name) as nombre'))
+            ->join('order_sales_lines as osl','osl.order_sale_id','order_sales.id')
+            ->join('movements as m','m.order_sales_line_id','osl.id')
+            ->whereIn('order_sales.plantel_id', Auth::user()->plantels->pluck('id'))
+            ->whereColumn('m.cantidad_salida','<','cantidad_entrada')
+            ->distinct()
+            //->pluck('nombre','order_sales.id')
+            ->get()->map(fn ($registro) => [
+                'value' => $registro->id,
+                'label' => $registro->nombre,
+            ]);
+
+        return Inertia::render('OrderDevolutions/Edit', ['orderDevolution'=>$orderDevolution, 'orderSales'=>$orderSales]);
     }
 
     /**

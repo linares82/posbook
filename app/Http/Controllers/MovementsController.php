@@ -258,12 +258,17 @@ class MovementsController extends Controller
 		return redirect()->route('orderSales.show',$orderSalesId)->with('sysMessage', 'Registro Borrado.');
     }
 
-    public function consultaExistencias(){
+    public function consultaExistencias($id){
+        
         $existencias=Movement::select('movements.id','p.name as plantel','p.id as plantel_id','pro.name as producto', 
         'pro.id as producto_id','cantidad_entrada','cantidad_salida')
         ->join('plantels as p', 'p.id','movements.plantel_id')
         ->join('products as pro', 'pro.id','movements.product_id')
+        ->join('order_sales_lines as osl','osl.id','movements.order_sales_line_id')
+        ->join('order_sales as os','os.id','osl.order_sale_id')
+        ->whereIn('movements.plantel_id', Auth::user()->plantels->pluck('id'))
         ->where('movements.type_movement_id',1)
+        ->where('os.id', $id)
         ->whereColumn('movements.cantidad_entrada','>','movements.cantidad_salida')
         ->get();
 

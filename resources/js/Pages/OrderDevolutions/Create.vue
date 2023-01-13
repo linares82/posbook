@@ -64,6 +64,16 @@
         </a-form-item>
       </a-col>
 
+      <a-col :md="24">
+            <a-form-item compact label="Orden Compra (Si no aparece la orden buscada, no tiene articulos para devolver)" name="order_sale_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                <a-select :options="orderSales" show-search v-model:value="formOrderDevolution.order_sale_id" style="width: 300px" placeholder="Seleccionar Opción">
+                </a-select>
+                <div v-if="errors.order_sale_id">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.order_sale_id"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+
       <a-col :span="1"></a-col>
 
 
@@ -103,15 +113,17 @@ export default {
     LockOutlined,
   },
 
-  props: ["errors"],
+  props: ["errors", "orderSales","orderSale"],
 
-  setup() {
+  setup(props) {
+    
     let formOrderDevolution = reactive({
       name: "",
       fecha: "",
-      motivo:""
+      motivo:"",
+      order_sale_id:props.orderSale
     });
-
+    
     let processing = ref(false);
 
     let submitF = () => {

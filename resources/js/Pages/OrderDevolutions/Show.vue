@@ -14,6 +14,7 @@
             <a-descriptions-item label="Nombre">{{orderDevolution.name}}</a-descriptions-item>
             <a-descriptions-item label="Fecha">{{orderDevolution.fecha}}</a-descriptions-item>
             <a-descriptions-item label="Motivo">{{orderDevolution.motivo}}</a-descriptions-item>
+            <a-descriptions-item label="Orden Venta">{{orderDevolution.order_sale_id}} - {{ orderSale.fecha }} - {{ orderSale.name }}</a-descriptions-item>
         </a-descriptions>
     </a-col>
 </a-row>
@@ -112,7 +113,7 @@ export default {
         MinusCircleOutlined
     },
 
-    props: ["orderDevolution", 'route_consultaExistencias', 'route_storeLines', 'orderDevolutionLines', 'route_destroy_ln'],
+    props: ["orderDevolution","orderSale", 'route_consultaExistencias', 'route_storeLines', 'orderDevolutionLines', 'route_destroy_ln'],
 
     setup(props) {
         let existencias = reactive([]);

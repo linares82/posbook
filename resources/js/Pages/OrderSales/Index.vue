@@ -89,6 +89,14 @@
                                                                 as="button">Registrar Entrada</Link>
 
                                                         </a-menu-item>
+                                                        <a-menu-item key="4" v-if="permissions.orderDevolutionsCreate">
+                                                            <eye-outlined />
+
+                                                            <Link :href="`/orderDevolutions/create/${orderSale.id}`"
+                                                                class="ant-btn ant-btn-default ant-btn-round ant-btn-sm"
+                                                                as="button">Crear Devolución</Link>
+
+                                                        </a-menu-item>
                                                     </a-menu>
                                                 </template>
                                             </a-dropdown-button>

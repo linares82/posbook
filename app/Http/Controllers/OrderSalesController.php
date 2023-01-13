@@ -24,6 +24,7 @@ class OrderSalesController extends Controller
         $permissions['orderSalesUpdate']=Auth::user()->hasPermissionTo('orderSales.update');
         $permissions['orderSalesShow']=Auth::user()->hasPermissionTo('orderSales.show');
         $permissions['orderSalesDestroy']=Auth::user()->hasPermissionTo('orderSales.destroy');
+        $permissions['orderDevolutionsCreate']=Auth::user()->hasPermissionTo('orderDevolutions.create');
         return $permissions;
     }
 
@@ -203,7 +204,7 @@ class OrderSalesController extends Controller
     public function update(OrderSalesUpdateRequest $request, $id)
     {
         $datos=$request->all();
-        dd($datos);
+        //dd($datos);
         try{
             $orderSale=OrderSale::findOrFail($id);
             $orderSale->fecha=$datos['fecha'];

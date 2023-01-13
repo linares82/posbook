@@ -226,7 +226,7 @@ Route::prefix('/movements')
 ->name('movements.')
 ->controller(MovementsController::class)
 ->group(function () {
-    Route::get('consultaExistencias', 'consultaExistencias')->name('consultaExistencias');
+    Route::get('consultaExistencias/{id}', 'consultaExistencias')->name('consultaExistencias');
     Route::get('', 'index')->name('index')->middleware('can:movements.index');
     Route::get('/create', 'create')->name('create')->middleware('can:movements.create');
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:movements.edit');
@@ -334,7 +334,7 @@ Route::prefix('/orderDevolutions')
 ->controller(OrderDevolutionsController::class)
 ->group(function () {
     Route::get('', 'index')->name('index')->middleware('can:orderDevolutions.index');
-    Route::get('/create', 'create')->name('create')->middleware('can:orderDevolutions.create');
+    Route::get('/create/{id?}', 'create')->name('create')->middleware('can:orderDevolutions.create');
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:orderDevolutions.edit');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:orderDevolutions.show');
     Route::get('/registrarDevolucion/{id}', 'registrarDevolucion')->name('registrarDevolucion')->middleware('can:orderDevolutions.registrarDevolucion');

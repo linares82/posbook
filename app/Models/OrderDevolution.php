@@ -34,7 +34,7 @@ class OrderDevolution extends Model
 		});
 	}
 
-    protected $fillable = ['name', 'fecha', 'motivo', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
+    protected $fillable = ['name', 'fecha', 'motivo', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','order_sale_id'];
 
 	protected $dates = ['deleted_at'];
 
@@ -51,6 +51,11 @@ class OrderDevolution extends Model
 	public function usu_delete()
 	{
 		return $this->hasOne('App\Models\User', 'id', 'usu_delete_id');
+	} // end
+
+	public function orderSale()
+	{
+		return $this->hasOne('App\Models\OrderSale', 'id', 'order_sale_id');
 	} // end
 
     public function setFechaAttribute($value){
