@@ -8,6 +8,7 @@ use App\Models\CashBox;
 use App\Models\Payment;
 use App\Models\Plantel;
 use App\Models\Product;
+use App\Models\Movement;
 use App\Models\LnCashBox;
 use App\Models\StCashBox;
 use Illuminate\Http\Request;
@@ -393,12 +394,15 @@ class CashBoxesController extends Controller
     public function cancelCashBox($id)
     {
         $cashBox=CashBox::with('payments')->with('lnCashBoxes')->findOrFail($id);
-        $cashBox->st_cash_box_id=4;
-        $cashBox->save();
-
+        
         //dd($cashBox);
         foreach($cashBox->lnCashBoxes as $linea){
             //dd($linea);
+            /*if($cashBox->st_cash_box_id==2 and $cashBox->bnd_entrgado==1){
+                $movimiento=Movement::find($linea->movement_id);
+                $movimiento->cantidad_salida=$movimiento->cantidad_salida-$linea->quantity;
+                $movimiento->save();
+            }*/
             $linea->delete();
         }
 
@@ -406,6 +410,9 @@ class CashBoxesController extends Controller
             //dd($payment);
             $payment->delete();
         }
+
+        $cashBox->st_cash_box_id=4;
+        $cashBox->save();
     }
 
     public function ticket($id){

@@ -101,7 +101,7 @@ export default {
         let processing = ref(false);
 
         let submitF = () => {
-            Inertia.post("/cashBoxes/rptCajasApartadasR", formCashBox, {
+            Inertia.post("/movements/verEntradasSalidasR", formCashBox, {
                 onStart: () => {
                     processing.value = true;
                 },

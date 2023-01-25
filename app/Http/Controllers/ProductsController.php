@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ProductsCreateRequest;
 use App\Http\Requests\ProductsUpdateRequest;
+use App\Models\CashBoxToAssign;
 
 class ProductsController extends Controller
 {
@@ -69,13 +70,20 @@ class ProductsController extends Controller
             'label' => $product->name,
         ]);
         $books->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+        $cashBoxes=CashBoxToAssign::get()->map(fn ($cashBox) => [
+            'value' => $cashBox->id,
+            'label' => $cashBox->name,
+        ]);
+        $cashBoxes->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
         $periods=Period::all()->map(fn ($period) => [
             'value' => $period->id,
             'label' => $period->name,
         ]);
         $periods->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
         ///dd($products);
-        return Inertia::render('Products/Create',['books'=>$books,'periods'=>$periods]);
+        return Inertia::render('Products/Create',['books'=>$books,
+        'periods'=>$periods, 
+        'cashBoxes'=>$cashBoxes]);
     }
 
     /**
@@ -153,7 +161,15 @@ class ProductsController extends Controller
             'label' => $period->name,
         ]);
         $periods->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
-        return Inertia::render('Products/Edit', ['product'=>$product, 'books'=>$books,'periods'=>$periods]);
+        $cashBoxes=CashBoxToAssign::get()->map(fn ($cashBox) => [
+            'value' => $cashBox->id,
+            'label' => $cashBox->name,
+        ]);
+        $cashBoxes->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+        return Inertia::render('Products/Edit', ['product'=>$product, 
+        'books'=>$books,
+        'periods'=>$periods,
+        'cashBoxes'=>$cashBoxes]);
     }
 
     /**
@@ -183,6 +199,7 @@ class ProductsController extends Controller
             $product->bnd_ofertable=$datos['bnd_ofertable'];
             $product->product_id=$datos['product_id'];
             $product->period_id=$datos['period_id'];
+            $product->cash_box_to_assign_id=$datos['cash_box_to_assign_id'];
             $product->save();
             
         }catch(Exception $e){

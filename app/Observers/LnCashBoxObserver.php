@@ -41,11 +41,13 @@ class LnCashBoxObserver
      */
     public function deleting(LnCashBox $lnCashBox)
     {
+        if(!is_null($lnCashBox->movement_id)){
             $movement=Movement::where('id', $lnCashBox->movement_id)
             ->first();
             if(!is_null($movement)){
                 $movement->cantidad_salida=$movement->cantidad_salida-$lnCashBox->quantity;
                 $movement->save();
             }
+        }
     }
 }

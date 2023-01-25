@@ -113,6 +113,17 @@
 
       <a-col :span="1"></a-col>
 
+      <a-col :md="7">
+        <a-form-item name="cash_box_to_assign_id" label="Caja" >
+        <a-select
+          v-model:value="formProduct.cash_box_to_assign_id"
+          show-search
+          placeholder="Seleccionar opción"
+          :options="cashBoxes"
+          :filter-option="filterOptionCashBoxes"
+        ></a-select>
+        </a-form-item>
+      </a-col>
 
       <a-col :span="1"></a-col>
     </a-row>
@@ -141,7 +152,7 @@ export default {
     LockOutlined,
   },
 
-  props: ["errors","periods", "books"],
+  props: ["errors","periods", "books", 'cashBoxes'],
 
   setup() {
     let formProduct = reactive({
@@ -151,7 +162,8 @@ export default {
       bnd_activo:true,
       bnd_ofertable:true,
       period_id:'',
-      product_id:""
+      product_id:"",
+      cash_box_to_assign_id:""
     });
 
     let processing = ref(false);
@@ -175,10 +187,15 @@ export default {
       return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
 
+    const filterOptionCashBoxes = (input, option) => {
+      return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    };
+
     return {
       formProduct,
       filterOptionPeriods,
       filterOptionProducts,
+      filterOptionCashBoxes,
       submitF,
       processing,
     };

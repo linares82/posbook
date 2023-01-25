@@ -34,6 +34,8 @@ class LnCashBox extends Model
 		});
 	}
 
+	protected $revisionCreationsEnabled = true;
+
     protected $fillable = ['cash_box_id','product_id','quantity','precio','total','usu_alta_id', 'usu_mod_id', 'usu_delete_id','movement_id'];
 
 	protected $dates = ['deleted_at'];

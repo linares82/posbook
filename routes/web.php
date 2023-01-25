@@ -233,10 +233,14 @@ Route::prefix('/movements')
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:movements.show');
     Route::get('/verEntradas', 'verEntradas')->name('verEntradas');
     Route::get('/verEntradasSalidasF', 'verEntradasSalidasF')->name('verEntradasSalidasF')->middleware('can:movements.verEntradasSalidasF');
-    Route::get('/verEntradasSalidasR', 'verEntradasSalidasR')->name('verEntradasSalidasR')->middleware('can:movements.verEntradasSalidasF');;
+    Route::post('/verEntradasSalidasR', 'verEntradasSalidasR')->name('verEntradasSalidasR')->middleware('can:movements.verEntradasSalidasF');;
     Route::post('/store', 'store')->name('store')->middleware('can:movements.create');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:movements.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:movements.destroy');
+    Route::get('/cortePlantel', 'cortePlantel')->name('cortePlantel')->middleware('can:movements.cortePlantel');
+    Route::post('/cortePlantelR', 'cortePlantelR')->name('cortePlantelR')->middleware('can:movements.cortePlantel');
+    Route::get('/corteGeneral', 'corteGeneral')->name('corteGeneral')->middleware('can:movements.corteGeneral');
+    Route::post('/corteGeneralR', 'corteGeneralR')->name('corteGeneralR')->middleware('can:movements.corteGeneral');
 });
 
 Route::prefix('/stPayments')
