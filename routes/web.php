@@ -241,6 +241,8 @@ Route::prefix('/movements')
     Route::post('/cortePlantelR', 'cortePlantelR')->name('cortePlantelR')->middleware('can:movements.cortePlantel');
     Route::get('/corteGeneral', 'corteGeneral')->name('corteGeneral')->middleware('can:movements.corteGeneral');
     Route::post('/corteGeneralR', 'corteGeneralR')->name('corteGeneralR')->middleware('can:movements.corteGeneral');
+    Route::get('/corteToeic', 'corteToeic')->name('corteToeic')->middleware('can:movements.corteToeic');
+    Route::post('/corteToeicR', 'corteToeicR')->name('corteToeicR')->middleware('can:movements.corteToeic');
 });
 
 Route::prefix('/stPayments')
