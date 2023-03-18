@@ -102,10 +102,6 @@ class OrderDevolutionsController extends Controller
             }
             //dd($orderSaleSelected);
 
-
-            
-        
-        
     }
 
     /**
@@ -119,7 +115,11 @@ class OrderDevolutionsController extends Controller
         $datos=$request->all();
         //dd($datos);
         try{
-            $orderDevolution=OrderDevolution::create($datos);
+            $input=array('fecha'=>$datos['fecha'],
+            'name'=>$datos['name'],
+            'motivo'=>$datos['motivo'],
+            'order_sale_id'=>$datos['order_sale_id']['value']);
+            $orderDevolution=OrderDevolution::create($input);
         }catch(Exception $e){
             dd($e);
         }

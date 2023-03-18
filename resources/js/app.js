@@ -7,7 +7,8 @@ import { InertiaProgress } from '@inertiajs/progress'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 
-createInertiaApp({
+
+const appFil=createInertiaApp({
   resolve: name => require(`./Pages/${name}`),
   setup({ el, App, props, plugin }) {
     createApp({ render: () => h(App, props) })

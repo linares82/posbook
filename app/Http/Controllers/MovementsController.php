@@ -401,6 +401,14 @@ class MovementsController extends Controller
         $grouped = $lineas->groupBy('product');
         //dd($grouped->toArray());
         $resumen = array();
+        $totales = array();
+        $totales['cantidad'] = 0;
+        $totales['vendidos'] = 0;
+        $totales['existencia'] = 0;
+        $totales['precio'] = 0;
+        $totales['efectivo_caja'] = 0;
+        $totales['vales'] = 0;
+
         foreach ($grouped as $llave => $group) {
             $linea = array();
             $linea['producto'] = $llave;
@@ -431,6 +439,12 @@ class MovementsController extends Controller
                 $linea['precio'] = $line->precio;
                 $linea['efectivo_caja'] = $line->precio * $linea['vendidos'];
             }
+            $totales['cantidad'] = $totales['cantidad'] + $linea['cantidad'];
+            $totales['vendidos'] = $totales['vendidos'] + $linea['vendidos'];
+            $totales['existencia'] = $totales['existencia'] + $linea['existencia'];
+            $totales['precio'] = $totales['precio'] + $linea['precio'];
+            $totales['efectivo_caja'] = $totales['efectivo_caja'] + $linea['efectivo_caja'];
+            $totales['vales']=$totales['vales']+$linea['vales'];
             array_push($resumen, $linea);
             //dd($linea);
         }
@@ -441,7 +455,8 @@ class MovementsController extends Controller
             'plantel' => $plantel,
             'fecha1' => $datos['fecha_f']->format('Y-m-d'),
             'fecha2' => $datos['fecha_t']->format('Y-m-d'),
-            'resumen' => $resumen
+            'resumen' => $resumen,
+            'totales' => $totales
         ]);
     }
 
@@ -464,6 +479,10 @@ class MovementsController extends Controller
         //$fechaf=Carbon::createFromFormat('', $datos['fecha_f']);
         $planteles = Plantel::all();
         $detalle = array();
+        $totales = array();
+        $totales['dinero_cantidad_vendida'] = 0;
+        $totales['dinero_existencia_por_devolver'] = 0;
+        $totales['dinero_vendidos_costo'] = 0;
         $resumen = array();
         foreach ($planteles as $plantel) {
             $lineas = Movement::select(
@@ -543,14 +562,18 @@ class MovementsController extends Controller
                 $lin_gral['dinero_existencia_por_devolver'] != 0 and
                 $lin_gral['dinero_vendidos_costo']
             ) {
+                //dd($lin_gral);
+                $totales['dinero_cantidad_vendida'] = $totales['dinero_cantidad_vendida'] + $lin_gral['dinero_cantidad_vendida'];
+                $totales['dinero_existencia_por_devolver'] = $totales['dinero_existencia_por_devolver'] + $lin_gral['dinero_existencia_por_devolver'];
+                $totales['dinero_vendidos_costo'] = $totales['dinero_vendidos_costo'] + $lin_gral['dinero_vendidos_costo'];
                 array_push($resumen, $lin_gral);
             }
 
-            //dd($detalle);
+            //dd($totales);
             //}
             //dd($resumen);
         }
-
+        //dd($totales);
 
         //dd($resumen);
 
@@ -563,7 +586,8 @@ class MovementsController extends Controller
             'fecha1' => $datos['fecha_f']->format('Y-m-d'),
             'fecha2' => $datos['fecha_t']->format('Y-m-d'),
             'resumen' => $resumen,
-            'detalle' => $detalle
+            'detalle' => $detalle,
+            'totales' => $totales
         ]);
     }
 

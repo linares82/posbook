@@ -58,6 +58,27 @@
                                                 }} </td>
 
                                             </tr>
+                                            <tr class="ant-table-row ant-table-row-level-0" >
+                                                <td class="ant-table-cell" colstart="0" colend="0">Totales</td>
+                                                <td class="ant-table-cell" colstart="0" colend="0">{{ totales.dinero_cantidad_vendida }}</td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{
+                                                    totales.dinero_existencia_por_devolver
+                                                }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{
+                                                    totales.dinero_vendidos_costo
+                                                }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{
+                                                    totales.dinero_cantidad_vendida - totales.dinero_vendidos_costo
+                                                }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{
+                                                (totales.dinero_cantidad_vendida - totales.dinero_vendidos_costo) * 0.10 }}
+                                                </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{
+                                                    totales.dinero_cantidad_vendida - totales.dinero_vendidos_costo -
+                                                        (totales.dinero_cantidad_vendida - totales.dinero_vendidos_costo) * 0.10
+                                                }} </td>
+
+                                            </tr>
                                         </tbody>
                                     </table>
 
@@ -137,10 +158,10 @@ export default {
 
     components: {},
 
-    props: ['resumen', 'detalle', 'fecha1', 'fecha2'],
+    props: ['resumen', 'detalle', 'fecha1', 'fecha2', 'totales'],
 
     setup(props) {
-        console.log(props)
+        //console.log(props)
 
         return {
 
