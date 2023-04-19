@@ -23,7 +23,7 @@
                     style="width: 200px"
                     placeholder="Seleccionar Plantel..."
                     >
-                    
+
                     </a-select>
                 </a-col>
                 <a-col :span="6">
@@ -33,7 +33,7 @@
                     style="width: 200px"
                     placeholder="Seleccionar Motivo..."
                     >
-                    
+
                     </a-select>
                 </a-col>
                 <a-col :span="6">
@@ -43,7 +43,7 @@
                     style="width: 200px"
                     placeholder="Seleccionar Tipo Movimiento..."
                     >
-                    
+
                     </a-select>
                 </a-col>
                 <a-col :span="6">
@@ -53,7 +53,7 @@
                     style="width: 200px"
                     placeholder="Seleccionar Producto..."
                     >
-                    
+
                     </a-select>
                 </a-col>
             </a-row>
@@ -70,11 +70,11 @@
                             <table style="table-layout: auto;" class="ant-table-striped">
                                 <colgroup></colgroup>
                                 <thead class="ant-table-thead">
-                                    <th class="ant-table-cell" colstart="0" colend="0">Id</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Plantel</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Motivo</th>
+                                    <th @click="orderColumn('id')" class="ant-table-cell" colstart="0" colend="0">Id</th>
+                                    <th @click="orderColumn('pu.plantel_id')" class="ant-table-cell" colstart="1" colend="1">Plantel</th>
+                                    <th @click="orderColumn('reason_id')" class="ant-table-cell" colstart="1" colend="1">Motivo</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Tipo Movimiento</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Producto</th>
+                                    <th @click="orderColumn('product_id')" class="ant-table-cell" colstart="1" colend="1">Producto</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Entrada</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Salida</th>
                                     <th class="ant-table-cell" colstart="3" colend="4">Acciones</th>
@@ -95,7 +95,7 @@
                                                 <template #overlay>
                                                     <a-menu>
                                                         <a-menu-item key="1" v-if="permissions.movementsEdit">
-                                                            <form-outlined />
+
                                                             <Link :href="`/movements/edit/${movement.id}`"
                                                                 class="ant-btn ant-btn-default ant-btn-round ant-btn-sm"
                                                                 as="button">Editar</Link>
@@ -144,7 +144,6 @@ import {
     SmileOutlined,
     SearchOutlined,
     InfoCircleOutlined,
-    FormOutlined,
     DeleteOutlined,
     EyeOutlined
 } from "@ant-design/icons-vue";
@@ -168,7 +167,6 @@ export default {
         SearchOutlined,
         InfoCircleOutlined,
         SmileOutlined,
-        FormOutlined,
         DeleteOutlined,
         EyeOutlined
     },
@@ -190,10 +188,12 @@ export default {
         };
 
         let search = reactive({
-            plantel_id : ref(props.filters.plantel_id),
-            reason_id : ref(props.filters.reason_id),
-            type_movement_id : ref(props.filters.type_movement_id),
-            product_id : ref(props.filters.product_id)
+            plantel_id : props.filters.plantel_id,
+            reason_id : props.filters.reason_id,
+            type_movement_id : props.filters.type_movement_id,
+            product_id : props.filters.product_id,
+            column: props.filters.column,
+            direction: props.filters.direction
         });
         watch(
             search,
@@ -214,13 +214,18 @@ export default {
                 );
             }, 500)
         );
-        
+
+        const orderColumn = (column)=>{
+            search.column=column;
+            search.direction=search.direction === "asc" ? "desc" : "asc";
+        }
+
 
         return {
             borrar,
             search,
             paginator: false,
-
+            orderColumn,
         };
     },
 };

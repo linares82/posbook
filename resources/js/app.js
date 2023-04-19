@@ -19,4 +19,5 @@ const appFil=createInertiaApp({
   },
 })
 
+
 InertiaProgress.init({color: '#00FAF6',showSpinner: true,})

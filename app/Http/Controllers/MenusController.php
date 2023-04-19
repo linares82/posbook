@@ -30,7 +30,7 @@ class MenusController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $sysMessage=$request->session()->get('sysMessage');
         $menus=Menu::query()
         ->when($request->input('item'), function($query, $item){
@@ -96,7 +96,7 @@ class MenusController extends Controller
     public function show($id)
     {
         $menu=Menu::findOrfail($id);
-        
+
         return Inertia::render('Menus/Show', ['menu'=>$menu]);
     }
 
@@ -133,7 +133,7 @@ class MenusController extends Controller
             $menu->target=$datos['target'];
             $menu->imagen=$datos['imagen'];
             $menu->save();
-            
+
         }catch(Exception $e){
             dd($e);
         }

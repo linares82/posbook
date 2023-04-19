@@ -45,11 +45,15 @@ class MovementsController extends Controller
         //dd($request->all());
         $sysMessage = $request->session()->get('sysMessage');
         $filtros = $request->input('search');
+
+        $planteles=Auth::user()->plantels->pluck('id');
+        //dd($planteles);
+
         //dd($filtros);
         $m = Movement::query();
         if (isset($filtros['plantel_id'])) {
             $m->when($filtros['plantel_id'], function ($query, $plantel_id) {
-                $query->where('plantel_id', $plantel_id);
+                $query->where('movements.plantel_id', $plantel_id);
             });
         }
         if (isset($filtros['reason_id'])) {
@@ -67,9 +71,18 @@ class MovementsController extends Controller
                 $query->where('product_id', $product_id);
             });
         }
-        $movements = $m->orderBy('id', 'desc')
-            ->with('plantel')
-            //->where('id',1)->first();
+
+        if (isset($filtros['column']) and isset($filtros['direction'])) {
+        $m->when($filtros, function ($query, $filtros) {
+                $query->orderBy($filtros['column'], $filtros['direction']);
+
+        });
+        }
+        $movements = $m->orderBy('movements.id', 'desc')
+            ->join('users as u','u.id','movements.usu_alta_id')
+            ->join('plantel_user as pu','pu.user_id','u.id')
+            ->with('plantel','typeMovement','reason','plantel')
+            ->whereIn('pu.plantel_id',$planteles)
             ->paginate(100)
             ->withQueryString()
             ->through(fn ($movement) => [
@@ -108,7 +121,7 @@ class MovementsController extends Controller
             'motivos' => $motivos,
             'tipo_movimientos' => $tipo_movimientos,
             'productos' => $productos,
-            'filters' => $request->only(['name']),
+            'filters' => $request->only(['name','column','direction']),
             'sysMessage' => $sysMessage,
             'permissions' => $this->getPermissions()
         ]);

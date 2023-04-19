@@ -42,7 +42,7 @@
                                                 <td class="ant-table-cell" colstart="2" colend="2">  {{ ln.vendidos}} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2">  {{ ln.existencia}} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2">  {{ ln.precio}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ ln.efectivo_caja}} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ Intl.NumberFormat('es-Mx', { style: 'currency', currency: 'MXN' }).format(ln.efectivo_caja)}} </td>
 
 
                                             </tr>
@@ -53,7 +53,7 @@
                                                 <td class="ant-table-cell" colstart="2" colend="2">  {{ totales.vendidos}} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2">  {{ totales.existencia}} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2">  {{ totales.precio}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ totales.efectivo_caja}} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ Intl.NumberFormat('es-Mx', { style: 'currency', currency: 'MXN' }).format(totales.efectivo_caja)}} </td>
 
                                             </tr>
                                         </tbody>

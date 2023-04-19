@@ -4,11 +4,12 @@
             <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Menus" sub-title="Lista" />
         </a-col>
         <a-col :span="12">
-            <div v-if="permissions.menusCreate">
-                <Link href="/menus/create" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button">Crear
-                </Link>
-            </div>
-
+            <a-divider>
+                <div v-if="permissions.menusCreate">
+                    <Link href="/menus/create" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button">Crear
+                    </Link>
+                </div>
+            </a-divider>
 
         </a-col>
     </a-row>
@@ -35,18 +36,20 @@
     <div class="ant-table-wrapper ant-table-striped">
         <div class="ant-spin-nested-loading">
             <div class="ant-spin-container">
-                <div class="ant-table ant-table-small ant-table-bordered">
+                <div class="ant-table ant-table-small ant-table-fixed-header ant-table-scroll-position-left ant-table-layout-fixed ant-table-bordered" >
                     <!---->
                     <div class="ant-table-container">
                         <div class="ant-table-content">
                             <table style="table-layout: auto;" class="ant-table-striped">
                                 <colgroup></colgroup>
                                 <thead class="ant-table-thead">
+                                    <tr>
                                     <th class="ant-table-cell" colstart="0" colend="0">Id</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Item</th>
                                     <th class="ant-table-cell" colstart="1" colend="2">Depende de</th>
                                     <th class="ant-table-cell" colstart="1" colend="3">Orden</th>
                                     <th class="ant-table-cell" colstart="3" colend="4">Acciones</th>
+                                    </tr>
                                 </thead>
                                 <tbody class="ant-table-tbody">
                                     <tr class="ant-table-row ant-table-row-level-0" v-for="menu in menus.data"
@@ -68,9 +71,8 @@
                                                         </a-menu-item>
                                                         <a-menu-item key="2" v-if="permissions.menusDestroy">
                                                             <delete-outlined />
-                                                            <a-popconfirm title="Estas seguro de la operación?"
-                                                                ok-text="Si" cancel-text="No"
-                                                                @confirm="borrar(menu.id)">
+                                                            <a-popconfirm title="Estas seguro de la operación?" ok-text="Si"
+                                                                cancel-text="No" @confirm="borrar(menu.id)">
                                                                 <button
                                                                     class="ant-btn ant-btn-default ant-btn-round ant-btn-sm">Borrar</button>
                                                             </a-popconfirm>
@@ -140,7 +142,7 @@ export default {
 
     props: ["menus", "filters", "sysMessage", 'permissions'],
 
-    setup(props) {
+    setup (props) {
         mounted: {
             if (props.sysMessage !== null) {
                 message.success(props.sysMessage, 10);
@@ -178,5 +180,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
