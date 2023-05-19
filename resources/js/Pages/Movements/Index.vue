@@ -84,7 +84,7 @@
                                         :key="movement.id">
                                         <td class="ant-table-cell" colstart="0" colend="0">{{ movement.id }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.plantel }}</td>
-                                        <td class="ant-table-cell" colstart="1" colend="1">{{ movement.motivo }}</td>
+                                        <td class="ant-table-cell" colstart="1" colend="1">{{ movement.motivo }} - {{ movement.order_sales_id }} Linea - {{ movement.order_sales_line_id }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.tipo_movimiento }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.producto }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.entrada }}</td>

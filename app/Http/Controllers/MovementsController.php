@@ -77,11 +77,11 @@ class MovementsController extends Controller
                 $query->orderBy($filtros['column'], $filtros['direction']);
             });
         }
-        $movements = $m->orderBy('movements.id', 'desc')
+        $movements = $m->select('movements.*')->orderBy('movements.id', 'desc')
             ->join('users as u', 'u.id', 'movements.usu_alta_id')
-            ->join('plantel_user as pu', 'pu.user_id', 'u.id')
-            ->with('plantel', 'typeMovement', 'reason', 'plantel')
-            ->whereIn('pu.plantel_id', $planteles)
+            //->join('plantel_user as pu', 'pu.user_id', 'u.id')
+            ->with('plantel', 'typeMovement', 'reason')
+            ->whereIn('movements.plantel_id', $planteles)
             ->paginate(100)
             ->withQueryString()
             ->through(fn ($movement) => [
@@ -89,13 +89,15 @@ class MovementsController extends Controller
                 'plantel' => $movement->plantel->name,
                 'motivo' => $movement->reason->name,
                 'tipo_movimiento' => $movement->typeMovement->name,
+                'order_sales_id'=>$movement->orderSalesLine->order_sale_id,
+                'order_sales_line_id'=>$movement->order_sales_line_id,
                 'producto' => $movement->product->name,
                 'costo' => $movement->costo,
                 'precio' => $movement->precio,
                 'entrada' => $movement->cantidad_entrada,
                 'salida' => $movement->cantidad_salida
             ]);
-        //dd($movements->plantel);
+        //dd($movements);
 
         $planteles = Plantel::get()->map(fn ($plantel) => [
             'value' => $plantel->id,
