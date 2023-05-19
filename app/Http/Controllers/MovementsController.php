@@ -46,7 +46,7 @@ class MovementsController extends Controller
         $sysMessage = $request->session()->get('sysMessage');
         $filtros = $request->input('search');
 
-        $planteles=Auth::user()->plantels->pluck('id');
+        $planteles = Auth::user()->plantels->pluck('id');
         //dd($planteles);
 
         //dd($filtros);
@@ -73,16 +73,15 @@ class MovementsController extends Controller
         }
 
         if (isset($filtros['column']) and isset($filtros['direction'])) {
-        $m->when($filtros, function ($query, $filtros) {
+            $m->when($filtros, function ($query, $filtros) {
                 $query->orderBy($filtros['column'], $filtros['direction']);
-
-        });
+            });
         }
         $movements = $m->orderBy('movements.id', 'desc')
-            ->join('users as u','u.id','movements.usu_alta_id')
-            ->join('plantel_user as pu','pu.user_id','u.id')
-            ->with('plantel','typeMovement','reason','plantel')
-            ->whereIn('pu.plantel_id',$planteles)
+            ->join('users as u', 'u.id', 'movements.usu_alta_id')
+            ->join('plantel_user as pu', 'pu.user_id', 'u.id')
+            ->with('plantel', 'typeMovement', 'reason', 'plantel')
+            ->whereIn('pu.plantel_id', $planteles)
             ->paginate(100)
             ->withQueryString()
             ->through(fn ($movement) => [
@@ -121,7 +120,7 @@ class MovementsController extends Controller
             'motivos' => $motivos,
             'tipo_movimientos' => $tipo_movimientos,
             'productos' => $productos,
-            'filters' => $request->only(['name','column','direction']),
+            'filters' => $request->only(['name', 'column', 'direction']),
             'sysMessage' => $sysMessage,
             'permissions' => $this->getPermissions()
         ]);
@@ -173,15 +172,19 @@ class MovementsController extends Controller
         $datos['reason_id'] = 2;
         $datos['type_movement_id'] = 1;
         $orderSalesLine = OrderSalesLine::find($datos['order_sales_line_id']);
-        try {
-            $movement = Movement::create($datos);
-            $sumaEntradas = Movement::where('order_sales_line_id', $movement->order_sale_id)->sum('cantidad_entrada');
-            if ($orderSalesLine->cantidad == $sumaEntradas) {
-                $orderSalesLine->bnd_entrada_registrada = 1;
-                $orderSalesLine->save();
+        $validar_existencia_cantidad = Movement::where('order_sales_line_id', $datos['order_sales_line_id'])->sum('cantidad_entrada');
+        //dd($validar_existencia_cantidad);
+        if ($orderSalesLine->cantidad > $validar_existencia_cantidad) {
+            try {
+                $movement = Movement::create($datos);
+                $sumaEntradas = Movement::where('order_sales_line_id', $movement->order_sale_id)->sum('cantidad_entrada');
+                if ($orderSalesLine->cantidad == $sumaEntradas) {
+                    $orderSalesLine->bnd_entrada_registrada = 1;
+                    $orderSalesLine->save();
+                }
+            } catch (Exception $e) {
+                dd($e);
             }
-        } catch (Exception $e) {
-            dd($e);
         }
 
         return redirect()->route('orderSales.show', $orderSalesLine->order_sale_id)->with('sysMessage', 'Registro Creado.');
@@ -457,7 +460,7 @@ class MovementsController extends Controller
             $totales['existencia'] = $totales['existencia'] + $linea['existencia'];
             $totales['precio'] = $totales['precio'] + $linea['precio'];
             $totales['efectivo_caja'] = $totales['efectivo_caja'] + $linea['efectivo_caja'];
-            $totales['vales']=$totales['vales']+$linea['vales'];
+            $totales['vales'] = $totales['vales'] + $linea['vales'];
             array_push($resumen, $linea);
             //dd($linea);
         }

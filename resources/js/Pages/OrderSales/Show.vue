@@ -258,7 +258,7 @@ export default {
         };
 
         const addEntrada = record => {
-            console.log(formEntrada)
+            //console.log(formEntrada)
             //dataSource.value = dataSource.value.filter(item => item.id !== key);
             //Inertia.get("/orderSalesLines/receiveOCPlantel/"+key);
 
@@ -275,10 +275,10 @@ export default {
                 formEntrada.total_acumulado = parseInt(formEntrada.total_acumulado) + parseInt(formEntrada.cantidad_entrada);
                 location.reload();
             } else {
-                
+
                 alert("La suma de entradas ya registradas y la cantidad nueva de entradas es superior a la orden de compra");
             }
-            //location.reload();
+            location.reload();
         };
 
         const handleCancelEntrada = () => {
@@ -315,7 +315,7 @@ export default {
             visibleObs.value = false;
         };
 
-        
+
 
         const showDrawer = (record) => {
             visibleDrawer.value = true;
