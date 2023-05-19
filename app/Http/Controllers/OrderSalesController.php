@@ -98,7 +98,7 @@ class OrderSalesController extends Controller
      */
     public function store(OrderSalesCreateRequest $request)
     {
-        
+
         $datos_order_sale=$request->only('fecha','name','plantel_id');
         $datos_lineas=$request->input('lineas');
         //dd($datos_lineas);
@@ -128,8 +128,8 @@ class OrderSalesController extends Controller
     {
         $orderSale=OrderSale::findOrfail($id);
         $lineas=OrderSalesLine::select('order_sales_lines.*','p.name as plantel','pro.name as product',
-        DB::raw('(select sum(m.cantidad_entrada) 
-        from movements as m where m.order_sales_line_id=order_sales_lines.id and 
+        DB::raw('(select sum(m.cantidad_entrada)
+        from movements as m where m.order_sales_line_id=order_sales_lines.id and
         m.deleted_at is null) as total_entradas'))
         ->join('plantels as p','p.id','order_sales_lines.plantel_id')
         ->join('products as pro','pro.id','order_sales_lines.product_id')
@@ -141,8 +141,8 @@ class OrderSalesController extends Controller
         $route_verEntradas=route('movements.verEntradas');
 
         //dd($lineas);
-        
-        return Inertia::render('OrderSales/Show', 
+
+        return Inertia::render('OrderSales/Show',
         ['orderSale'=>$orderSale, 'lineas'=>$lineas, 'route_verObservaciones'=>$route_verObservaciones,
         'route_verEntradas'=>$route_verEntradas]);
     }
@@ -158,11 +158,11 @@ class OrderSalesController extends Controller
         ->orderBy('plantel_id')
         ->get();
 
-        
-        
-        
+
+
+
         //dd($lineas);
-        
+
         return Inertia::render('OrderSales/Print', ['orderSale'=>$orderSale, 'lineas'=>$lineas]);
     }
 
@@ -209,7 +209,8 @@ class OrderSalesController extends Controller
             $orderSale=OrderSale::findOrFail($id);
             $orderSale->fecha=$datos['fecha'];
             $orderSale->name=$datos['name'];
-            $orderSale->name=$datos['plantel_id'];
+            $orderSale->plantel_id=$datos['plantel_id'];
+            //dd($orderSale);
             $orderSale->save();
 
             if(isset($datos['lineas'])){
@@ -221,7 +222,7 @@ class OrderSalesController extends Controller
                     $l=OrderSalesLine::create($linea);
                 }
             }
-            
+
         }catch(Exception $e){
             dd($e);
         }

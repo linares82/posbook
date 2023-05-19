@@ -35,25 +35,48 @@
                                             <th>Efectivo</th>
                                         </thead>
                                         <tbody class="ant-table-tbody">
-                                            <tr class="ant-table-row ant-table-row-level-0" v-for="ln in resumen" :key="ln.movement_id">
+                                            <tr class="ant-table-row ant-table-row-level-0" v-for="ln in resumen"
+                                                :key="ln.movement_id">
                                                 <td class="ant-table-cell" colstart="0" colend="0">{{ ln.producto }}</td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ ln.cantidad}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ ln.vales}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ ln.vendidos}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ ln.existencia}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ ln.precio}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ Intl.NumberFormat('es-Mx', { style: 'currency', currency: 'MXN' }).format(ln.efectivo_caja)}} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.cantidad }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.vales }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.vendidos }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.existencia }} </td>
+                                                <td class="ant-table-cell column-money" colstart="2" colend="2">
+                                                    {{
+                                                        Intl.NumberFormat('es-MX', {
+                                                            style: 'currency', currency: 'MXN'
+                                                        }).format(ln.precio)
+
+                                                    }}
+                                                </td>
+                                                <td class="ant-table-cell column-money" colstart="2" colend="2">
+                                                    {{ Intl.NumberFormat('es-Mx', {
+                                                        style: 'currency', currency: 'MXN'
+                                                    }).format(ln.efectivo_caja) }} </td>
 
 
                                             </tr>
-                                            <tr class="ant-table-row ant-table-row-level-0" >
+                                            <tr class="ant-table-row ant-table-row-level-0">
                                                 <td class="ant-table-cell" colstart="0" colend="0">Totales</td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ totales.cantidad}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ totales.vales}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ totales.vendidos}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ totales.existencia}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ totales.precio}} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2">  {{ Intl.NumberFormat('es-Mx', { style: 'currency', currency: 'MXN' }).format(totales.efectivo_caja)}} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.cantidad }}
+                                                </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.vales }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.vendidos }}
+                                                </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.existencia }}
+                                                </td>
+                                                <td class="ant-table-cell column-money" colstart="2" colend="2">
+                                                    {{ Intl.NumberFormat('es-Mx', {
+                                                        style: 'currency', currency: 'MXN'
+                                                    }).format(totales.precio )
+
+                                                        }}
+                                                </td>
+                                                <td class="ant-table-cell column-money" colstart="2" colend="2"> {{
+                                                    Intl.NumberFormat('es-Mx', {
+                                                        style: 'currency', currency: 'MXN'
+                                                    }).format(totales.efectivo_caja) }} </td>
 
                                             </tr>
                                         </tbody>
@@ -66,45 +89,54 @@
             </div>
         </a-col>
     </a-row>
-    </template>
+</template>
 
-    <script>
-    import Layout from "../../../shared/LayoutPrint";
+<script>
+import Layout from "../../../shared/LayoutPrint";
 import es_ES from 'ant-design-vue/lib/locale-provider/es_Es';
 
-    export default {
-        layout: Layout,
+export default {
+    layout: Layout,
 
-        components: {},
+    components: {},
 
-        props: ['resumen','plantel','fecha1','fecha2','totales'],
+    props: ['resumen', 'plantel', 'fecha1', 'fecha2', 'totales'],
 
-        setup(props) {
-            console.log(props)
+    setup (props) {
+        console.log(props)
 
-            return {
+        return {
 
-            };
-        },
-    };
-    </script>
+        };
+    },
+};
+</script>
 
-    <style>
-    @media print {
+<style>
+@media print {
 
-        .oculto-impresion,
-        .oculto-impresion * {
-            display: none !important;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-        }
+    .oculto-impresion,
+    .oculto-impresion * {
+        display: none !important;
     }
 
     header {
         position: fixed;
         top: 0;
     }
-    </style>
+
+    th.column-money,
+    td.column-money {
+        text-align: right !important;
+    }
+}
+
+header {
+    position: fixed;
+    top: 0;
+}
+
+th.column-money,
+td.column-money {
+    text-align: right !important;
+}</style>
