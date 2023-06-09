@@ -79,8 +79,9 @@ class MovementsController extends Controller
         }
         $movements = $m->select('movements.*')->orderBy('movements.id', 'desc')
             ->join('users as u', 'u.id', 'movements.usu_alta_id')
-            //->join('plantel_user as pu', 'pu.user_id', 'u.id')
+            ->join('order_sales_lines as osl', 'osl.id', 'movements.order_sales_line_id')
             ->with('plantel', 'typeMovement', 'reason')
+            ->whereNull('osl.deleted_at')
             ->whereIn('movements.plantel_id', $planteles)
             ->paginate(100)
             ->withQueryString()
@@ -97,7 +98,7 @@ class MovementsController extends Controller
                 'entrada' => $movement->cantidad_entrada,
                 'salida' => $movement->cantidad_salida
             ]);
-        //dd($movements);
+        //dd($movements->toArray());
 
         $planteles = Plantel::get()->map(fn ($plantel) => [
             'value' => $plantel->id,
@@ -509,8 +510,8 @@ class MovementsController extends Controller
                 'p.name as product',
                 'cantidad_entrada',
                 'cantidad_salida',
-                'movements.precio',
-                'movements.costo',
+                'p.precio',
+                'p.costo',
                 'movements.id as movement_id'
             )
                 ->join('products as p', 'p.id', 'movements.product_id')
@@ -577,7 +578,7 @@ class MovementsController extends Controller
             //dd($detalle);
             if (
                 $lin_gral['dinero_cantidad_vendida'] != 0 and
-                $lin_gral['dinero_existencia_por_devolver'] != 0 and
+                //$lin_gral['dinero_existencia_por_devolver'] != 0 and
                 $lin_gral['dinero_vendidos_costo']
             ) {
                 //dd($lin_gral);
@@ -636,7 +637,7 @@ class MovementsController extends Controller
                 ->whereDate('cash_boxes.created_at', '>=', $datos['fecha_f'])
                 ->whereDate('cash_boxes.created_at', '<=', $datos['fecha_t'])
                 ->where('plantel_id', $plantel->id)
-                ->where('p.id', 19)
+                ->whereIn('p.id', array(19,20))
                 ->whereNull('lcb.deleted_at')
                 ->orderBy('plantel_id')
                 ->orderBy('lcb.product_id')
@@ -659,7 +660,7 @@ class MovementsController extends Controller
                         $pagos['cuenta_pagos1'] = $pagos['cuenta_pagos1'] + 1;
                         $p = Payment::where('cash_box_id', $caja->cash_box_id)->orderBy('id', 'asc')->first();
                         $pagos['suma_pagos1'] = $pagos['suma_pagos1'] + $p->monto;
-                    } elseif (count($count_pagos) == 2) {
+                    } elseif ($count_pagos == 2) {
                         $pagos['cuenta_pagos1'] = $pagos['cuenta_pagos1'] + 1;
                         $p = Payment::where('cash_box_id', $caja->cash_box_id)->orderBy('id', 'asc')->first();
                         $pagos['suma_pagos1'] = $pagos['suma_pagos1'] + $p->monto;

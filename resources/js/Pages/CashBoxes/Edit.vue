@@ -7,7 +7,7 @@
         <Link href="/cashBoxes" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button"><i><search-outlined /></i>Buscar</Link>
         <Link href="/cashBoxes/create" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button"><i><book-outlined /></i>Nuevo</Link>
         <a :href="route_ticket" target="_blank" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button"><i><printer-outlined /></i>Ticket</a>
-        
+
     </a-col>
 </a-row>
 <a-form :model="formCashBox" @submit.prevent="submitF" autocomplete="off" layout="vertical">
@@ -34,7 +34,7 @@
                 </div>
             </a-form-item>
         </a-col>
-        
+
         <a-col :md="1"></a-col>
         <a-col :md="7">
             <a-form-item label="Cliente" name="customer" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
@@ -467,15 +467,20 @@ export default {
             payments: []
         });
 
+        //console.log(props.cashBox.lineas);
         for (let linea in props.cashBox.lineas) {
             formCashBox.lineas.push(props.cashBox.lineas[linea])
             //console.log(props.cashBox.lineas[linea].movement_id===null);
-            if(props.cashBox.lineas[linea].movement_id===null){
+            if(props.cashBox.lineas[linea].movement_id===null && props.cashBox.lineas[linea].precio>0){
                 formCashBox.movement_id = true;
+            }else if(props.cashBox.lineas[linea].movement_id===null && props.cashBox.lineas[linea].precio==0){
+                formCashBox.movement_id = true;
+            }else{
+                formCashBox.movement_id = false;
             }
         }
-        //console.log(formCashBox);
-        
+        //console.log(formCashBox.movement_id);
+
         for (let payment in props.cashBox.payments) {
             formCashBox.payments.push({
                 id: props.cashBox.payments[payment].id,
@@ -488,7 +493,7 @@ export default {
                 payment_method_id: props.cashBox.payments[payment].payment_method_id,
                 st_payment: props.cashBox.payments[payment].st_payment,
                 st_payment_id: props.cashBox.payments[payment].st_payment_id
-                
+
             });
             //formCashBox.payments.push(props.cashBox.payments[payment])
         }
@@ -533,7 +538,7 @@ export default {
             });
             //console.log(formCashBox);
             if (consultaProductos.product_id > 0 && consultaProductos.product_id !== null) {
-                axios.get(props.ruta_productos_findById + 
+                axios.get(props.ruta_productos_findById +
                         "?producto=" + consultaProductos.product_id +
                         "&plantel="+formCashBox.plantel_id)
                     .then(response => {
@@ -622,7 +627,7 @@ export default {
 
         const handleChangeProducto = value => {
             //console.log("{{$ruta_productos_findById}}");
-            axios.get(props.ruta_productos_findById + 
+            axios.get(props.ruta_productos_findById +
                         "?producto=" + value +
                         "&plantel="+formCashBox.plantel_id)
                     .then(response => {
@@ -741,7 +746,7 @@ export default {
 
         const consultaPorcentajeDescuento = value => {
             //console.log(props.ruta_consulta_porcentaje_descuento);
-            axios.get(props.ruta_consulta_porcentaje_descuento + 
+            axios.get(props.ruta_consulta_porcentaje_descuento +
                         "?id=" + value )
                     .then(response => {
                         //console.log(response);

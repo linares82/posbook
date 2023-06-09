@@ -90,6 +90,7 @@
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.entrada }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.salida }}</td>
                                         <td class="ant-table-cell" colstart="3" colend="4">
+                                           <!--
                                             <a-dropdown-button>
                                                 Acciones
                                                 <template #overlay>
@@ -120,6 +121,7 @@
                                                     </a-menu>
                                                 </template>
                                             </a-dropdown-button>
+                                            -->
                                         </td>
                                     </tr>
                                 </tbody>

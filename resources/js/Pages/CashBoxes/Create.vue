@@ -112,7 +112,7 @@
                     Agregar Linea
                 </a-button>
             </a-form-item>
-            
+
             <a-col :span="16">
                 <a-space v-for="(linea, index) in formCashBox.lineas" :key="linea.tiempo_id" style="display: flex; margin-bottom: 8px" align="baseline">
                     <a-form-item :name="['linea', index, 'product_id']" label="Producto">
@@ -282,12 +282,12 @@ export default {
         PlusOutlined,
     },
 
-    props: ["errors", 'productos', 'planteles', 'estatus', 'productos', 'plantel', 'paymentMethods', 
+    props: ["errors", 'productos', 'planteles', 'estatus', 'productos', 'plantel', 'paymentMethods',
     'ruta_productos_findById', 'ruta_consulta_porcentaje_descuento'],
 
     setup(props) {
         const formRef = ref();
-        
+
         let formCashBox = reactive({
             plantel_id: props.plantel,
             fecha: undefined,
@@ -349,7 +349,7 @@ export default {
                     .then(response => {
                         //formCashBox.precio = response.data.precio;
                         //consultaProductos=response.data;
-                        console.log(response.data);
+                        //console.log(response.data);
                         formCashBox.lineas.push({
                             product_id: response.data.producto.id,
                             quantity: 1,
@@ -375,11 +375,11 @@ export default {
         };
 
         const addPayment = () => {
-            
+
             if(formCashBox.porcentaje_descuento>0){
                 formCashBox.monto=formCashBox.total*formCashBox.porcentaje_descuento;
             }
-            
+
             formCashBox.payments.push({
                 payment_method_id: formCashBox.payment_method_id,
                 monto: formCashBox.total,
@@ -472,11 +472,11 @@ export default {
             if(formCashBox.payment_method_id==4 && formCashBox.porcentaje_descuento>0){
                 formCashBox.monto=formCashBox.total*formCashBox.porcentaje_descuento;
             }
-            
+
         });*/
         const consultaPorcentajeDescuento = value => {
             //console.log(props.ruta_consulta_porcentaje_descuento);
-            axios.get(props.ruta_consulta_porcentaje_descuento + 
+            axios.get(props.ruta_consulta_porcentaje_descuento +
                         "?id=" + value )
                     .then(response => {
                         //console.log(response);

@@ -123,7 +123,9 @@
                                         <th>Numero</th>
                                         <th>Libros Vendidos Regular</th>
                                         <th>Libros Restantes</th>
+                                        <th>P. U.</th>
                                         <th>Venta Regular</th>
+                                        <th>C. U.</th>
                                         <th>Por Devolver</th>
                                         <th>Por Pagar</th>
                                     </thead>
@@ -142,7 +144,15 @@
                                                     ln.existencia_por_vender
                                                 }} </td>
                                             <td class="ant-table-cell column-money" colstart="2" colend="2"> {{
+                                                    Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(ln.precio)
+
+                                                }} </td>
+                                            <td class="ant-table-cell column-money" colstart="2" colend="2"> {{
                                                     Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(ln.dinero_cantidad_vendida)
+
+                                                }} </td>
+                                            <td class="ant-table-cell column-money" colstart="2" colend="2"> {{
+                                                    Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(ln.costo)
 
                                                 }} </td>
                                             <td class="ant-table-cell column-money" colstart="2" colend="2"> {{
