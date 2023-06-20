@@ -239,13 +239,33 @@ class OrderSalesController extends Controller
     public function destroy($id)
     {
         $orderSale=OrderSale::findOrFail($id);
-        //dd($user);
+
+        foreach($orderSale->orderSalesLines as $linea){
+            foreach($linea->movements as $movement){
+                if ($movement->cantidad_salida>0){
+                    //dd('fil');
+                    return redirect()->route('orderSales.index')->with('sysMessage', 'No es posible borrar el registro. Existen movimientos vinculados');
+                }
+
+            }
+
+        }
+        //dd($movimientos);
         try{
-            $orderSale->delete();
+            foreach($orderSale->orderSalesLines as $linea){
+                foreach($linea->movements as $movement){
+
+                        $movement->delete();
+
+                    $linea->delete();
+                }
+                $orderSale->delete();
+            }
+
         }catch(Exception $e){
             dd($e);
         }
-		return redirect()->route('orderSales.index')->with('sysMessage', 'Registro Borrado.');
+		return redirect()->route('orderSales.index')->with('sysMessage', 'Registros Borrado.');
     }
 
 }

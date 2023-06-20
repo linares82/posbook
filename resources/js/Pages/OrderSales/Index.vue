@@ -157,6 +157,7 @@ export default {
     props: ["orderSales", "filters", "sysMessage", 'permissions'],
 
     setup(props) {
+        //console.log(props.sysMessage);
         mounted: {
             if (props.sysMessage !== null) {
                 message.success(props.sysMessage, 10);
