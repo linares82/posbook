@@ -27,6 +27,16 @@
                     </template>
                 </a-input>
             </a-col>
+            <a-col :span="6">
+                    <a-select
+                    :options="planteles"
+                    v-model:value="search.plantel_id"
+                    style="width: 200px"
+                    placeholder="Seleccionar Plantel..."
+                    >
+
+                    </a-select>
+                </a-col>
         </a-row>
     </a-collapse-panel>
 </a-collapse>
@@ -74,7 +84,7 @@
                                                                 <button
                                                                     class="ant-btn ant-btn-default ant-btn-round ant-btn-sm">Borrar</button>
                                                             </a-popconfirm>
-                                                            
+
                                                     </a-menu-item>
                                                     -->
                                                     <a-menu-item key="3" v-if="permissions.cashBoxesCancelCashBox">

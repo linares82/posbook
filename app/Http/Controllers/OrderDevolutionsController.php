@@ -34,7 +34,7 @@ class OrderDevolutionsController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $sysMessage=$request->session()->get('sysMessage');
         $orderDevolutions=OrderDevolution::query()
         ->when($request->input('name'), function($query, $item){
@@ -65,7 +65,7 @@ class OrderDevolutionsController extends Controller
      */
     public function create($orderSale=0)
     {
-        
+
             $orderSales=OrderSale::select('order_sales.id',DB::raw('concat(order_sales.id," - ",order_sales.fecha," - ",order_sales.name) as nombre'))
             ->join('order_sales_lines as osl','osl.order_sale_id','order_sales.id')
             ->join('movements as m','m.order_sales_line_id','osl.id')
@@ -97,7 +97,7 @@ class OrderDevolutionsController extends Controller
                 ->get()->map(fn ($registro) => [
                     'value' => $registro->id,
                     'label' => $registro->nombre,
-                ]); 
+                ]);
                 return Inertia::render('OrderDevolutions/Create',['orderSale'=>$orderSaleSelected, 'orderSales'=>$orderSales]);
             }
             //dd($orderSaleSelected);
@@ -118,7 +118,8 @@ class OrderDevolutionsController extends Controller
             $input=array('fecha'=>$datos['fecha'],
             'name'=>$datos['name'],
             'motivo'=>$datos['motivo'],
-            'order_sale_id'=>$datos['order_sale_id']['value']);
+            //'order_sale_id'=>$datos['order_sale_id']['value']);
+            'order_sale_id'=>$datos['order_sale_id']);
             $orderDevolution=OrderDevolution::create($input);
         }catch(Exception $e){
             dd($e);
@@ -158,7 +159,7 @@ class OrderDevolutionsController extends Controller
         //dd($route_consultaExistencias);
         $route_consultaExistencias=route('movements.consultaExistencias', array('id'=>$orderSale->id));
         //dd($route_consultaExistencias);
-        return Inertia::render('OrderDevolutions/Show', 
+        return Inertia::render('OrderDevolutions/Show',
         ['orderDevolution'=>$orderDevolution,
         'orderSale'=>$orderSale,
          'orderDevolutionLines'=>$orderDevolutionLines,
@@ -210,7 +211,7 @@ class OrderDevolutionsController extends Controller
             $orderDevolution->fecha=$datos['fecha'];
             $orderDevolution->motivo=$datos['motivo'];
             $orderDevolution->save();
-            
+
         }catch(Exception $e){
             dd($e);
         }
@@ -258,14 +259,14 @@ class OrderDevolutionsController extends Controller
         $route_storeLines=route('orderDevolutionLines.storeLines');
         $route_destroy_ln=route('orderDevolutionLines.destroy');
         //dd($route_consultaExistencias);
-        
-        return Inertia::render('OrderDevolutions/RegistrarDevolucion', 
+
+        return Inertia::render('OrderDevolutions/RegistrarDevolucion',
         ['orderDevolution'=>$orderDevolution,
          'orderDevolutionLines'=>$orderDevolutionLines,
          'route_consultaExistencias'=>$route_consultaExistencias,
         'route_storeLines'=>$route_storeLines,
         'route_destroy_ln'=>$route_destroy_ln]);
     }
-    
+
 
 }

@@ -122,6 +122,7 @@
                                         <th>Producto</th>
                                         <th>Numero</th>
                                         <th>Libros Vendidos Regular</th>
+                                        <th>Libros Devueltos</th>
                                         <th>Libros Restantes</th>
                                         <th>P. U.</th>
                                         <th>Venta Regular</th>
@@ -139,6 +140,8 @@
                                                     ln.cantidad_pedida
                                                 }} </td>
                                             <td class="ant-table-cell column-money" colstart="2" colend="2"> {{ ln.vendidos }}
+                                            </td>
+                                            <td class="ant-table-cell column-money" colstart="2" colend="2"> {{ ln.devueltos }}
                                             </td>
                                             <td class="ant-table-cell column-money" colstart="2" colend="2"> {{
                                                     ln.existencia_por_vender

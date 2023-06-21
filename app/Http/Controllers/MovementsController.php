@@ -20,6 +20,7 @@ use App\Models\OrderSalesLine;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\MovementsCreateRequest;
 use App\Http\Requests\MovementsUpdateRequest;
+use App\Models\OrderDevolutionLine;
 
 class MovementsController extends Controller
 {
@@ -68,7 +69,7 @@ class MovementsController extends Controller
         }
         if (isset($filtros['product_id'])) {
             $m->when($filtros['product_id'], function ($query, $product_id) {
-                $query->where('product_id', $product_id);
+                $query->where('movements.product_id', $product_id);
             });
         }
 
@@ -426,6 +427,7 @@ class MovementsController extends Controller
         $totales = array();
         $totales['cantidad'] = 0;
         $totales['vendidos'] = 0;
+        $totales['devueltos'] = 0;
         $totales['existencia'] = 0;
         $totales['precio'] = 0;
         $totales['efectivo_caja'] = 0;
@@ -436,16 +438,23 @@ class MovementsController extends Controller
             $linea['producto'] = $llave;
             $linea['cantidad'] = 0;
             $linea['vendidos'] = 0;
+            $linea['devueltos'] = 0;
             $linea['existencia'] = 0;
             $linea['precio'] = 0;
             $linea['efectivo_caja'] = 0;
+            $vendidos=0;
+            $devueltos=0;
             foreach ($group as $line) {
                 $linea['movement_id'] = $line->movement_id;
                 $linea['cantidad'] = $linea['cantidad'] + $line->cantidad_entrada;
-                $vendidos = LnCashBox::where('movement_id', $line->movement_id)
-                    //->wereNull('deleted_at')
+                $vendidos = $vendidos+ LnCashBox::where('movement_id', $line->movement_id)
                     ->count();
+
                 $linea['vendidos'] = $vendidos;
+                $devueltos = $devueltos + OrderDevolutionLine::where('movement_id', $line->movement_id)
+                    ->where('bnd_salida_registrada', 1)
+                    ->value('cantidad');
+                $linea['devueltos']=$devueltos;
                 $ventas = LnCashBox::where('movement_id', $line->movement_id)
                     //->wereNull('deleted_at')
                     ->get();
@@ -463,6 +472,7 @@ class MovementsController extends Controller
             }
             $totales['cantidad'] = $totales['cantidad'] + $linea['cantidad'];
             $totales['vendidos'] = $totales['vendidos'] + $linea['vendidos'];
+            $totales['devueltos'] = $totales['devueltos'] + $linea['devueltos'];
             $totales['existencia'] = $totales['existencia'] + $linea['existencia'];
             $totales['precio'] = $totales['precio'] + $linea['precio'];
             $totales['efectivo_caja'] = $totales['efectivo_caja'] + $linea['efectivo_caja'];
@@ -520,11 +530,12 @@ class MovementsController extends Controller
                 ->join('products as p', 'p.id', 'movements.product_id')
                 ->join('plantels as pla', 'pla.id', 'movements.plantel_id')
                 ->where('plantel_id', $plantel->id)
+                //->where('plantel_id', $plantel['id'])
                 ->whereDate('movements.created_at', '>=', $datos['fecha_f'])
                 ->whereDate('movements.created_at', '<=', $datos['fecha_t'])
                 ->orderBy('movements.product_id')
                 ->get();
-            //dd($lineas);
+            //dd($lineas->toArray());
             //$groupedPlantel = $lineas->groupBy('plantel_id');
 
             //foreach($groupedPlantel as $llave => $group){
@@ -541,6 +552,7 @@ class MovementsController extends Controller
                 $linea['plantel'] = "";
                 $linea['cantidad_pedida'] = 0;
                 $linea['vendidos'] = 0;
+                $linea['devueltos'] = 0;
                 $linea['existencia_por_vender'] = 0;
                 $linea['dinero_cantidad_vendida'] = 0;
                 $linea['dinero_existencia_por_devolver'] = 0;
@@ -548,6 +560,8 @@ class MovementsController extends Controller
                 $linea['costo'] = 0;
                 $linea['precio'] = 0;
                 $linea['movement_id'] = 0;
+                $vendidos=0;
+                $devueltos=0;
 
                 $linea['producto'] = $llave;
                 //dd($group->toArray());
@@ -558,14 +572,19 @@ class MovementsController extends Controller
                     $linea['precio'] = $line->precio;
                     $linea['movement_id'] = $line->movement_id;
                     $linea['cantidad_pedida'] = $linea['cantidad_pedida'] + $line->cantidad_entrada;
-                    $vendidos = LnCashBox::where('movement_id', $line->movement_id)
-                        //->wereNull('deleted_at')
-                        ->count();
+                    $vendidos = $vendidos + LnCashBox::where('movement_id', $line->movement_id)->count();
+                    /*if($line->movement_id==82){
+                        dd($vendidos);
+                    }*/
                     $linea['vendidos'] = $vendidos;
+                    $devueltos= $devueltos+ OrderDevolutionLine::where('movement_id', $line->movement_id)
+                    ->where('bnd_salida_registrada', 1)
+                    ->value('cantidad');
+                    $linea['devueltos'] = $devueltos;
                     $ventas = LnCashBox::where('movement_id', $line->movement_id)
                         //->wereNull('deleted_at')
                         ->get();
-                    $linea['existencia_por_vender'] = $linea['cantidad_pedida'] - $linea['vendidos'];
+                    $linea['existencia_por_vender'] = $linea['cantidad_pedida'] - $linea['vendidos'] - $linea['devueltos'];
                     $linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos'];
                     $linea['dinero_existencia_por_devolver'] = $linea['existencia_por_vender'] * $line->costo;
                     $linea['dinero_vendidos_costo'] = $line->costo * $linea['vendidos'];
@@ -600,7 +619,7 @@ class MovementsController extends Controller
         //dd($resumen);
 
         //dd($grouped->toArray());
-
+        //dd($detalle);
         $datos['fecha_f'] = new DateTime($datos['fecha_f']);
         $datos['fecha_t'] = new DateTime($datos['fecha_t']);
 

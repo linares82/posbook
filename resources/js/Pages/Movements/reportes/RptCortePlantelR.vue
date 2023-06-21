@@ -30,6 +30,7 @@
                                             <th>Pedido</th>
                                             <th>Vales</th>
                                             <th>Vendidos</th>
+                                            <th>Devueltos</th>
                                             <th>Existencia despues de ventas</th>
                                             <th>P.U.</th>
                                             <th>Efectivo</th>
@@ -41,7 +42,8 @@
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.cantidad }} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.vales }} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.vendidos }} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.existencia }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.devueltos }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.existencia - ln.devueltos}} </td>
                                                 <td class="ant-table-cell column-money" colstart="2" colend="2">
                                                     {{
                                                         Intl.NumberFormat('es-MX', {
@@ -63,6 +65,8 @@
                                                 </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.vales }} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.vendidos }}
+                                                </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.devueltos }}
                                                 </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.existencia }}
                                                 </td>
