@@ -28,7 +28,9 @@ class CashBoxesController extends Controller
         $permissions['cashBoxesUpdate'] = Auth::user()->hasPermissionTo('cashBoxes.update');
         $permissions['cashBoxesShow'] = Auth::user()->hasPermissionTo('cashBoxes.show');
         $permissions['cashBoxesDestroy'] = Auth::user()->hasPermissionTo('cashBoxes.destroy');
+        $permissions['cashBoxesManyLines'] = Auth::user()->hasPermissionTo('cashBoxes.manyLines');
         $permissions['cashBoxesCancelCashBox'] = Auth::user()->hasPermissionTo('cashBoxes.cancelCashBox');
+        $permissions['cashBoxesPayments'] = Auth::user()->hasPermissionTo('cashBoxes.payments');
         return $permissions;
     }
 
@@ -107,8 +109,8 @@ class CashBoxesController extends Controller
 
         return Inertia::render(
             'CashBoxes/Create',
-            ['planteles' => $planteles, 'estatus' => $estatus, 'productos' => $productos, 
-            'plantel' => $plantel, 'paymentMethods' => $paymentMethods, 
+            ['planteles' => $planteles, 'estatus' => $estatus, 'productos' => $productos,
+            'plantel' => $plantel, 'paymentMethods' => $paymentMethods,
             'ruta_productos_findById' => $ruta_productos_findById,
             'ruta_consulta_porcentaje_descuento'=>$ruta_consulta_porcentaje_descuento]
         );
@@ -133,11 +135,11 @@ class CashBoxesController extends Controller
         $inputCaja['matricula'] = $datos['matricula'];
         $inputCaja['total'] = $datos['total'];
         if(!isset($datos['bnd_entregado'])){
-            $inputCaja['bnd_entregado']=0;    
+            $inputCaja['bnd_entregado']=0;
         }else{
             $inputCaja['bnd_entregado'] = $datos['bnd_entregado'];
         }
-        
+
         $inputCaja['st_cash_box_id'] = 1;
 
         try {
@@ -294,8 +296,9 @@ class CashBoxesController extends Controller
                 'paymentMethods' => $paymentMethods, 'ruta_productos_findById' => $ruta_productos_findById,
                 'cashBox' => $cashBox, 'ruta_update_ln' => $ruta_update_ln, 'ruta_destroy_ln' => $ruta_destroy_ln,
                 'ruta_update_payment' => $ruta_update_payment, 'ruta_destroy_payment' => $ruta_destroy_payment,
-                'ruta_update_cashBox' => $ruta_update_cashBox, 
+                'ruta_update_cashBox' => $ruta_update_cashBox,
                 'ruta_consulta_porcentaje_descuento' => $ruta_consulta_porcentaje_descuento,
+                'permissions'=>$this->getPermissions()
             ]
         );
     }
@@ -394,7 +397,7 @@ class CashBoxesController extends Controller
     public function cancelCashBox($id)
     {
         $cashBox=CashBox::with('payments')->with('lnCashBoxes')->findOrFail($id);
-        
+
         //dd($cashBox);
         foreach($cashBox->lnCashBoxes as $linea){
             //dd($linea);
@@ -416,7 +419,7 @@ class CashBoxesController extends Controller
     }
 
     public function ticket($id){
-        
+
         $cashBox =cashBox::select('cash_boxes.*', 'p.name as plantel','st.name as estatus','p.address','p.director','phone')
         ->join('plantels as p','p.id','cash_boxes.plantel_id')
         ->join('st_cash_boxes as st','st.id','cash_boxes.st_cash_box_id')->where('cash_boxes.id',$id)->first();
@@ -465,10 +468,10 @@ class CashBoxesController extends Controller
     public function rptCajasApartadasR(Request $request){
         $datos=$request->all();
         //dd($datos);
-        $cajasApartadas=CashBox::select('cash_boxes.id','cash_boxes.customer','st_cash_box_id','stcb.name as stcb', 
+        $cajasApartadas=CashBox::select('cash_boxes.id','cash_boxes.customer','st_cash_box_id','stcb.name as stcb',
         'cash_boxes.total as total_caja', 'cash_boxes.matricula', 'cash_boxes.bnd_entregado','cash_boxes.fecha as fecha_caja',
         'cash_boxes.bnd_referencia_revisada', 'cash_boxes.reference',
-        'p.name as producto', 'ln.quantity', 'ln.precio', 'ln.total as total_ln', 'ln.movement_id') 
+        'p.name as producto', 'ln.quantity', 'ln.precio', 'ln.total as total_ln', 'ln.movement_id')
         /*'pm.name as payment_method',
         'pay.monto', 'pay.porcentaje_descuento', 'pay.fecha as fecha_pago')*/
         ->join('ln_cash_boxes as ln','ln.cash_box_id','cash_boxes.id')

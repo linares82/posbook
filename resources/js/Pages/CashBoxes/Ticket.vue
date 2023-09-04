@@ -24,15 +24,29 @@
                                                 </a-row>
                                             </th>
                                         </tr>
+                                        <tr>
+                                            <td>Producto </td><td>Cantidad</td><td>Monto</td>
+                                        </tr>
                                     </thead>
                                     <tbody class="ant-table-tbody">
                                         <tr class="ant-table-row ant-table-row-level-0" v-for="linea in cashBoxLns" :key="linea.id">
-                                            <td class="ant-table-cell" colstart="0" colend="0">{{ linea.id }} {{linea.product }} {{linea.quantity}}</td>
-                                            <td class="ant-table-cell" colstart="2" colend="2"> $ {{ linea.total}} </td>
+                                            <td class="ant-table-cell" colstart="0" colend="0">{{ linea.id }} {{linea.product }} </td>
+                                            <td class="ant-table-cell" colstart="0" colend="0">{{linea.quantity}}</td>
+                                            <td class="ant-table-cell" colstart="2" colend="2" align="right">
+                                                {{ Intl.NumberFormat('es-MX', {
+                                                            style: 'currency', currency: 'MXN'
+                                                        }).format(linea.total)}}
+
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td class="ant-table-cell" colstart="0" colend="0">Adeudo Total</td>
-                                            <td class="ant-table-cell" colstart="2" colend="2"> $ {{ cashBox.total}} </td>
+                                            <td class="ant-table-cell" colstart="0" colend="0" colspan="2">Adeudo Total</td>
+                                            <td class="ant-table-cell" colstart="2" colend="2" align="right">
+                                                {{ Intl.NumberFormat('es-MX', {
+                                                            style: 'currency', currency: 'MXN'
+                                                        }).format(cashBox.total)}}
+
+                                            </td>
                                         </tr>
                                         <tr v-for="payment in payments" :key="payment.id">
                                             <td class="ant-table-cell" colstart="0" colend="0">Pago realizado, {{payment.payment_method}}</td>
