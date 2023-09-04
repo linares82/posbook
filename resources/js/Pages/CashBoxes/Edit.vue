@@ -244,13 +244,13 @@
         </a-col>
 
         <div>
-            <a-modal v-model:visible="visiblePayment" title="Agregar Pago" @ok="addPayment">
+            <a-modal v-model:visible="visiblePayment" :rules="rulesFormAddPayment" title="Agregar Pago" @ok="addPayment">
                 <template #footer>
                     <a-button key="back" @click="handleCancelPayment">Cancelar</a-button>
                     <a-button key="submit" type="primary" :loading="loadingPayment" @click="addPayment">Agregar</a-button>
                 </template>
                 <a-col :md="24">
-                    <a-form-item label="Metodo de Pago" name="payment_method_id">
+                    <a-form-item label="Metodo de Pago" name="payment_method_id" ref="payment_method_id">
                         <a-select :options="paymentMethods" show-search @change="consultaPorcentajeDescuento" v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción">
                         </a-select>
                         <div v-if="errors.payment_method_id">
@@ -320,9 +320,7 @@
             </a-modal>
         </div>
 
-        <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" style="border: solid 1px; padding:5px;"
-            v-show="permissions.cashBoxesPayments"
-        >
+        <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" style="border: solid 1px; padding:5px;" v-show="permissions.cashBoxesPayments">
             <a-form-item v-show="formCashBox.payments.reduce((acumulador, payment) => acumulador + payment.monto, 0)<formCashBox.total">
                 <a-button type="dashed" block @click="showModalPayment">
                     <PlusOutlined />
@@ -443,7 +441,7 @@ export default {
     props: ['ruta_destroy_ln', 'ruta_update_ln', 'cashBox', "errors", 'productos', 'planteles',
         'estatus', 'productos', 'plantel', 'paymentMethods', 'ruta_productos_findById',
         'ruta_update_payment', 'ruta_destroy_payment', 'ruta_update_cashBox',
-        'ruta_consulta_porcentaje_descuento','permissions'
+        'ruta_consulta_porcentaje_descuento', 'permissions'
     ],
 
     setup(props) {
@@ -728,21 +726,38 @@ export default {
             visibleEditPayment.value = false;
         };
 
+        const rulesFormAddPayment = {
+            payment_method_id: [{
+                required: true,
+                message: 'Campo Requerido',
+                trigger: 'change',
+            }],
+        };
+
         const addPayment = () => {
             loadingPayment.value = true;
 
-            if (formCashBox.porcentaje_descuento > 0) {
-                formCashBox.monto = formCashBox.total * formCashBox.porcentaje_descuento;
+            if (formCashBox.payment_method_id == 0) {
+                alert('Por favor se requiere una forma de pago valida.');
+                loadingPayment.value = false;
+            } else if (!formCashBox.fechaPago) {
+                alert('Por favor se requiere una fecha de pago valida.');
+                loadingPayment.value = false;
+            } else {
+                if (formCashBox.porcentaje_descuento > 0) {
+                    formCashBox.monto = formCashBox.total * formCashBox.porcentaje_descuento;
+                }
+
+                formCashBox.payments.push({
+                    payment_method_id: formCashBox.payment_method_id,
+                    porcentaje_descuento: formCashBox.porcentaje_descuento,
+                    monto: formCashBox.monto,
+                    fecha: formCashBox.fechaPago
+                });
+                loadingPayment.value = false;
+                visiblePayment.value = false;
             }
 
-            formCashBox.payments.push({
-                payment_method_id: formCashBox.payment_method_id,
-                porcentaje_descuento: formCashBox.porcentaje_descuento,
-                monto: formCashBox.monto,
-                fecha: formCashBox.fechaPago
-            });
-            loadingPayment.value = false;
-            visiblePayment.value = false;
         };
 
         const handleCancelPayment = () => {
@@ -807,7 +822,8 @@ export default {
             visibleEditLinea,
             visiblePayment,
             visibleEditPayment,
-            route_ticket
+            route_ticket,
+            rulesFormAddPayment
         };
     },
 };
