@@ -4,16 +4,16 @@
         <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Caja" sub-title="Entradas Salidas" />
     </a-col>
     <a-col :span="12">
-        
+
     </a-col>
 </a-row>
 <a-form ref="formRef" :model="formCashBox" @submit.prevent="submitF" layout="vertical">
     <a-row>
-        
+
         <a-col :md="1"></a-col>
         <a-col :md="7">
             <a-form-item compact label="Fecha de:" name="fecha_f" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-date-picker v-model:value="formCashBox.fecha_f" format="YYYY-MM-DD" :bordered="true" />
+                <a-date-picker show-time  v-model:value="formCashBox.fecha_f" format="YYYY-MM-DD" :bordered="true" />
                 <div v-if="errors.fecha_f">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fecha_f"></div>
                 </div>
@@ -22,7 +22,7 @@
         <a-col :md="1"></a-col>
         <a-col :md="7">
             <a-form-item compact label="Fecha a:" name="fecha_t" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-date-picker v-model:value="formCashBox.fecha_t" format="YYYY-MM-DD" :bordered="true" />
+                <a-date-picker show-time  v-model:value="formCashBox.fecha_t" format="YYYY-MM-DD" :bordered="true" />
                 <div v-if="errors.fecha_t">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fecha_t"></div>
                 </div>

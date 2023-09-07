@@ -8,6 +8,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\StocksController;
 use App\Http\Controllers\PeriodsController;
 use App\Http\Controllers\ReasonsController;
+use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\PlantelsController;
 use App\Http\Controllers\ProductsController;
@@ -101,6 +102,7 @@ Route::prefix('/menus')
     Route::get('/create', 'create')->name('create')->middleware('can:menus.create');
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:menus.edit');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:menus.show');
+    Route::get('/findItem/{id}', 'findItem')->name('findItem');//->middleware('can:menus.show');
     Route::post('/store', 'store')->name('store')->middleware('can:menus.create');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:menus.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:menus.destroy');
@@ -378,4 +380,32 @@ Route::prefix('/obsEntries')
     Route::post('/store', 'store')->name('store')->middleware('can:obsEntries.create');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:obsEntries.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:obsEntries.destroy');
+});
+
+Route::prefix('/accounts')
+->middleware('auth')
+->name('accounts.')
+->controller(AccountsController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:accounts.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:accounts.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:accounts.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:accounts.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:accounts.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:accounts.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:accounts.destroy');
+});
+
+Route::prefix('/outputs')
+->middleware('auth')
+->name('outputs.')
+->controller(OutputsController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:outputs.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:outputs.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:outputs.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:outputs.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:outputs.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:outputs.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:outputs.destroy');
 });

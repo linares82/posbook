@@ -6,14 +6,15 @@ use Exception;
 use Inertia\Inertia;
 use App\Models\Stock;
 use App\Models\Period;
+use App\Models\Account;
 use App\Models\Plantel;
 use App\Models\Product;
 use App\Models\Movement;
 use Illuminate\Http\Request;
+use App\Models\CashBoxToAssign;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ProductsCreateRequest;
 use App\Http\Requests\ProductsUpdateRequest;
-use App\Models\CashBoxToAssign;
 
 class ProductsController extends Controller
 {
@@ -36,7 +37,7 @@ class ProductsController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $sysMessage=$request->session()->get('sysMessage');
         $products=Product::query()
         ->when($request->input('name'), function($query, $item){
@@ -80,10 +81,17 @@ class ProductsController extends Controller
             'label' => $period->name,
         ]);
         $periods->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+        $accounts=Account::where('bnd_ingreso', 1)->get()->map(fn ($cashBox) => [
+            'value' => $cashBox->id,
+            'label' => $cashBox->code." ".$cashBox->name,
+        ]);
+        $accounts->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
         ///dd($products);
         return Inertia::render('Products/Create',['books'=>$books,
-        'periods'=>$periods, 
-        'cashBoxes'=>$cashBoxes]);
+        'periods'=>$periods,
+        'cashBoxes'=>$cashBoxes,
+        'accounts'=>$accounts
+    ]);
     }
 
     /**
@@ -124,7 +132,7 @@ class ProductsController extends Controller
         ->join('plantels as pla','pla.id','plantel_id')
         ->get();
         //dd($product);
-        
+
         return Inertia::render('Products/Show', ['product'=>$product,'stocks'=>$stock]);
     }
 
@@ -138,7 +146,7 @@ class ProductsController extends Controller
                 $input['current_stock']=0;
                 Stock::create($input);
             }
-            
+
         }
     }
 
@@ -166,10 +174,18 @@ class ProductsController extends Controller
             'label' => $cashBox->name,
         ]);
         $cashBoxes->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
-        return Inertia::render('Products/Edit', ['product'=>$product, 
+
+        $accounts=Account::where('bnd_ingreso', 1)->get()->map(fn ($cashBox) => [
+            'value' => $cashBox->id,
+            'label' => $cashBox->code." ".$cashBox->name,
+        ]);
+        $accounts->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+        return Inertia::render('Products/Edit', ['product'=>$product,
         'books'=>$books,
         'periods'=>$periods,
-        'cashBoxes'=>$cashBoxes]);
+        'cashBoxes'=>$cashBoxes,
+        'accounts'=>$accounts
+    ]);
     }
 
     /**
@@ -192,7 +208,7 @@ class ProductsController extends Controller
                 $datos['bnd_activo']=0;
             }
             $product->bnd_activo=$datos['bnd_activo'];
-            
+
             if(!isset($datos['bnd_ofertable'])){
                 $datos['bnd_ofertable']=0;
             }
@@ -200,8 +216,9 @@ class ProductsController extends Controller
             $product->product_id=$datos['product_id'];
             $product->period_id=$datos['period_id'];
             $product->cash_box_to_assign_id=$datos['cash_box_to_assign_id'];
+            $product->account_id=$datos['account_id'];
             $product->save();
-            
+
         }catch(Exception $e){
             dd($e);
         }

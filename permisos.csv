@@ -1,8 +1,8 @@
-"id","name","guard_name","created_at","updated_at"
-158,"obsEntries.index","web",,
-159,"obsEntries.create","web",,
-160,"obsEntries.show","web",,
-161,"obsEntries.edit","web",,
-162,"obsEntries.store","web",,
-163,"obsEntries.update","web",,
-164,"obsEntries.destroy","web",,
+id,name,guard_name,created_at,updated_at
+178,accounts.index,web,2023-09-07 00:00:00,2023-09-07 00:00:00
+179,accounts.create,web,2023-09-07 00:00:00,2023-09-07 00:00:00
+180,accounts.show,web,2023-09-07 00:00:00,2023-09-07 00:00:00
+181,accounts.edit,web,2023-09-07 00:00:00,2023-09-07 00:00:00
+182,accounts.store,web,2023-09-07 00:00:00,2023-09-07 00:00:00
+183,accounts.update,web,2023-09-07 00:00:00,2023-09-07 00:00:00
+184,accounts.destroy,web,2023-09-07 00:00:00,2023-09-07 00:00:00

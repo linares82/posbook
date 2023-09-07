@@ -8,7 +8,7 @@
             <Link href="/cashBoxes/create" class="ant-btn ant-btn-primary ant-btn-round ant-btn-sm" as="button">Crear
             </Link>
         </div>
-
+        <PermIdentificados :permissions="permissions"></PermIdentificados>
     </a-col>
 </a-row>
 
@@ -118,6 +118,7 @@
 
 <script>
 import Layout from "../../shared/Layout";
+import permIdentificados from "../../shared/permIdentificados";
 import Paginator from "../../shared/Paginator";
 import {
     Link
@@ -141,20 +142,23 @@ import {
     Inertia
 } from "@inertiajs/inertia";
 import debounce from "lodash/debounce";
+import PermIdentificados from "../../shared/permIdentificados.vue";
 
 export default {
     layout: Layout,
 
     components: {
-        Link,
-        Paginator,
-        SearchOutlined,
-        InfoCircleOutlined,
-        SmileOutlined,
-        FormOutlined,
-        DeleteOutlined,
-        EyeOutlined
-    },
+    Link,
+    Paginator,
+    SearchOutlined,
+    InfoCircleOutlined,
+    SmileOutlined,
+    FormOutlined,
+    DeleteOutlined,
+    EyeOutlined,
+    permIdentificados,
+    PermIdentificados
+},
 
     props: ["cashBoxes", "filters", "sysMessage", 'permissions'],
 

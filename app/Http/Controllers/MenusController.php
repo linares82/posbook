@@ -158,4 +158,9 @@ class MenusController extends Controller
         }
 		return redirect()->route('menus.index')->with('sysMessage', 'Registro Borrado.');
     }
+
+    public function findItem($id){
+        $menu=Menu::find($id);
+        return route($menu->link);
+    }
 }

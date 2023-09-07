@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
 
-class Product extends Model
+class Account extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -33,7 +33,7 @@ class Product extends Model
 		});
 	}
 
-    protected $fillable = ['name','costo','precio','bnd_activo','bnd_ofertable','period_id','product_id', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','cash_box_to_assign_id','account_id'];
+    protected $fillable = ['code','name','bnd_ingreso','bnd_egreso', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
 
 	protected $dates = ['deleted_at'];
 
@@ -51,11 +51,4 @@ class Product extends Model
 	{
 		return $this->hasOne('App\Models\User', 'id', 'usu_delete_id');
 	} // end
-
-    /*public function users()
-    {
-        return $this->belongsToMany(User::class);
-    }*/
 }
-
-

@@ -6,7 +6,7 @@
     </a-col>
     <a-col :md="8"></a-col>
 </a-row>
-<a-form :model="formUser" @submit.prevent="submitF" autocomplete="off" layout="vertical">
+<a-form :model="formUser" @submit.prevent="submitF" autocomplete="on" layout="vertical">
     <a-row>
         <a-col :md="8">
 

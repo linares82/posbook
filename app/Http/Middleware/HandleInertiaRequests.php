@@ -54,7 +54,7 @@ class HandleInertiaRequests extends Middleware
         }else{
             return array_merge(parent::share($request));
         }
-        
+
     }
 
     public function getMenu($padre = 1){
@@ -63,7 +63,7 @@ class HandleInertiaRequests extends Middleware
         if (!session()->has('menu')) {
             $m = $this->armaMenuPrincipal();
             session(['menu' => $m]);
-        } 
+        }
         return session('menu');
     }
 
@@ -99,6 +99,8 @@ class HandleInertiaRequests extends Middleware
 
                     if ($r == 1) {
                         array_push($construccionMenu, array('key'=>$item->id,
+                        'value'=>$item->id,
+                        'label'=>$item->item,
                         'title'=>$item->item,
                         'link'=>$link,
                         'imagen'=>$item->imagen,
@@ -106,6 +108,8 @@ class HandleInertiaRequests extends Middleware
                         'children'=>$this->armaMenuPrincipal($item->id)));
                     } else {
                         array_push($construccionMenu, array('key'=>$item->id,
+                        'value'=>$item->id,
+                        'label'=>$item->item,
                         'title'=>$item->item,
                         'link'=>$link,
                         'target'=>$item->target,
