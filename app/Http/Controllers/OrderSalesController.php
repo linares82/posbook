@@ -38,11 +38,22 @@ class OrderSalesController extends Controller
         //dd($request->all());
         //dd(Auth::user()->plantels->pluck('id'));
         $sysMessage=$request->session()->get('sysMessage');
-        $orderSales=OrderSale::query()
+        $filtros = $request->input('search');
+        $m=OrderSale::query()
         ->select('order_sales.id','order_sales.fecha','order_sales.name', 'p.name as plantel')
         ->join('plantels as p','p.id','order_sales.plantel_id')
-        ->whereIn('order_sales.plantel_id', Auth::user()->plantels->pluck('id'))
-        ->when($request->input('fecha'), function($query, $fecha){
+        ->whereIn('order_sales.plantel_id', Auth::user()->plantels->pluck('id'));
+        if (isset($filtros['plantel_id'])) {
+            $m->when($filtros['plantel_id'], function ($query, $plantel_id) {
+                $query->where('order_sales.plantel_id', $plantel_id);
+            });
+        }
+        if (isset($filtros['fecha'])) {
+            $m->when($filtros['fecha'], function ($query, $fecha) {
+                $query->where('order_sales.fecha', $fecha);
+            });
+        }
+        $orderSales=$m->when($request->input('fecha'), function($query, $fecha){
             $query->whereDate('fecha',$fecha);
         })
         ->orderBy('order_sales.id','desc')
@@ -56,11 +67,16 @@ class OrderSalesController extends Controller
         ]);
         //dd($orderSales);
 
+        $planteles = Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
         return Inertia::render('OrderSales/Index',[
             'orderSales'=>$orderSales,
-            'filters'=>$request->only(['fecha']),
+            'filters'=>$request->only(['fecha', 'plantel_id']),
             'sysMessage'=>$sysMessage,
-            'permissions'=>$this->getPermissions()
+            'permissions'=>$this->getPermissions(),
+            'planteles'=>$planteles
         ]);
     }
 

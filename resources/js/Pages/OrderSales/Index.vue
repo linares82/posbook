@@ -17,16 +17,26 @@
         <a-collapse-panel key="1" header="Buscar">
             <a-row>
                 <a-col :span="6">
-                    <a-input v-model:value="fecha" size="small" placeholder="Buscar...">
+                    <a-input v-model:value="search.fecha" size="small" placeholder="Buscar fecha...">
                         <template #prefix>
                             <search-outlined />
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Buscar...">
+                            <a-tooltip title="Buscar Fecha...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
                     </a-input>
+                </a-col>
+                <a-col :span="6">
+                    <a-select
+                    :options="planteles"
+                    v-model:value="search.plantel_id"
+                    style="width: 200px"
+                    placeholder="Seleccionar Plantel..."
+                    >
+
+                    </a-select>
                 </a-col>
             </a-row>
         </a-collapse-panel>
@@ -132,7 +142,8 @@ import {
 import { message } from 'ant-design-vue';
 import {
     watch,
-    ref
+    ref,
+    reactive
 } from "vue";
 import {
     Inertia
@@ -154,7 +165,7 @@ export default {
         PrinterOutlined
     },
 
-    props: ["orderSales", "filters", "sysMessage", 'permissions'],
+    props: ["orderSales", "filters", "sysMessage", 'permissions', 'planteles'],
 
     setup(props) {
         //console.log(props.sysMessage);
@@ -171,13 +182,19 @@ export default {
             //}
         };
 
-        let fecha = ref(props.filters.fecha);
+        //let fecha = ref(props.filters.fecha);
+        let search = reactive({
+            plantel_id : props.filters.plantel_id,
+            fecha : props.filters.fecha,
+            column: props.filters.column,
+            direction: props.filters.direction
+        });
         watch(
-            fecha,
+            search,
             debounce(function (value) {
                 Inertia.get(
                     "/orderSales", {
-                    fecha: value
+                    search: value
                 }, {
                     preserveState: true,
                     replace: true,
@@ -187,7 +204,7 @@ export default {
         );
         return {
             borrar,
-            fecha,
+            search,
             paginator: false,
 
         };
