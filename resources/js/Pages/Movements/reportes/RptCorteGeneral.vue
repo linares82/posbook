@@ -13,7 +13,7 @@
         <a-col :md="1"></a-col>
         <a-col :md="7">
             <a-form-item compact label="Fecha de:" name="fecha_f" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-date-picker v-model:value="formCashBox.fecha_f" format="YYYY-MM-DD" :bordered="true" />
+                <a-date-picker v-model:value="formCashBox.fecha_f" @change="onChange1" format="YYYY-MM-DD" :bordered="true" />
                 <div v-if="errors.fecha_f">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fecha_f"></div>
                 </div>
@@ -22,7 +22,7 @@
         <a-col :md="1"></a-col>
         <a-col :md="7">
             <a-form-item compact label="Fecha a:" name="fecha_t" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-date-picker  v-model:value="formCashBox.fecha_t" format="YYYY-MM-DD" :bordered="true" />
+                <a-date-picker  v-model:value="formCashBox.fecha_t" @change="onChange2" format="YYYY-MM-DD" :bordered="true" />
                 <div v-if="errors.fecha_t">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fecha_t"></div>
                 </div>
@@ -62,11 +62,11 @@ import {
 } from "@inertiajs/inertia";
 import axios from 'axios';
 //import locale from 'ant-design-vue/es/date-picker/locale/es_Es';
-/*
+
 import dayjs from 'dayjs';
 import 'dayjs/locale/es-mx';
 dayjs.locale('es-mx');
-*/
+
 export default {
     layout: Layout,
     components: {
@@ -109,6 +109,18 @@ export default {
         const loadingLinea = ref(false);
         const visibleLinea = ref(false);
 
+        const onChange1 = (value, dateString) => {
+            //console.log('Selected Time: ', value);
+            //console.log('Formatted Selected Time: ', dateString);
+            formCashBox.fecha_f=dayjs(dateString, "YYYY-MM-DD");
+        };
+
+        const onChange2 = (value, dateString) => {
+            //console.log('Selected Time: ', value);
+            //console.log('Formatted Selected Time: ', dateString);
+            formCashBox.fecha_t=dayjs(dateString, "YYYY-MM-DD");
+        };
+
         return {
             formCashBox,
             submitF,
@@ -116,6 +128,8 @@ export default {
             formRef,
             loading,
             visible,
+            onChange1,
+            onChange2
         };
     },
 };
