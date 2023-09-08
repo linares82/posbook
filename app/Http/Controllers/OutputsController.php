@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Inertia\Inertia;
 use App\Models\Output;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\OutputsCreateRequest;
@@ -59,7 +60,12 @@ class OutputsController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Outputs/Create');
+        $accounts=Account::where('bnd_egreso',1)->get()->map(fn ($account) => [
+            'value' => $account->id,
+            'label' => $account->name,
+        ]);
+        $accounts->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+        return Inertia::render('Outputs/Create', ['accounts'=>$accounts]);
     }
 
     /**
@@ -103,7 +109,12 @@ class OutputsController extends Controller
     public function edit($id)
     {
         $output=Output::findOrfail($id);
-        return Inertia::render('Outputs/Edit', ['output'=>$output]);
+        $accounts=Account::where('bnd_egreso',1)->get()->map(fn ($account) => [
+            'value' => $account->id,
+            'label' => $account->name,
+        ]);
+        $accounts->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+        return Inertia::render('Outputs/Edit', ['output'=>$output, 'accounts'=>$accounts]);
     }
 
     /**

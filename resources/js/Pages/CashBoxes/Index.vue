@@ -16,18 +16,6 @@
     <a-collapse-panel key="1" header="Buscar">
         <a-row>
             <a-col :span="6">
-                <a-input v-model:value="name" size="small" placeholder="Buscar Tipo Movimiento">
-                    <template #prefix>
-                        <search-outlined />
-                    </template>
-                    <template #suffix>
-                        <a-tooltip title="Buscar Tipo Movimiento">
-                            <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                        </a-tooltip>
-                    </template>
-                </a-input>
-            </a-col>
-            <a-col :span="6">
                     <a-select
                     :options="planteles"
                     v-model:value="search.plantel_id"
@@ -136,7 +124,8 @@ import {
 } from 'ant-design-vue';
 import {
     watch,
-    ref
+    ref,
+    reactive
 } from "vue";
 import {
     Inertia
@@ -160,7 +149,7 @@ export default {
     PermIdentificados
 },
 
-    props: ["cashBoxes", "filters", "sysMessage", 'permissions'],
+    props: ["cashBoxes", "filters", "sysMessage", 'permissions', 'planteles'],
 
     setup(props) {
         mounted: {
@@ -176,13 +165,19 @@ export default {
             //}
         };
 
-        let name = ref(props.filters.name);
+        //let name = ref(props.filters.name);
+        let search = reactive({
+            plantel_id : props.filters.plantel_id,
+            //name : props.filters.name,
+            column: props.filters.column,
+            direction: props.filters.direction
+        });
         watch(
-            name,
+            search,
             debounce(function (value) {
                 Inertia.get(
                     "/cashBoxes", {
-                        name: value
+                        search: value
                     }, {
                         preserveState: true,
                         replace: true,
@@ -192,7 +187,7 @@ export default {
         );
         return {
             borrar,
-            name,
+            search,
             paginator: false,
 
         };

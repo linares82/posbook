@@ -124,7 +124,7 @@ class MovementsController extends Controller
             'motivos' => $motivos,
             'tipo_movimientos' => $tipo_movimientos,
             'productos' => $productos,
-            'filters' => $request->only(['name', 'column', 'direction']),
+            'filters' => $request->only(['name', 'plantel_id', 'column', 'direction']),
             'sysMessage' => $sysMessage,
             'permissions' => $this->getPermissions()
         ]);
@@ -416,10 +416,10 @@ class MovementsController extends Controller
             ->join('order_sales as os', 'os.id', 'osl.order_sale_id')
             ->whereNull('os.deleted_at')*/
             ->where('plantel_id', $datos['plantel_id'])
-            //->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->subDay()->toDateString())
-            //->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->subDay()->toDateString())
-            ->whereDate('movements.created_at', '>=', $datos['fecha_f'])
-            ->whereDate('movements.created_at', '<=', $datos['fecha_t'])
+            ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->subDay()->toDateString())
+            ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->subDay()->toDateString())
+            //->whereDate('movements.created_at', '>=', $datos['fecha_f'])
+            //->whereDate('movements.created_at', '<=', $datos['fecha_t'])
             ->orderBy('movements.product_id')
             ->get();
 
@@ -449,9 +449,10 @@ class MovementsController extends Controller
             foreach ($group as $line) {
                 $linea['movement_id'] = $line->movement_id;
                 $linea['cantidad'] = $linea['cantidad'] + $line->cantidad_entrada;
+                //dd($line);
                 $vendidos = $vendidos+ LnCashBox::where('movement_id', $line->movement_id)
-                    ->count();
-
+                    ->sum('quantity');
+                //dd(LnCashBox::where('movement_id', $line->movement_id)->get()->toArray());
                 $linea['vendidos'] = $vendidos;
                 $devueltos = $devueltos + OrderDevolutionLine::where('movement_id', $line->movement_id)
                     ->where('bnd_salida_registrada', 1)
@@ -533,10 +534,10 @@ class MovementsController extends Controller
                 ->join('plantels as pla', 'pla.id', 'movements.plantel_id')
                 ->where('plantel_id', $plantel->id)
                 //->where('plantel_id', $plantel['id'])
-                ->whereDate('movements.created_at', '>=', $datos['fecha_f'])
-                ->whereDate('movements.created_at', '<=', $datos['fecha_t'])
-                //->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->subDay()->toDateString())
-                //->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->subDay()->toDateString())
+                //->whereDate('movements.created_at', '>=', $datos['fecha_f'])
+                //->whereDate('movements.created_at', '<=', $datos['fecha_t'])
+                ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->subDay()->toDateString())
+                ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->subDay()->toDateString())
                 ->orderBy('movements.product_id')
                 ->get();
             //dd($lineas->toArray());
@@ -576,7 +577,7 @@ class MovementsController extends Controller
                     $linea['precio'] = $line->precio;
                     $linea['movement_id'] = $line->movement_id;
                     $linea['cantidad_pedida'] = $linea['cantidad_pedida'] + $line->cantidad_entrada;
-                    $vendidos = $vendidos + LnCashBox::where('movement_id', $line->movement_id)->count();
+                    $vendidos = $vendidos + LnCashBox::where('movement_id', $line->movement_id)->sum('quantity');
                     /*if($line->movement_id==82){
                         dd($vendidos);
                     }*/

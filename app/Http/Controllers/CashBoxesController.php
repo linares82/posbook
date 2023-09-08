@@ -41,13 +41,21 @@ class CashBoxesController extends Controller
      */
     public function index(Request $request)
     {
-
+        $filtros = $request->input('search');
         $sysMessage = $request->session()->get('sysMessage');
-        $cashBoxes = CashBox::query()
-            ->whereIn('plantel_id', Auth::user()->plantels->pluck('id'))
-            ->when($request->input('name'), function ($query, $item) {
-                $query->where('name', 'like', '%' . $item . '%');
-            })->orderBy('id', 'desc')
+        $m = CashBox::query();
+            $m->whereIn('plantel_id', Auth::user()->plantels->pluck('id'));
+            if (isset($filtros['name'])) {
+                $m->when($filtros['name'], function ($query, $name) {
+                    $query->where('movements.name', $name);
+                });
+            }
+            if (isset($filtros['plantel_id'])) {
+                $m->when($filtros['plantel_id'], function ($query, $plantel_id) {
+                    $query->where('cash_boxes.plantel_id', $plantel_id);
+                });
+            }
+            $cashBoxes=$m->orderBy('id', 'desc')
             ->paginate(100)
             ->withQueryString()
             ->through(fn ($cashBox) => [
@@ -55,15 +63,21 @@ class CashBoxesController extends Controller
                 'plantel'=>$cashBox->plantel->name,
                 'cliente' => $cashBox->customer,
                 'fecha' => $cashBox->fecha,
-                'estatus' => $cashBox->stCashBox->name,
+                'estatus' => optional($cashBox->stCashBox)->name,
                 'total' => $cashBox->total,
             ]);
         //dd($users);
 
+        $planteles = Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+
         return Inertia::render('CashBoxes/Index', [
             'cashBoxes' => $cashBoxes,
-            'filters' => $request->only(['name']),
+            'filters' => $request->only(['name', 'plantel_id']),
             'sysMessage' => $sysMessage,
+            'planteles'=>$planteles,
             'permissions' => $this->getPermissions()
         ]);
     }

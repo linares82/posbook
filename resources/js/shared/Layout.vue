@@ -10,6 +10,9 @@
                         <MenuUnfoldOutlined v-if="collapsed" />
                         <MenuFoldOutlined v-else />
                     </a-button>
+
+                </a-col>
+                <a-col :md="6" justify="start">
                     <a-cascader v-model:value="value" :options="$page.props.menudos" @change="irAOpcion" :show-search="{ filter }" placeholder="Ir a..." />
                 </a-col>
                 <a-col :md="6" justify="center">

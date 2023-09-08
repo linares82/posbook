@@ -6,6 +6,7 @@ use App\Http\Controllers\MenusController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\StocksController;
+use App\Http\Controllers\OutputsController;
 use App\Http\Controllers\PeriodsController;
 use App\Http\Controllers\ReasonsController;
 use App\Http\Controllers\AccountsController;
@@ -396,6 +397,7 @@ Route::prefix('/accounts')
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:accounts.destroy');
 });
 
+
 Route::prefix('/outputs')
 ->middleware('auth')
 ->name('outputs.')
@@ -408,4 +410,18 @@ Route::prefix('/outputs')
     Route::post('/store', 'store')->name('store')->middleware('can:outputs.create');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:outputs.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:outputs.destroy');
+});
+
+Route::prefix('/expenses')
+->middleware('auth')
+->name('expenses.')
+->controller(ExpensesController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:expenses.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:expenses.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:expenses.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:expenses.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:expenses.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:expenses.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:expenses.destroy');
 });
