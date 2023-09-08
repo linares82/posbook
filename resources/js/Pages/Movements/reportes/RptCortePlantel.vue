@@ -21,7 +21,7 @@
         <a-col :md="1"></a-col>
         <a-col :md="7">
             <a-form-item compact label="Fecha de:" name="fecha_f" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-date-picker show-time v-model:value="formCashBox.fecha_f" format="YYYY-MM-DD HH:mm:ss" :bordered="true" />
+                <a-date-picker v-model:value="formCashBox.fecha_f" format="YYYY-MM-DD" :bordered="true" />
                 <div v-if="errors.fecha_f">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fecha_f"></div>
                 </div>
@@ -30,7 +30,7 @@
         <a-col :md="1"></a-col>
         <a-col :md="7">
             <a-form-item compact label="Fecha a:" name="fecha_t" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-date-picker show-time v-model:value="formCashBox.fecha_t" format="YYYY-MM-DD HH:mm:ss" :bordered="true" />
+                <a-date-picker v-model:value="formCashBox.fecha_t" format="YYYY-MM-DD" :bordered="true" />
                 <div v-if="errors.fecha_t">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fecha_t"></div>
                 </div>
