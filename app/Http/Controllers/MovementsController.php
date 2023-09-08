@@ -416,8 +416,8 @@ class MovementsController extends Controller
             ->join('order_sales as os', 'os.id', 'osl.order_sale_id')
             ->whereNull('os.deleted_at')*/
             ->where('plantel_id', $datos['plantel_id'])
-            ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->toDateString())
-            ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->toDateString())
+            ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->subDay()->toDateString())
+            ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->subDay()->toDateString())
             ->orderBy('movements.product_id')
             ->get();
 
@@ -533,8 +533,8 @@ class MovementsController extends Controller
                 //->where('plantel_id', $plantel['id'])
                 //->whereDate('movements.created_at', '>=', $datos['fecha_f'])
                 //->whereDate('movements.created_at', '<=', $datos['fecha_t'])
-                ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->toDateString())
-                ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->toDateString())
+                ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->subDay()->toDateString())
+                ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->subDay()->toDateString())
                 ->orderBy('movements.product_id')
                 ->get();
             //dd($lineas->toArray());
