@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Inertia\Inertia;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +31,7 @@ class PaymentMethodsController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $sysMessage=$request->session()->get('sysMessage');
         $paymentMethods=PaymentMethod::query()
         ->when($request->input('name'), function($query, $item){
@@ -59,7 +60,12 @@ class PaymentMethodsController extends Controller
      */
     public function create()
     {
-        return Inertia::render('PaymentMethods/Create');
+        $accounts=Account::where('bnd_ingreso', 1)->get()->map(fn ($cashBox) => [
+            'value' => $cashBox->id,
+            'label' => $cashBox->code." ".$cashBox->name,
+        ]);
+        $accounts->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+        return Inertia::render('PaymentMethods/Create', ['accounts'=>$accounts]);
     }
 
     /**
@@ -91,7 +97,7 @@ class PaymentMethodsController extends Controller
     public function show($id)
     {
         $paymentMethod=PaymentMethod::findOrfail($id);
-        
+
         return Inertia::render('PaymentMethods/Show', ['paymentMethod'=>$paymentMethod]);
     }
 
@@ -104,7 +110,16 @@ class PaymentMethodsController extends Controller
     public function edit($id)
     {
         $paymentMethod=PaymentMethod::findOrfail($id);
-        return Inertia::render('PaymentMethods/Edit', ['paymentMethod'=>$paymentMethod]);
+
+        $accounts=Account::where('bnd_ingreso', 1)->get()->map(fn ($cashBox) => [
+            'value' => $cashBox->id,
+            'label' => $cashBox->code." ".$cashBox->name,
+        ]);
+        $accounts->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+
+        return Inertia::render('PaymentMethods/Edit', ['paymentMethod'=>$paymentMethod,
+        'accounts'=>$accounts
+    ]);
     }
 
     /**
@@ -123,8 +138,9 @@ class PaymentMethodsController extends Controller
             $paymentMethod->name=$datos['name'];
             $paymentMethod->porcentaje_descuento=$datos['porcentaje_descuento'];
             $paymentMethod->bnd_exempt=$datos['bnd_exempt']==true ? 1 : 0;
+            $paymentMethod->account_id=$datos['account_id'];
             $paymentMethod->save();
-            
+
         }catch(Exception $e){
             dd($e);
         }

@@ -169,7 +169,7 @@ export default {
 
     props: ["menu", "auth"],
     setup (props) {
-        const list = props.menu;
+
         const collapsed = ref(true);
         const linkPerfil = "/users/editPerfil/" + props.auth.user.id;
 
@@ -198,7 +198,7 @@ export default {
             linkPerfil,
             selectedKeys: ref(["1"]),
             collapsed: ref(true),
-            list,
+            //list,
             selectedKeys: ref(["1"]),
             openKeys: ref(["2"]),
             es_ES,

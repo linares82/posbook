@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Inertia\Inertia;
+use App\Models\Account;
 use App\Models\CashBox;
+use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\Plantel;
 use App\Models\Product;
@@ -507,5 +509,68 @@ class CashBoxesController extends Controller
                 'cajasApartadas' => $cajasApartadas
             ]
         );
+    }
+
+    public function rptIngresosEgresos(){
+        $planteles = Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        $planteles->prepend(["value" => null, 'label' => "Selecionar Opción"]);
+        $plantelesPluck=Plantel::pluck('id');
+        $cuentas = Account::get()->map(fn ($account) => [
+            'value' => $account->id,
+            'label' => $account->code." ".$account->name,
+        ]);
+        $cuentas->prepend(["value" => null, 'label' => "Selecionar Opción"]);
+        $cuentasPluck=Account::pluck('id');
+        //dd($plantelesPluck);
+        return Inertia::render('CashBoxes/reportes/RptIngresosEgresos',['planteles'=>$planteles,
+        "cuentas"=>$cuentas, 'cuentasPluck'=>$cuentasPluck, 'plantelesPluck'=>$plantelesPluck
+    ]);
+    }
+
+    public function rptIngresosEgresosR(Request $request){
+        $datos=$request->all();
+        //dd($datos);
+        $ingresos=CashBox::select('cash_boxes.id as cash_box_id','cash_boxes.customer','pla.name as plantel',
+        'cash_boxes.matricula', 'cash_boxes.bnd_entregado', 'stp.name as estatus_pago', 'p.fecha', 'ln.total as monto',
+        'pro.name as producto',
+        'c.name as cuenta', 'c.code as codigo')
+        ->join ('ln_cash_boxes as ln', 'ln.cash_box_id', 'cash_boxes.id')
+        ->join('products as pro', 'pro.id', 'ln.product_id')
+        ->join('accounts as c','c.id', 'pro.account_id')
+        ->join('payments as p', 'p.cash_box_id','cash_boxes.id')
+        ->join('plantels as pla', 'pla.id', 'cash_boxes.plantel_id')
+        ->join('st_payments as stp', 'stp.id', 'p.st_payment_id')
+        ->join('payment_methods as pm', 'pm.id', 'p.payment_method_id')
+        ->where('st_cash_box_id', 2)
+        ->where('st_payment_id', 2)
+        ->whereBetween('p.fecha', array($datos['fecha_f'], $datos['fecha_t']))
+        ->whereIn('cash_boxes.plantel_id', $datos['plantel_id'])
+        ->orderBy('c.id')
+        ->orderBy('pla.id')
+        ->get();
+
+        //dd($ingresos->toArray());
+
+        $egresos=Expense::select('expenses.id','pla.name as plantel', 'o.name as concepto',
+        'c.name as cuenta','c.code as codigo','monto', 'fecha')
+        ->whereBetween('expenses.fecha', array($datos['fecha_f'], $datos['fecha_t']))
+        ->whereIn('expenses.plantel_id', $datos['plantel_id'])
+        ->join('plantels as pla', 'pla.id', 'expenses.plantel_id')
+        ->join('outputs as o', 'o.id', 'expenses.output_id')
+        ->join('accounts as c', 'c.id', 'o.account_id')
+        ->orderBy('c.id')
+        ->orderBy('pla.id')
+        ->get();
+
+        //dd($egresos->toArray());
+
+        return Inertia::render('CashBoxes/reportes/RptIngresosEgresosR', ['ingresos' => $ingresos,
+        'egresos' => $egresos,
+        'fecha1' => date_format(date_create($datos['fecha_f']),'Y-m-d'),
+        'fecha2' => date_format(date_create($datos['fecha_t']), 'Y-m-d'),
+    ]);
     }
 }

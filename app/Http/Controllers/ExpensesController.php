@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Inertia\Inertia;
+use App\Models\Output;
 use App\Models\Expense;
+use App\Models\Plantel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ExpensesCreateRequest;
@@ -40,9 +42,17 @@ class ExpensesController extends Controller
         ->withQueryString()
         ->through(fn($expense)=>[
             'id'=>$expense->id,
-            'name'=>$expense->name
+            'plantel_id'=>$expense->plantel_id,
+            'plantel'=>$expense->plantel->name,
+            'output_id'=>$expense->output_id,
+            'output'=>$expense->output->name,
+            'fecha'=>$expense->fecha,
+            'monto'=>$expense->monto,
+            'detalle'=>$expense->detalle
         ]);
         //dd($users);
+
+
 
         return Inertia::render('Expenses/Index',[
             'expenses'=>$expenses,
@@ -59,7 +69,17 @@ class ExpensesController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Expenses/Create');
+        $planteles = Plantel::whereIn('id', Auth::user()->plantels->pluck('id'))->get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        $planteles->prepend(["value" => null, 'label' => "Selecionar Opción"]);
+        $outputs = Output::get()->map(fn ($output) => [
+            'value' => $output->id,
+            'label' => $output->name,
+        ]);
+        $outputs->prepend(["value" => null, 'label' => "Selecionar Opción"]);
+        return Inertia::render('Expenses/Create', ['outputs'=>$outputs, 'planteles'=>$planteles]);
     }
 
     /**
@@ -103,7 +123,18 @@ class ExpensesController extends Controller
     public function edit($id)
     {
         $expense=Expense::findOrfail($id);
-        return Inertia::render('Expenses/Edit', ['expense'=>$expense]);
+
+        $planteles = Plantel::whereIn('id', Auth::user()->plantels->pluck('id'))->get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        $planteles->prepend(["value" => null, 'label' => "Selecionar Opción"]);
+        $outputs = Output::get()->map(fn ($output) => [
+            'value' => $output->id,
+            'label' => $output->name,
+        ]);
+        $outputs->prepend(["value" => null, 'label' => "Selecionar Opción"]);
+        return Inertia::render('Expenses/Edit', ['expense'=>$expense, 'outputs'=>$outputs, 'planteles'=>$planteles]);
     }
 
     /**
@@ -119,8 +150,8 @@ class ExpensesController extends Controller
         //dd($datos);
         try{
             $expense=Expense::findOrFail($id);
-            $expense->name=$datos['name'];
-            $expense->save();
+            //$expense->name=$datos['name'];
+            $expense->update($datos);
 
         }catch(Exception $e){
             dd($e);

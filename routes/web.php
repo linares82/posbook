@@ -10,6 +10,7 @@ use App\Http\Controllers\OutputsController;
 use App\Http\Controllers\PeriodsController;
 use App\Http\Controllers\ReasonsController;
 use App\Http\Controllers\AccountsController;
+use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\PlantelsController;
 use App\Http\Controllers\ProductsController;
@@ -304,6 +305,8 @@ Route::prefix('/cashBoxes')
     Route::get('/ticket/{id}', 'ticket')->name('ticket')->middleware('can:cashBoxes.ticket');
     Route::get('/rptCajasApartadasF', 'rptCajasApartadasF')->name('rptCajasApartadasF')->middleware('can:cashBoxes.rptCajasApartadas');
     Route::post('/rptCajasApartadasR', 'rptCajasApartadasR')->name('rptCajasApartadasR')->middleware('can:cashBoxes.rptCajasApartadas');
+    Route::get('/rptIngresosEgresosF', 'rptIngresosEgresos')->name('rptIngresosEgresos')->middleware('can:cashBoxes.rptIngresosEgresos');
+    Route::post('/rptIngresosEgresosR', 'rptIngresosEgresosR')->name('rptIngresosEgresosR')->middleware('can:cashBoxes.rptIngresosEgresos');
     Route::post('/store', 'store')->name('store')->middleware('can:cashBoxes.create');
     Route::post('/update', 'update')->name('update')->middleware('can:cashBoxes.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:cashBoxes.destroy');

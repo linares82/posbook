@@ -33,7 +33,7 @@ class PaymentMethod extends Model
 		});
 	}
 
-    protected $fillable = ['name','bnd_excempt', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id', 'porcentaje_descuento'];
+    protected $fillable = ['name','bnd_excempt','account_id', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id', 'porcentaje_descuento'];
 
 	protected $dates = ['deleted_at'];
 

@@ -29,6 +29,8 @@ class CreateExpensesTable extends Migration
             $table->foreign('usu_mod_id')->references('id')->on('users');
             $table->foreign('usu_alta_id')->references('id')->on('users');
             $table->foreign('usu_delete_id')->references('id')->on('users');
+            $table->foreign('plantel_id')->references('id')->on('plantels');
+            $table->foreign('output_id')->references('id')->on('outputs');
         });
     }
 

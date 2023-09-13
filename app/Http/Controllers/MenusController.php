@@ -161,6 +161,8 @@ class MenusController extends Controller
 
     public function findItem($id){
         $menu=Menu::find($id);
+        //dd($id);
+        //dd(route($menu->link));
         return route($menu->link);
     }
 }

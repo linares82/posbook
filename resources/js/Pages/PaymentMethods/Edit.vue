@@ -52,6 +52,12 @@
 
       <a-col :span="1"></a-col>
 
+      <a-col :md="7">
+            <a-form-item name="account_id" label="Cuenta Ingreso">
+                <a-select v-model:value="formPaymentMethod.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOpttionsAccounts"></a-select>
+            </a-form-item>
+        </a-col>
+
       <a-col :span="1"></a-col>
 
       <a-col :span="1"></a-col>
@@ -82,14 +88,15 @@ export default {
     LockOutlined,
   },
 
-  props: ["errors", "paymentMethod"],
+  props: ["errors", "paymentMethod", 'accounts'],
 
   setup(props) {
     let formPaymentMethod = reactive({
       id: props.paymentMethod.id,
       name: props.paymentMethod.name,
       bnd_exempt: props.paymentMethod.bnd_exempt,
-      porcentaje_descuento:props.paymentMethod.porcentaje_descuento
+      porcentaje_descuento:props.paymentMethod.porcentaje_descuento,
+      account_id:props.paymentMethod.account_id
     });
 
     let processing = ref(false);

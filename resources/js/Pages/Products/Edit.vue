@@ -81,7 +81,7 @@
         <a-col :span="1"></a-col>
 
         <a-col :md="7">
-            <a-form-item name="account_id" label="Cuenta Egreso">
+            <a-form-item name="account_id" label="Cuenta Ingreso">
                 <a-select v-model:value="formProduct.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOpttionsAccounts"></a-select>
             </a-form-item>
         </a-col>
