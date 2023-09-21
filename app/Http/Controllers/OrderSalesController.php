@@ -35,7 +35,7 @@ class OrderSalesController extends Controller
      */
     public function index(Request $request)
     {
-        //dd($request->all());
+        //dd($request->session()->get('sysMessage'));
         //dd(Auth::user()->plantels->pluck('id'));
         $sysMessage=$request->session()->get('sysMessage');
         $filtros = $request->input('search');
@@ -282,6 +282,18 @@ class OrderSalesController extends Controller
             dd($e);
         }
 		return redirect()->route('orderSales.index')->with('sysMessage', 'Registros Borrado.');
+    }
+
+    public function actualizarLineasOrderSales($id){
+        return $lineas=OrderSalesLine::select('order_sales_lines.*','p.name as plantel','pro.name as product',
+        DB::raw('(select sum(m.cantidad_entrada)
+        from movements as m where m.order_sales_line_id=order_sales_lines.id and
+        m.deleted_at is null) as total_entradas'))
+        ->join('plantels as p','p.id','order_sales_lines.plantel_id')
+        ->join('products as pro','pro.id','order_sales_lines.product_id')
+        ->where('order_sale_id', $id)
+        ->whereIn('plantel_id', Auth::user()->plantels->pluck('id'))
+        ->get();
     }
 
 }

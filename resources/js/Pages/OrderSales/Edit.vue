@@ -30,7 +30,7 @@
 
         <a-col :md="7">
             <a-form-item compact label="Plantel" name="plantel_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-select :options="planteles" show-search v-model:value="formOrderSale.plantel_id" style="width: 300px" placeholder="Seleccionar Opción">
+                <a-select :options="planteles" show-search v-model:value="formOrderSale.plantel_id" style="width: 300px" placeholder="Seleccionar Opción" :filter-option="filterOption">
 
                 </a-select>
                 <div v-if="errors.plantel_id">
@@ -42,11 +42,11 @@
         <a-col :span="24">
             <a-space v-for="(linea, index) in formOrderSale.lineas" :key="linea.tiempo_id" style="display: flex; margin-bottom: 8px" align="baseline">
                 <a-form-item :name="['linea', index, 'plantel_id']" label="Plantel">
-                    <a-select v-model:value="linea.plantel_id" :options="planteles" style="width: 300px" show-search></a-select>
+                    <a-select v-model:value="linea.plantel_id" :options="planteles" style="width: 300px" show-search :filter-option="filterOption"></a-select>
                 </a-form-item>
 
                 <a-form-item :name="['linea', index, 'product_id']" label="Producto">
-                    <a-select v-model:value="linea.product_id" :options="productos" style="width: 300px" show-search></a-select>
+                    <a-select v-model:value="linea.product_id" :options="productos" style="width: 300px" show-search :filter-option="filterOption"></a-select>
                 </a-form-item>
 
                 <a-form-item label="Cantidad" :name="['linea', index, 'cantidad']">
@@ -79,7 +79,7 @@
     <template #bodyCell="{ column, text, record }">
         <template v-if="['plantel_id'].includes(column.dataIndex)">
             <div>
-                <a-select v-if="editableData[record.id]" :options="planteles" v-model:value="editableData[record.id][column.dataIndex]"  style="width: 200px" show-search></a-select>
+                <a-select v-if="editableData[record.id]" :options="planteles" v-model:value="editableData[record.id][column.dataIndex]"  style="width: 200px" show-search :filter-option="filterOption"></a-select>
                 <template v-else>
                     {{ text }}
                 </template>
@@ -87,14 +87,14 @@
         </template>
         <template v-if="['plantel','product'].includes(column.dataIndex)">
             <div>
-                
+
                     {{ text }}
-                
+
             </div>
         </template>
         <template v-if="['product_id'].includes(column.dataIndex)">
             <div>
-                <a-select v-if="editableData[record.id]" :options="productos" v-model:value="editableData[record.id][column.dataIndex]"  style="width: 200px" show-search></a-select>
+                <a-select v-if="editableData[record.id]" :options="productos" v-model:value="editableData[record.id][column.dataIndex]"  style="width: 200px" show-search :filter-option="filterOption"></a-select>
                 <template v-else>
                     {{ text }}
                 </template>
@@ -282,6 +282,12 @@ export default {
             Inertia.delete(`/orderSalesLines/delete/${key}`, {
                     replace: true,
                 })
+            window.location.reload();
+        };
+
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
         };
 
         return {
@@ -300,6 +306,7 @@ export default {
             edit,
             save,
             cancel,
+            filterOption
         };
     },
 };

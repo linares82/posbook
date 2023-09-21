@@ -58,7 +58,7 @@
 
         <a-col :md="7">
             <a-form-item name="period_id" label="Periodo">
-                <a-select v-model:value="formProduct.period_id" show-search placeholder="Seleccionar opción" :options="periods" :filter-option="filterOptionPeriods"></a-select>
+                <a-select v-model:value="formProduct.period_id" show-search placeholder="Seleccionar opción" :options="periods" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
 
@@ -66,7 +66,7 @@
 
         <a-col :md="7">
             <a-form-item name="product_id" label="Libro">
-                <a-select v-model:value="formProduct.product_id" show-search placeholder="Seleccionar opción" :options="books" :filter-option="filterOptionProducts"></a-select>
+                <a-select v-model:value="formProduct.product_id" show-search placeholder="Seleccionar opción" :options="books" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
 
@@ -74,7 +74,7 @@
 
         <a-col :md="7">
             <a-form-item name="cash_box_to_assign_id" label="Caja">
-                <a-select v-model:value="formProduct.cash_box_to_assign_id" show-search placeholder="Seleccionar opción" :options="cashBoxes" :filter-option="filterOptionCashBoxes"></a-select>
+                <a-select v-model:value="formProduct.cash_box_to_assign_id" show-search placeholder="Seleccionar opción" :options="cashBoxes" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
 
@@ -82,7 +82,7 @@
 
         <a-col :md="7">
             <a-form-item name="account_id" label="Cuenta Egreso">
-                <a-select v-model:value="formProduct.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOpttionsAccounts"></a-select>
+                <a-select v-model:value="formProduct.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
 
@@ -147,28 +147,14 @@ export default {
             });
         };
 
-        const filterOptionPeriods = (input, option) => {
+        const filterOption = (input, option) => {
             return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
         };
 
-        const filterOptionProducts = (input, option) => {
-            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-        };
-
-        const filterOptionCashBoxes = (input, option) => {
-            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-        };
-
-        const filterOptionAccounts = (input, option) => {
-            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-        };
 
         return {
             formProduct,
-            filterOptionPeriods,
-            filterOptionProducts,
-            filterOptionCashBoxes,
-            filterOptionAccounts,
+            filterOption,
             submitF,
             processing,
         };

@@ -73,7 +73,7 @@
 
       <a-col :md="7">
             <a-form-item name="account_id" label="Cuenta Egreso">
-                <a-select v-model:value="formPaymentMethod.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOpttionsAccounts"></a-select>
+                <a-select v-model:value="formPaymentMethod.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
 
@@ -144,11 +144,16 @@ export default {
       console.log("Failed:", errorInfo);
     };
 */
+const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
 
     return {
       formPaymentMethod,
       submitF,
       processing,
+      filterOption
     };
   },
 };

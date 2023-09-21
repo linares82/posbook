@@ -11,7 +11,8 @@
     <a-row :gutter="20">
         <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
             <a-form-item compact label="Plantel" name="plantel_id">
-                <a-select :options="planteles" mode="multiple" @search="filterOption" v-model:value="formCashBox.plantel_id" style="width: 100%" placeholder="Seleccionar Opción">
+                <a-select :options="planteles" mode="multiple" show-search
+                    :filter-option="filterOption" v-model:value="formCashBox.plantel_id" style="width: 100%" placeholder="Seleccionar Opción">
                 </a-select>
                 <div v-if="errors.plantel_id">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.plantel_id"></div>
@@ -22,7 +23,8 @@
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
             <a-form-item compact label="Cuentas" name="account_id">
-                <a-select :options="cuentas" mode="multiple" @search="filterOption" v-model:value="formCashBox.account_id" style="width: 100%" placeholder="Seleccionar Opción">
+                <a-select :options="cuentas" mode="multiple" show-search
+                    :filter-option="filterOption" v-model:value="formCashBox.account_id" style="width: 100%" placeholder="Seleccionar Opción">
                 </a-select>
                 <div v-if="errors.account_id">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.account_id"></div>
@@ -142,7 +144,7 @@ export default {
         };
 
         const filterOption = (input, option) => {
-            return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
         };
 
         let plantelesTodos=() => {

@@ -13,7 +13,7 @@
 
         <a-col :md="7">
             <a-form-item compact label="Plantel" name="plantel_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-select :options="planteles" show-search v-model:value="formCashBox.plantel_id" style="width: 300px" placeholder="Seleccionar Opción">
+                <a-select :options="planteles" show-search v-model:value="formCashBox.plantel_id" style="width: 300px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                 </a-select>
                 <div v-if="errors.plantel_id">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.plantel_id"></div>
@@ -73,7 +73,7 @@
                 </template>
                 <a-col :md="10">
                     <a-form-item label="Producto" name="product_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                        <a-select @change="handleChange" show-search :options="productos" v-model:value="formCashBox.product_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        <a-select @change="handleChange" show-search :options="productos" v-model:value="formCashBox.product_id" style="width: 250px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                         </a-select>
                         <div v-if="errors.product_id">
                             <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.product_id"></div>
@@ -116,7 +116,7 @@
             <a-col :span="16">
                 <a-space v-for="(linea, index) in formCashBox.lineas" :key="linea.tiempo_id" style="display: flex; margin-bottom: 8px" align="baseline">
                     <a-form-item :name="['linea', index, 'product_id']" label="Producto">
-                        <a-select v-model:value="linea.product_id" :options="productos" disabled style="width: 250px" show-search></a-select>
+                        <a-select v-model:value="linea.product_id" :options="productos" disabled style="width: 250px" show-search :filter-option="filterOption"></a-select>
                     </a-form-item>
 
                     <a-form-item :name="['linea', index, 'totalLinea']" label="Total">
@@ -136,7 +136,7 @@
                 </template>
                 <a-col :md="24">
                     <a-form-item label="Metodo de Pago" name="payment_method_id">
-                        <a-select :options="paymentMethods" @change="consultaPorcentajeDescuento" show-search v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        <a-select :options="paymentMethods" @change="consultaPorcentajeDescuento" show-search v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                         </a-select>
                         <div v-if="errors.payment_method_id">
                             <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.payment_method_id"></div>
@@ -217,7 +217,7 @@
             <a-col :span="16">
                 <a-space v-for="(payment, index) in formCashBox.payments" :key="payment.tiempo_id" style="display: flex; margin-bottom: 8px" align="baseline">
                     <a-form-item :name="['payment', index, 'payment_method_id']" label="Metodo Pago">
-                        <a-select v-model:value="payment.payment_method_id" :options="paymentMethods" disabled style="width: 250px" show-search></a-select>
+                        <a-select v-model:value="payment.payment_method_id" :options="paymentMethods" disabled style="width: 250px" show-search :filter-option="filterOption"></a-select>
                     </a-form-item>
 
                     <a-form-item :name="['payment', index, 'monto']" label="Monto">
@@ -485,6 +485,10 @@ export default {
 
         };
 
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
 
         return {
             //porc_desc_calculado,
@@ -511,6 +515,7 @@ export default {
             visibleLinea,
             showModalLinea,
             handleCancelLinea,
+            filterOption
         };
     },
 };

@@ -11,7 +11,7 @@
     <a-row>
         <a-col :md="7">
             <a-form-item compact label="Plantel" name="plantel_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-select :options="planteles" show-search v-model:value="formCashBox.plantel_id" style="width: 100%" placeholder="Seleccionar Opción">
+                <a-select :options="planteles" show-search v-model:value="formCashBox.plantel_id" style="width: 100%" placeholder="Seleccionar Opción" :filter-option="filterOption">
                 </a-select>
                 <div v-if="errors.plantel_id">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.plantel_id"></div>
@@ -130,6 +130,11 @@ export default {
             formCashBox.fecha_t=dayjs(dateString, "YYYY-MM-DD");
         };
 
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
+
         return {
             formCashBox,
             submitF,
@@ -138,7 +143,8 @@ export default {
             loading,
             visible,
             onChange1,
-            onChange2
+            onChange2,
+            filterOption
         };
     },
 };

@@ -4,14 +4,14 @@
         <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Caja" sub-title="Entradas Salidas" />
     </a-col>
     <a-col :span="12">
-        
+
     </a-col>
 </a-row>
 <a-form ref="formRef" :model="formCashBox" @submit.prevent="submitF" layout="vertical">
     <a-row>
         <a-col :md="7">
             <a-form-item compact label="Plantel" name="plantel_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-select :options="planteles" mode="multiple" show-search v-model:value="formCashBox.plantel_id" style="width: 300px" placeholder="Seleccionar Opción">
+                <a-select :options="planteles" mode="multiple" show-search v-model:value="formCashBox.plantel_id" style="width: 300px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                 </a-select>
                 <div v-if="errors.plantel_id">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.plantel_id"></div>
@@ -117,6 +117,11 @@ export default {
         const loadingLinea = ref(false);
         const visibleLinea = ref(false);
 
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
+
         return {
             formCashBox,
             submitF,
@@ -124,6 +129,7 @@ export default {
             formRef,
             loading,
             visible,
+            filterOption
         };
     },
 };

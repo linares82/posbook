@@ -34,6 +34,8 @@
                     v-model:value="search.plantel_id"
                     style="width: 200px"
                     placeholder="Seleccionar Plantel..."
+                    show-search
+                    :filter-option="filterOption"
                     >
 
                     </a-select>
@@ -143,7 +145,8 @@ import { message } from 'ant-design-vue';
 import {
     watch,
     ref,
-    reactive
+    reactive,
+    mounted
 } from "vue";
 import {
     Inertia
@@ -169,6 +172,9 @@ export default {
 
     setup(props) {
         //console.log(props.sysMessage);
+        if (props.sysMessage !== null) {
+                message.success(props.sysMessage, 10);
+            }
         mounted: {
             if (props.sysMessage !== null) {
                 message.success(props.sysMessage, 10);
@@ -202,11 +208,15 @@ export default {
                 );
             }, 500)
         );
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
         return {
             borrar,
             search,
             paginator: false,
-
+            filterOption
         };
     },
 };

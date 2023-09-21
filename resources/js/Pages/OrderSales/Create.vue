@@ -29,7 +29,7 @@
 
         <a-col :md="7">
             <a-form-item compact label="Plantel" name="plantel_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-select :options="planteles" show-search v-model:value="formOrderSale.plantel_id" style="width: 300px" placeholder="Seleccionar Opción">
+                <a-select :options="planteles" show-search v-model:value="formOrderSale.plantel_id" style="width: 300px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                 </a-select>
                 <div v-if="errors.plantel_id">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.plantel_id"></div>
@@ -40,11 +40,11 @@
         <a-col :span="24">
             <a-space v-for="(linea, index) in formOrderSale.lineas" :key="linea.tiempo_id" style="display: flex; margin-bottom: 8px" align="baseline">
                 <a-form-item :name="['linea', index, 'plantel_id']" label="Plantel">
-                    <a-select v-model:value="linea.plantel_id" :options="planteles" style="width: 300px" show-search></a-select>
+                    <a-select v-model:value="linea.plantel_id" :options="planteles" style="width: 300px" show-search :filter-option="filterOption"></a-select>
                 </a-form-item>
 
                 <a-form-item :name="['linea', index, 'product_id']" label="Producto">
-                    <a-select v-model:value="linea.product_id" :options="productos" style="width: 300px" show-search></a-select>
+                    <a-select v-model:value="linea.product_id" :options="productos" style="width: 300px" show-search :filter-option="filterOption"></a-select>
                 </a-form-item>
 
                 <a-form-item label="Cantidad" :name="['linea', index, 'cantidad']">
@@ -107,11 +107,11 @@ export default {
         PlusOutlined,
     },
 
-    props: ["errors", 'productos', 'planteles','plantel'],
+    props: ["errors", 'productos', 'planteles', 'plantel'],
 
     setup(props) {
         const formRef = ref();
-            let formOrderSale = reactive({
+        let formOrderSale = reactive({
             fecha: "",
             plantel_id: props.plantel,
             lineas: []
@@ -161,6 +161,10 @@ export default {
       console.log("Failed:", errorInfo);
     };
 */
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
 
         return {
             formOrderSale,
@@ -171,7 +175,8 @@ export default {
             formRef,
             onFinish,
             removeLinea,
-            addLinea
+            addLinea,
+            filterOption
         };
     },
 };

@@ -36,7 +36,7 @@
 
       <a-col :span="1"></a-col>
 
-      <a-col :md="7"> 
+      <a-col :md="7">
         <a-form-item label="Motivo" name="motivo">
           <a-input v-model:value="formOrderDevolution.motivo"> </a-input>
           <div v-if="errors.motivo">
@@ -54,7 +54,7 @@
 
       <a-col :md="24">
             <a-form-item compact label="Orden Compra (Si no aparece la orden buscada, no tiene articulos para devolver)" name="order_sale_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-select :options="orderSales" show-search v-model:value="formOrderDevolution.order_sale_id" style="width: 300px" placeholder="Seleccionar Opción">
+                <a-select :options="orderSales" show-search v-model:value="formOrderDevolution.order_sale_id" style="width: 300px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                 </a-select>
                 <div v-if="errors.order_sale_id">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.order_sale_id"></div>
@@ -109,11 +109,16 @@ export default {
       });
     };
 
+    const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
 
     return {
       formOrderDevolution,
       submitF,
       processing,
+      filterOption
     };
   },
 };

@@ -22,6 +22,8 @@
                     v-model:value="search.plantel_id"
                     style="width: 200px"
                     placeholder="Seleccionar Plantel..."
+                    show-search
+                    :filter-option="filterOption"
                     >
 
                     </a-select>
@@ -32,6 +34,8 @@
                     v-model:value="search.reason_id"
                     style="width: 200px"
                     placeholder="Seleccionar Motivo..."
+                    show-search
+                    :filter-option="filterOption"
                     >
 
                     </a-select>
@@ -42,6 +46,8 @@
                     v-model:value="search.type_movement_id"
                     style="width: 200px"
                     placeholder="Seleccionar Tipo Movimiento..."
+                    show-search
+                    :filter-option="filterOption"
                     >
 
                     </a-select>
@@ -52,6 +58,8 @@
                     v-model:value="search.product_id"
                     style="width: 200px"
                     placeholder="Seleccionar Producto..."
+                    show-search
+                    :filter-option="filterOption"
                     >
 
                     </a-select>
@@ -74,9 +82,11 @@
                                     <th @click="orderColumn('pu.plantel_id')" class="ant-table-cell" colstart="1" colend="1">Plantel</th>
                                     <th @click="orderColumn('reason_id')" class="ant-table-cell" colstart="1" colend="1">Motivo</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Tipo Movimiento</th>
+
                                     <th @click="orderColumn('product_id')" class="ant-table-cell" colstart="1" colend="1">Producto</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Entrada</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Salida</th>
+                                    <th class="ant-table-cell" colstart="1" colend="1">Caja</th>
                                     <th class="ant-table-cell" colstart="3" colend="4">Acciones</th>
                                 </thead>
                                 <tbody class="ant-table-tbody">
@@ -86,9 +96,11 @@
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.plantel }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.motivo }} - {{ movement.order_sales_id }} Linea - {{ movement.order_sales_line_id }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.tipo_movimiento }}</td>
+
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.producto }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.entrada }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.salida }}</td>
+                                        <td class="ant-table-cell" colstart="1" colend="1">Caja: {{ movement.cash_box_id }} Cantidad: {{ movement.quantity }}</td>
                                         <td class="ant-table-cell" colstart="3" colend="4">
                                            <!--
                                             <a-dropdown-button>
@@ -222,12 +234,17 @@ export default {
             search.direction=search.direction === "asc" ? "desc" : "asc";
         }
 
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
 
         return {
             borrar,
             search,
             paginator: false,
             orderColumn,
+            filterOption
         };
     },
 };

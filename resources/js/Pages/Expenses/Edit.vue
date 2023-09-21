@@ -11,7 +11,7 @@
     <a-row :gutter="20">
         <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
             <a-form-item compact label="Plantel" name="plantel_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-select :options="planteles" show-search v-model:value="formExpense.plantel_id" style="width: 300px" placeholder="Seleccionar Opción">
+                <a-select :options="planteles" show-search v-model:value="formExpense.plantel_id" style="width: 300px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                 </a-select>
                 <div v-if="errors.plantel_id">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.plantel_id"></div>
@@ -21,7 +21,7 @@
 
         <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
             <a-form-item compact label="Concepto" name="output_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-select :options="outputs" show-search v-model:value="formExpense.output_id" style="width: 300px" placeholder="Seleccionar Opción">
+                <a-select :options="outputs" show-search v-model:value="formExpense.output_id" style="width: 300px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                 </a-select>
                 <div v-if="errors.output_id">
                     <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.output_id"></div>
@@ -114,11 +114,17 @@ export default {
       });
     };
 
+    const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
+
 
     return {
       formExpense,
       submitF,
       processing,
+      filterOption
     };
   },
 };

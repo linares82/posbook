@@ -84,11 +84,11 @@ class OrderSalesLinesController extends Controller
             $period->cantidad=$datos['cantidad'];
             $period->contacto=$datos['contacto'];
             $period->save();
-            
+
         }catch(Exception $e){
             dd($e);
         }
-        
+
         return redirect()->route('orderSales.edit',$period->order_sale_id)->with('sysMessage', 'Registro Actualizado.');
     }
 
@@ -102,6 +102,12 @@ class OrderSalesLinesController extends Controller
     {
         $orderSalesLine=OrderSalesLine::findOrFail($id);
         $cabecera=$orderSalesLine->order_sale_id;
+
+        $movements=Movement::where('order_sales_line_id', $orderSalesLine->id)->where('cantidad_salida', '>', 0)->get();
+
+        if(count($movements)>0){
+            return redirect()->route('orderSales.edit', $cabecera)->with('sysMessage', 'Registro con movimientos, no puede ser borrar.');
+        }
         //dd($user);
         try{
             $orderSalesLine->delete();
@@ -123,7 +129,7 @@ class OrderSalesLinesController extends Controller
             ->whereColumn('cantidad_entrada','<','cantidad_salida')
             ->first();
 */
-            
+
 
             $input['plantel_id']=$linea->plantel_id;
             $input['reason_id']=2;
@@ -136,7 +142,7 @@ class OrderSalesLinesController extends Controller
             $input['order_sales_line_id']=$linea->id;
 
             $movement=Movement::create($input);
-            
+
             $lnCashBoxes=CashBox::select('ln.*')->join('ln_cash_boxes as ln','ln.cash_box_id','cash_boxes.id')
             ->where('cash_boxes.plantel_id', $linea->plantel_id)
             ->where('ln.product_id', $linea->product_id)
@@ -151,11 +157,11 @@ class OrderSalesLinesController extends Controller
                     $movement->save();
                 }
             }
-            
+
         }catch(Exception $e){
             dd($e);
         }
-        
+
 
     }
 }

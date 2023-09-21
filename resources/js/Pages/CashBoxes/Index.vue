@@ -21,6 +21,8 @@
                     v-model:value="search.plantel_id"
                     style="width: 200px"
                     placeholder="Seleccionar Plantel..."
+                    show-search
+                    :filter-option="filterOption"
                     >
 
                     </a-select>
@@ -185,11 +187,17 @@ export default {
                 );
             }, 500)
         );
+
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
+
         return {
             borrar,
             search,
             paginator: false,
-
+            filterOption
         };
     },
 };

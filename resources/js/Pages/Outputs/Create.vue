@@ -29,13 +29,13 @@
 
         <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
             <a-form-item name="account_id" label="Cuenta Egreso">
-                <a-select v-model:value="formOutput.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOpttionsAccounts"></a-select>
+                <a-select v-model:value="formOutput.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
     </a-row>
-        <a-form-item>
-            <a-button type="primary" html-type="submit" :disabled="processing">Crear</a-button>
-        </a-form-item>
+    <a-form-item>
+        <a-button type="primary" html-type="submit" :disabled="processing">Crear</a-button>
+    </a-form-item>
 </a-form>
 </template>
 
@@ -95,10 +95,16 @@ export default {
     };
 */
 
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
+
         return {
             formOutput,
             submitF,
             processing,
+            filterOption
         };
     },
 };

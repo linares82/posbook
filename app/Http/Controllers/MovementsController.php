@@ -6,6 +6,7 @@ use DateTime;
 use Exception;
 use Carbon\Carbon;
 use Inertia\Inertia;
+use App\Models\Output;
 use App\Models\Reason;
 use App\Models\CashBox;
 use App\Models\Payment;
@@ -16,11 +17,13 @@ use App\Models\LnCashBox;
 use App\Models\OrderSale;
 use App\Models\TypeMovement;
 use Illuminate\Http\Request;
+use App\Models\OutputProduct;
 use App\Models\OrderSalesLine;
+use App\Models\OrderDevolutionLine;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\MovementsCreateRequest;
 use App\Http\Requests\MovementsUpdateRequest;
-use App\Models\OrderDevolutionLine;
 
 class MovementsController extends Controller
 {
@@ -78,9 +81,10 @@ class MovementsController extends Controller
                 $query->orderBy($filtros['column'], $filtros['direction']);
             });
         }
-        $movements = $m->select('movements.*')->orderBy('movements.id', 'desc')
+        $movements = $m->select('movements.*', 'lnc.quantity', 'lnc.cash_box_id')->orderBy('movements.id', 'desc')
             ->join('users as u', 'u.id', 'movements.usu_alta_id')
             ->join('order_sales_lines as osl', 'osl.id', 'movements.order_sales_line_id')
+            ->leftJoin('ln_cash_boxes as lnc', 'lnc.movement_id', 'movements.id')
             ->with('plantel', 'typeMovement', 'reason')
             ->whereNull('osl.deleted_at')
             ->whereIn('movements.plantel_id', $planteles)
@@ -93,6 +97,8 @@ class MovementsController extends Controller
                 'tipo_movimiento' => $movement->typeMovement->name,
                 'order_sales_id'=>$movement->orderSalesLine->order_sale_id,
                 'order_sales_line_id'=>$movement->order_sales_line_id,
+                'cash_box_id'=>$movement->cash_box_id,
+                'quantity'=>$movement->quantity,
                 'producto' => $movement->product->name,
                 'costo' => $movement->costo,
                 'precio' => $movement->precio,
@@ -178,10 +184,12 @@ class MovementsController extends Controller
         $orderSalesLine = OrderSalesLine::find($datos['order_sales_line_id']);
         $validar_existencia_cantidad = Movement::where('order_sales_line_id', $datos['order_sales_line_id'])->sum('cantidad_entrada');
         //dd($validar_existencia_cantidad);
-        if ($orderSalesLine->cantidad > $validar_existencia_cantidad) {
+        if ($orderSalesLine->cantidad >= $validar_existencia_cantidad) {
             try {
                 $movement = Movement::create($datos);
-                $sumaEntradas = Movement::where('order_sales_line_id', $movement->order_sale_id)->sum('cantidad_entrada');
+                $sumaEntradas = Movement::where('order_sales_line_id', $movement->order_sales_line_id)->sum('cantidad_entrada');
+
+                //dd($sumaEntradas."--".$orderSalesLine->cantidad);
                 if ($orderSalesLine->cantidad == $sumaEntradas) {
                     $orderSalesLine->bnd_entrada_registrada = 1;
                     $orderSalesLine->save();
@@ -192,6 +200,8 @@ class MovementsController extends Controller
         }
 
         return redirect()->route('orderSales.show', $orderSalesLine->order_sale_id)->with('sysMessage', 'Registro Creado.');
+        //return Redirect::back()->with('sysMessage', 'Registro Creado.');
+
     }
 
     /**
@@ -268,10 +278,22 @@ class MovementsController extends Controller
     {
         $movement = Movement::findOrFail($id);
         $orderSalesId = $movement->orderSalesLine->order_sale_id;
+        $orderSalesLine=$movement->orderSalesLine;
+        $orderSalesLine->bnd_entrada_registrada=null;
+        $orderSalesLine->save();
 
+        $outputs_product=OutputProduct::where('movement_id', $movement->id)->get();
 
         //dd($user);
         try {
+            if(count($outputs_product)>0){
+                foreach($outputs_product as $output_product){
+                    $output_product->movement_id = null;
+                    $output_product->cantidad_antes_descuento=null;
+                    $output_product->cantidad_restante = null;
+                    $output_product->save();
+                }
+            }
             if (!is_null($movement->cantidad_salida) and $movement->cantidad_salida != 0) {
                 foreach ($movement->lnCashBoxes as $lnCashBox) {
                     $lnCashBox->movement_id = null;
@@ -283,6 +305,7 @@ class MovementsController extends Controller
             dd($e);
         }
         return redirect()->route('orderSales.show', $orderSalesId)->with('sysMessage', 'Registro Borrado.');
+        //return Redirect::route('orderSales.show', $orderSalesId)->with('sysMessage', 'Registro Borrado.');
     }
 
     public function consultaExistencias(Request $request)
@@ -416,8 +439,8 @@ class MovementsController extends Controller
             ->join('order_sales as os', 'os.id', 'osl.order_sale_id')
             ->whereNull('os.deleted_at')*/
             ->where('plantel_id', $datos['plantel_id'])
-            ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->subDay()->toDateString())
-            ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->subDay()->toDateString())
+            ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->toDateString())
+            ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->toDateString())
             //->whereDate('movements.created_at', '>=', $datos['fecha_f'])
             //->whereDate('movements.created_at', '<=', $datos['fecha_t'])
             ->orderBy('movements.product_id')
@@ -536,9 +559,10 @@ class MovementsController extends Controller
                 //->where('plantel_id', $plantel['id'])
                 //->whereDate('movements.created_at', '>=', $datos['fecha_f'])
                 //->whereDate('movements.created_at', '<=', $datos['fecha_t'])
-                ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->subDay()->toDateString())
-                ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->subDay()->toDateString())
+                ->whereDate('movements.created_at', '>=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_f'])->toDateString())
+                ->whereDate('movements.created_at', '<=', Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$datos['fecha_t'])->toDateString())
                 ->orderBy('movements.product_id')
+                ->whereNull('movements.deleted_at')
                 ->get();
             //dd($lineas->toArray());
             //$groupedPlantel = $lineas->groupBy('plantel_id');
@@ -712,4 +736,77 @@ class MovementsController extends Controller
             'resumen' => $resumen
         ]);
     }
+
+    public function movimientosEntradasConsumos()
+    {
+        $planteles = $planteles = Plantel::whereIn('id', Auth::user()->plantels->pluck('id'))->get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+
+        $productos = Product::get()->map(fn ($producto) => [
+            'value' => $producto->id,
+            'label' => $producto->name,
+        ]);
+
+        return Inertia::render('Movements/reportes/MovimientosEntradasConsumos', [
+            'planteles' => $planteles, "productos"=>$productos,
+        ]);
+    }
+
+    public function movimientosEntradasConsumosR(Request $request )
+    {
+        $filtros = $request->all();
+        //dd($filtros);
+        $m = Movement::query();
+
+        $m->where('movements.created_at', '>=', $filtros['fecha_f']);
+        $m->where('movements.created_at', '<=', $filtros['fecha_t']);
+
+        $movements = $m->select('movements.*', 'op.ln_cash_box_id', 'op.cantidad_descontada')->orderBy('movements.id', 'desc')
+            ->join('users as u', 'u.id', 'movements.usu_alta_id')
+            ->join('order_sales_lines as osl', 'osl.id', 'movements.order_sales_line_id')
+            ->leftJoin('output_products as op', 'op.movement_id', 'movements.id')
+            ->with('plantel')
+            ->whereNull('osl.deleted_at')
+            ->whereIn('movements.plantel_id', $filtros['plantel_id'])
+            ->whereIn('movements.product_id', $filtros['producto_id'])
+            ->distinct()
+            ->orderBy('movements.plantel_id', 'asc')
+            ->orderBy('movements.product_id', 'asc')
+            ->orderBy('movements.id', 'asc')
+            ->get();
+        //dd($movements->toArray());
+        $registros=array();
+        foreach($movements as $movement){
+            $input['movement_id']=$movement->id;
+            $input['plantel']=$movement->plantel->name;
+            $input['producto']=$movement->product->name;
+            $input['orden']="Orden: ".$movement->orderSalesLine->order_sale_id.
+                            " Linea: ".$movement->order_sales_line_id.
+                            " Cantidad: ".$movement->orderSalesLine->cantidad;
+            $input['cantidad_entrada']=$movement->cantidad_entrada;
+            $input['cantidad_salida']=$movement->cantidad_salida;
+            $lnCashBox=LnCashBox::find($movement->ln_cash_box_id);
+            $suma_output_product=OutputProduct::where('ln_cash_box_id', $movement->ln_cash_box_id)
+            ->whereNotNull('movement_id')
+            ->sum('cantidad_descontada');
+
+            $input['consumo']="Caja: ".optional($lnCashBox)->cash_box_id.
+                              " Linea: ".optional($lnCashBox)->id.
+                              " C. Comprada: ".optional($lnCashBox)->quantity.
+                              " C. Descontada: ".$suma_output_product;
+            array_push($registros, $input);
+            //dd($input);
+            //$cuenta_cajas=CashBox::where()
+        }
+        //dd($registros);
+        return Inertia::render('Movements/reportes/MovimientosEntradasConsumosR', [
+            'movimientos'=>$registros,
+            'fecha1' => date_format(date_create($filtros['fecha_f']), 'Y-m-d'),
+            'fecha2' => date_format(date_create($filtros['fecha_t']), 'Y-m-d'),
+        ]);
+    }
+
+
 }

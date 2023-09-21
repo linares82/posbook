@@ -29,7 +29,7 @@
 
         <a-col :md="4">
             <a-form-item compact label="Plantel" name="plantel_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                <a-select :options="planteles" show-search v-model:value="formCashBox.plantel_id" style="width: 100%" placeholder="Seleccionar Opción">
+                <a-select :options="planteles" show-search v-model:value="formCashBox.plantel_id" style="width: 100%" placeholder="Seleccionar Opción" :filter-option="filterOption">
 
                 </a-select>
                 <div v-if="errors.plantel_id">
@@ -114,7 +114,7 @@
                 <a-row :gutter="20">
                     <a-col :md="12">
                         <a-form-item label="Producto" name="product_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                            <a-select @change="handleChangeProducto" show-search :options="productos" v-model:value="formCashBox.product_id" style="width: 100%;" placeholder="Seleccionar Opción">
+                            <a-select @change="handleChangeProducto" show-search :options="productos" v-model:value="formCashBox.product_id" style="width: 100%;" placeholder="Seleccionar Opción" :filter-option="filterOption">
                             </a-select>
                             <div v-if="errors.product_id">
                                 <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.product_id"></div>
@@ -156,7 +156,7 @@
                 </template>
                 <a-col :md="10">
                     <a-form-item label="Producto" name="product_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
-                        <a-select @change="handleChangeProducto" show-search :options="productos" v-model:value="formCashBox.product_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        <a-select @change="handleChangeProducto" show-search :options="productos" v-model:value="formCashBox.product_id" style="width: 250px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                         </a-select>
                         <div v-if="errors.product_id">
                             <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.product_id"></div>
@@ -251,7 +251,7 @@
                 </template>
                 <a-col :md="24">
                     <a-form-item label="Metodo de Pago" name="payment_method_id" ref="payment_method_id">
-                        <a-select :options="paymentMethods" show-search @change="consultaPorcentajeDescuento" v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        <a-select :options="paymentMethods" show-search @change="consultaPorcentajeDescuento" v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                         </a-select>
                         <div v-if="errors.payment_method_id">
                             <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.payment_method_id"></div>
@@ -294,7 +294,7 @@
                 </template>
                 <a-col :md="24">
                     <a-form-item label="Metodo de Pago" name="payment_method_id">
-                        <a-select :options="paymentMethods" show-search v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción">
+                        <a-select :options="paymentMethods" show-search v-model:value="formCashBox.payment_method_id" style="width: 250px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                         </a-select>
                         <div v-if="errors.payment_method_id">
                             <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.payment_method_id"></div>
@@ -781,6 +781,11 @@ export default {
 
         };
 
+        const filterOption = (input, option) => {
+            //console.log(option);
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        };
+
         return {
             consultaPorcentajeDescuento,
             addLinea,
@@ -823,7 +828,8 @@ export default {
             visiblePayment,
             visibleEditPayment,
             route_ticket,
-            rulesFormAddPayment
+            rulesFormAddPayment,
+            filterOption
         };
     },
 };

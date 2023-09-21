@@ -208,6 +208,7 @@ Route::prefix('/orderSales')
     Route::post('/store', 'store')->name('store')->middleware('can:orderSales.create');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:orderSales.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:orderSales.destroy');
+    Route::get('/actualizarLineasOrderSales/{id}', 'actualizarLineasOrderSales')->name('actualizarLineasOrderSales');//->middleware('can:orderSales.show');
 });
 
 Route::prefix('/orderSalesLines')
@@ -247,6 +248,8 @@ Route::prefix('/movements')
     Route::post('/corteGeneralR', 'corteGeneralR')->name('corteGeneralR')->middleware('can:movements.corteGeneral');
     Route::get('/corteToeic', 'corteToeic')->name('corteToeic')->middleware('can:movements.corteToeic');
     Route::post('/corteToeicR', 'corteToeicR')->name('corteToeicR')->middleware('can:movements.corteToeic');
+    Route::get('/movimientosEntradasConsumos', 'movimientosEntradasConsumos')->name('movimientosEntradasConsumos')->middleware('can:movements.movimientosentradasConsumos');
+    Route::post('/movimientosEntradasConsumosR', 'movimientosEntradasConsumosR')->name('movimientosEntradasConsumosR')->middleware('can:movements.movimientosentradasConsumos');
 });
 
 Route::prefix('/stPayments')

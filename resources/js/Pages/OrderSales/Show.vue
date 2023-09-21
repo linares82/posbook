@@ -166,7 +166,8 @@ import {
     computed,
     defineComponent,
     reactive,
-    ref
+    ref,
+    onMounted
 } from 'vue';
 import {
     CheckOutlined,
@@ -193,6 +194,20 @@ export default {
     props: ["orderSale", "lineas", "errors", 'route_verObservaciones','route_verEntradas'],
 
     setup(props) {
+
+        let dataSource = ref();
+
+
+        onMounted(() => {
+            axios.get(`/orderSales/actualizarLineasOrderSales/${props.orderSale.id}`)
+                .then(response=>{
+                    //console.log(response.data);
+                    dataSource.value=response.data;
+                });
+        });
+
+
+        //actualizarLineas;
         const columns = [{
             title: 'Id',
             dataIndex: 'id',
@@ -222,7 +237,7 @@ export default {
             dataIndex: 'operation',
         }];
 
-        const dataSource = ref(props.lineas);
+
         const visibleEntrada = ref(false);
         const loadingEntrada = ref(false);
         let processing = ref(false);
@@ -271,14 +286,15 @@ export default {
                         processing.value = false;
                     },
                 });
+
                 visibleEntrada.value = false;
                 formEntrada.total_acumulado = parseInt(formEntrada.total_acumulado) + parseInt(formEntrada.cantidad_entrada);
-                location.reload();
+                //window.location.reload();
             } else {
 
                 alert("La suma de entradas ya registradas y la cantidad nueva de entradas es superior a la orden de compra");
             }
-            location.reload();
+            window.location.reload();
         };
 
         const handleCancelEntrada = () => {
@@ -382,11 +398,18 @@ export default {
             visibleDrawer.value = false;
         };
 
+
+
         const eliminarEntrada = (record) => {
             //console.log(record);
-            Inertia.delete(`/movements/delete/${record.id}`)
+            Inertia.delete(`/movements/delete/${record.id}`);
+            //console.log('despues borrar');
             visibleDrawer.value = false;
+
+            window.location.reload();
         };
+
+
 
         return {
             columns,
@@ -413,7 +436,8 @@ export default {
             onClose,
             eliminarObs,
             showDrawerEntradas,
-            eliminarEntrada
+            eliminarEntrada,
+            //actualizarLineas
         };
     },
 };

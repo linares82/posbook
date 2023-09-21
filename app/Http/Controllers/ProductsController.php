@@ -251,11 +251,13 @@ class ProductsController extends Controller
         $totalEntradas=Movement::where('plantel_id', $request->input('plantel'))
             ->where('product_id', $producto->id)
             ->where('cantidad_entrada','>','cantidad_salida')
+            ->whereNull('deleted_at')
             ->sum('cantidad_entrada');
 
         $totalSalidas=Movement::where('plantel_id', $request->input('plantel'))
             ->where('product_id', $producto->id)
             ->where('cantidad_entrada','>','cantidad_salida')
+            ->whereNull('deleted_at')
             ->sum('cantidad_salida');
         //dd($totalEntradas."-".$totalSalidas);
         $existencia=$totalEntradas-$totalSalidas;
