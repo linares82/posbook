@@ -67,19 +67,21 @@ class LnCashBoxObserver
                 $movement->save();
             }
         }*/
+        //dd($lnCashBox);
         for($i=1; $i<=$lnCashBox->quantity; $i++){
-
+            //dd($lnCashBox->quantity);
             $output_product=OutputProduct::where('ln_cash_box_id', $lnCashBox->id)
                 ->orderBy('id', 'desc')
                 ->first();
             //dd($output_product);
             if(!is_null($output_product) and !is_null($output_product->movement_id)){
                 $movement=Movement::where('id', $output_product->movement_id)->first();
+                //dd($movement);
                 $movement->cantidad_salida=$movement->cantidad_salida-1;
                 $movement->save();
-
+                $output_product->delete();
             }
-            $output_product->delete();
+
 
         }
 

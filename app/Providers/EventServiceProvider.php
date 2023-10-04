@@ -2,17 +2,23 @@
 
 namespace App\Providers;
 
-use App\Models\LnCashBox;
+use App\Models\CashBox;
+use App\Models\Expense;
+use App\Models\Payment;
 use App\Models\Movement;
+use App\Models\LnCashBox;
+use App\Observers\CashBoxObserver;
+use App\Observers\ExpenseObserver;
+use App\Observers\PaymentObserver;
 use App\Models\OrderDevolutionLine;
-use App\Observers\LnCashBoxObserver;
 use App\Observers\MovementObserver;
+use App\Observers\LnCashBoxObserver;
+use Illuminate\Support\Facades\Event;
 use App\Models\OrderDevolutionLineBox;
-use App\Observers\OrderDevolutionLineObserver;
 use Illuminate\Auth\Events\Registered;
+use App\Observers\OrderDevolutionLineObserver;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -34,9 +40,11 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        CashBox::observe(CashBoxObserver::class);
         LnCashBox::observe(LnCashBoxObserver::class);
         Movement::observe(MovementObserver::class);
         OrderDevolutionLine::observe(OrderDevolutionLineObserver::class);
-        
+        Payment::observe(PaymentObserver::class);
+        Expense::observe(ExpenseObserver::class);
     }
 }

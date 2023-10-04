@@ -22,6 +22,7 @@ class PlantelsController extends Controller
         $permissions['plantelsUpdate']=Auth::user()->hasPermissionTo('plantels.update');
         $permissions['plantelsShow']=Auth::user()->hasPermissionTo('plantels.show');
         $permissions['plantelsDestroy']=Auth::user()->hasPermissionTo('plantels.destroy');
+        $permissions['accountPlantelsIndex']=Auth::user()->hasPermissionTo('accountPlantels.index');
         return $permissions;
     }
 
@@ -32,7 +33,7 @@ class PlantelsController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $sysMessage=$request->session()->get('sysMessage');
         $plantels=Plantel::query()
         ->when($request->input('name'), function($query, $name){
@@ -148,7 +149,7 @@ class PlantelsController extends Controller
             $plantel->phone=$datos['phone'];
             $plantel->director=$datos['director'];
             $plantel->save();
-            
+
         }catch(Exception $e){
             dd($e);
         }

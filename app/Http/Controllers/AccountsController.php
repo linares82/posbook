@@ -5,8 +5,14 @@ namespace App\Http\Controllers;
 use Exception;
 use Inertia\Inertia;
 use App\Models\Account;
+use App\Models\CashBox;
+use App\Models\Expense;
+use App\Models\Plantel;
 use Illuminate\Http\Request;
+use App\Models\AccountPlantel;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DetalleAccountPlantel;
 use App\Http\Requests\AccountsCreateRequest;
 use App\Http\Requests\AccountsUpdateRequest;
 
@@ -20,6 +26,7 @@ class AccountsController extends Controller
         $permissions['accountsUpdate']=Auth::user()->hasPermissionTo('accounts.update');
         $permissions['accountsShow']=Auth::user()->hasPermissionTo('accounts.show');
         $permissions['accountsDestroy']=Auth::user()->hasPermissionTo('accounts.destroy');
+        $permissions['accountShowSaldos'] = Auth::user()->hasPermissionTo('accounts.showSaldos');
         return $permissions;
     }
 
@@ -43,7 +50,10 @@ class AccountsController extends Controller
             'code'=>$account->code,
             'name'=>$account->name,
             'bnd_ingreso'=>$account->bnd_ingreso ? "Si" : "No",
-            'bnd_egreso'=>$account->bnd_egreso ? "Si" : "No"
+            'bnd_egreso'=>$account->bnd_egreso ? "Si" : "No",
+            'fecha_inicio'=>$account->fecha_inicio,
+            'saldo_ingresos'=>$account->saldo_ingresos,
+            'saldo_egresos'=>$account->saldo_egresos,
         ]);
         //dd($users);
 
@@ -62,7 +72,11 @@ class AccountsController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Accounts/Create');
+        $planteles=Plantel::plantelsCmb();$planteles = Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        return Inertia::render('Accounts/Create', ['planteles' => $planteles]);
     }
 
     /**
@@ -93,8 +107,57 @@ class AccountsController extends Controller
     public function show($id)
     {
         $account=Account::findOrfail($id);
+        //dd($account);
+        $diferencia=$account->saldo_ingresos-$account->saldo_egresos;
+        $cash_boxes=CashBox::select('cash_boxes.id as cash_box_id', 'cash_boxes.fecha',
+        'p.name as producto', 'ln.total as monto')
+        ->join('ln_cash_boxes as ln', 'ln.cash_box_id', 'cash_boxes.id')
+        ->join('products as p','p.id', 'ln.product_id')
+        ->whereNull('cash_boxes.deleted_at')
+        ->whereNull('ln.deleted_at')
+        ->whereNull('p.deleted_at')
+        ->where('p.account_id', $account->id)
+        ->where('fecha','>=', $account->fecha_inicio)
+        ->where('st_cash_box_id',2)
+        ->orderBy('cash_boxes.fecha', 'asc')
+        ->get()
+        ->map(fn($box)=>[
+            'cash_box_id'=>$box->cash_box_id,
+            'fecha'=>$box->fecha,
+            'monto'=>$box->monto,
+            'producto'=>$box->producto,
+            'url_consultar_ingreso'=>route('cashBoxes.edit', $box->cash_box_id)
+        ]);
+        //dd($cash_boxes->toArray());
 
-        return Inertia::render('Accounts/Show', ['account'=>$account]);
+        $suma_ingresos=0;
+        foreach($cash_boxes as $box){
+            $suma_ingresos=$suma_ingresos+$box['monto'];
+        }
+
+        $expenses=Expense::select('expenses.id as expense_id', 'expenses.fecha',
+        'o.name as egreso', 'expenses.monto')
+        ->join('outputs as o','o.id', 'expenses.output_id')
+        ->where('expenses.account_id', $account->id)
+        ->where('expenses.fecha','>=', $account->fecha_inicio)
+        ->orderBy('expenses.fecha', 'asc')
+        ->get()
+        ->map(fn($box)=>[
+            'expense_id'=>$box->expense_id,
+            'fecha'=>$box->fecha,
+            'monto'=>$box->monto,
+            'egreso'=>$box->egreso,
+            'url_consultar_egreso'=>route('expenses.edit', $box->expense_id)
+        ]);
+        $suma_egresos=0;
+        foreach($expenses as $expense){
+            $suma_egresos=$suma_egresos+$expense['monto'];
+        }
+        //dd($cash_boxes->toArray());
+        return Inertia::render('Accounts/Show', ['account'=>$account, 'diferencia'=>$diferencia,
+        "cash_boxes"=>$cash_boxes,'expenses'=>$expenses, 'suma_egresos'=>$suma_egresos,
+        'suma_ingresos'=>$suma_ingresos
+    ]);
     }
 
     /**
@@ -106,7 +169,11 @@ class AccountsController extends Controller
     public function edit($id)
     {
         $account=Account::findOrfail($id);
-        return Inertia::render('Accounts/Edit', ['account'=>$account]);
+        $planteles = Plantel::get()->map(fn ($plantel) => [
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+        return Inertia::render('Accounts/Edit', ['account'=>$account, 'planteles'=>$planteles]);
     }
 
     /**
@@ -148,6 +215,25 @@ class AccountsController extends Controller
             dd($e);
         }
 		return redirect()->route('accounts.index')->with('sysMessage', 'Registro Borrado.');
+    }
+
+    public function showSaldos($id)
+    {
+        $account=Account::findOrfail($id);
+
+        $account_plantel=AccountPlantel::select('account_plantel.*','p.name as plantel','a.name as account')
+        ->where('account_id', $id)
+        ->join('plantels as p','p.id','account_plantel.plantel_id')
+        ->join('accounts as a','a.id','account_plantel.account_id')
+        ->whereNull('p.deleted_at')
+        ->whereNull('a.deleted_at')
+        ->orderBy('account_plantel.plantel_id', 'asc')
+        ->get();
+        //dd($account_plantel->toArray());
+
+        return Inertia::render('Accounts/ShowSaldos', ['account'=>$account,
+        'accountPlantels'=>$account_plantel,
+    ]);
     }
 
 }

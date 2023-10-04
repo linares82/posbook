@@ -85,6 +85,14 @@
                                                                 as="button">Generar Stock Inicial</Link>
 
                                                         </a-menu-item>
+                                                        <a-menu-item key="3" v-if="permissions.accountPlantelsIndex">
+                                                            <eye-outlined />
+
+                                                            <a :href="`/accountPlantels/${plantel.id}`" target="_blank"
+                                                                class="ant-btn ant-btn-default ant-btn-round ant-btn-sm"
+                                                                as="button">Cuentas</a>
+
+                                                        </a-menu-item>
                                                     </a-menu>
                                                 </template>
                                             </a-dropdown-button>

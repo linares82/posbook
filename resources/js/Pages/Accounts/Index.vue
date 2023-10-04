@@ -45,9 +45,12 @@
                                     <th class="ant-table-cell" colstart="0" colend="0">Id</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Clave</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Cuenta</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Ingreso</th>
-                                    <th class="ant-table-cell" colstart="1" colend="1">Egreso</th>
+                                    <!--<th class="ant-table-cell" colstart="1" colend="1">Fecha Inicio</th>
+                                    <th class="ant-table-cell" colstart="1" colend="1">Saldo Ingreso</th>
+                                    <th class="ant-table-cell" colstart="1" colend="1">Saldo Egreso</th>
+                                    -->
                                     <th class="ant-table-cell" colstart="3" colend="4">Acciones</th>
+
                                 </thead>
                                 <tbody class="ant-table-tbody">
                                     <tr class="ant-table-row ant-table-row-level-0" v-for="account in accounts.data"
@@ -55,8 +58,10 @@
                                         <td class="ant-table-cell" colstart="0" colend="0">{{ account.id }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ account.code }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ account.name }}</td>
-                                        <td class="ant-table-cell" colstart="1" colend="1">{{ account.bnd_ingreso }}</td>
-                                        <td class="ant-table-cell" colstart="1" colend="1">{{ account.bnd_egreso }}</td>
+                                        <!--<td class="ant-table-cell" colstart="1" colend="1">{{ account.fecha_inicio }}</td>
+                                        <td class="ant-table-cell" colstart="1" colend="1">{{ account.saldo_ingresos }}</td>
+                                        <td class="ant-table-cell" colstart="1" colend="1">{{ account.saldo_egresos }}</td>
+                                        -->
                                         <td class="ant-table-cell" colstart="3" colend="4">
                                             <a-dropdown-button>
                                                 Acciones
@@ -77,12 +82,22 @@
                                                                     class="ant-btn ant-btn-default ant-btn-round ant-btn-sm">Borrar</button>
                                                             </a-popconfirm>
                                                         </a-menu-item>
+                                                        <!--
                                                         <a-menu-item key="3" v-if="permissions.accountsShow">
                                                             <eye-outlined />
 
                                                             <Link :href="`/accounts/show/${account.id}`"
                                                                 class="ant-btn ant-btn-default ant-btn-round ant-btn-sm"
-                                                                as="button">Ver</Link>
+                                                                as="button">Corte</Link>
+
+                                                        </a-menu-item>
+                                                        -->
+                                                        <a-menu-item key="3" v-if="permissions.accountShowSaldos">
+                                                            <eye-outlined />
+
+                                                            <Link :href="`/accounts/showSaldos/${account.id}`"
+                                                                class="ant-btn ant-btn-default ant-btn-round ant-btn-sm"
+                                                                as="button">Saldos</Link>
 
                                                         </a-menu-item>
                                                     </a-menu>

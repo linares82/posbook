@@ -278,7 +278,8 @@ export default {
             //Inertia.get("/orderSalesLines/receiveOCPlantel/"+key);
 
             if (parseInt(formEntrada.total_order_line) >= (parseInt(formEntrada.total_acumulado) + parseInt(formEntrada.cantidad_entrada))) {
-                Inertia.post("/movements/store", formEntrada, {
+
+                Inertia.post("/movementsPartials/store", formEntrada, {
                     onStart: () => {
                         processing.value = true;
                     },
@@ -289,6 +290,7 @@ export default {
 
                 visibleEntrada.value = false;
                 formEntrada.total_acumulado = parseInt(formEntrada.total_acumulado) + parseInt(formEntrada.cantidad_entrada);
+
                 //window.location.reload();
             } else {
 
@@ -402,7 +404,7 @@ export default {
 
         const eliminarEntrada = (record) => {
             //console.log(record);
-            Inertia.delete(`/movements/delete/${record.id}`);
+            Inertia.delete(`/movementsPartials/delete/${record.id}`);
             //console.log('despues borrar');
             visibleDrawer.value = false;
 

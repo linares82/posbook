@@ -85,6 +85,7 @@ class MovementsController extends Controller
             ->join('users as u', 'u.id', 'movements.usu_alta_id')
             ->join('order_sales_lines as osl', 'osl.id', 'movements.order_sales_line_id')
             ->leftJoin('ln_cash_boxes as lnc', 'lnc.movement_id', 'movements.id')
+            ->whereNull('lnc.deleted_at')
             ->with('plantel', 'typeMovement', 'reason')
             ->whereNull('osl.deleted_at')
             ->whereIn('movements.plantel_id', $planteles)

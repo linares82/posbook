@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Inertia\Inertia;
+use App\Models\CashBox;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +31,7 @@ class PaymentsController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $sysMessage=$request->session()->get('sysMessage');
         $payments=Payment::query()
         ->when($request->input('name'), function($query, $item){
@@ -90,7 +91,7 @@ class PaymentsController extends Controller
     public function show($id)
     {
         $payment=Payment::findOrfail($id);
-        
+
         return Inertia::render('Payments/Show', ['payment'=>$payment]);
     }
 
@@ -133,7 +134,7 @@ class PaymentsController extends Controller
             }
             //dd($cashBox->ToArray());
             $cashBox->save();
-            
+
         }catch(Exception $e){
             dd($e);
         }
@@ -151,9 +152,22 @@ class PaymentsController extends Controller
     {
         $datos=$request->all();
         $payment=Payment::findOrFail($datos['id']);
+        $cash_box=CashBox::findOrFail($payment->cash_box_id);
+
+
         //dd($user);
         try{
             $payment->delete();
+            $sumaPagos=Payment::where('cash_box_id', $payment->cash_box_id)->whereNull('deleted_at')->sum('monto');
+            if($sumaPagos<$cash_box->total and $sumaPagos>0){
+                $cash_box->st_cash_box_id=3;
+            }else if($sumaPagos==0){
+                $cash_box->st_cash_box_id=1;
+            }else{
+                $cash_box->st_cash_box_id=2;
+            }
+            //dd($cashBox->ToArray());
+            $cash_box->save();
         }catch(Exception $e){
             dd($e);
         }

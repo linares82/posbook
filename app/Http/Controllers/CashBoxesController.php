@@ -548,6 +548,7 @@ class CashBoxesController extends Controller
         ->where('st_payment_id', 2)
         ->whereBetween('p.fecha', array($datos['fecha_f'], $datos['fecha_t']))
         ->whereIn('cash_boxes.plantel_id', $datos['plantel_id'])
+        ->whereIn('pro.account_id', $datos['account_id'])
         ->orderBy('c.id')
         ->orderBy('pla.id')
         ->get();
@@ -558,9 +559,10 @@ class CashBoxesController extends Controller
         'c.name as cuenta','c.code as codigo','monto', 'fecha')
         ->whereBetween('expenses.fecha', array($datos['fecha_f'], $datos['fecha_t']))
         ->whereIn('expenses.plantel_id', $datos['plantel_id'])
+        ->whereIn('expenses.account_id', $datos['account_id'])
         ->join('plantels as pla', 'pla.id', 'expenses.plantel_id')
         ->join('outputs as o', 'o.id', 'expenses.output_id')
-        ->join('accounts as c', 'c.id', 'o.account_id')
+        ->join('accounts as c', 'c.id', 'expenses.account_id')
         ->orderBy('c.id')
         ->orderBy('pla.id')
         ->get();

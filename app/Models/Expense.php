@@ -34,7 +34,9 @@ class Expense extends Model
 		});
 	}
 
-    protected $fillable = ['plantel_id', 'output_id', 'detalle', 'monto', 'fecha', 'observaciones', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
+    protected $fillable = ['plantel_id', 'output_id', 'detalle', 'monto', 'fecha', 'observaciones',
+    'corte_id','account_id',
+    'usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
 
 	protected $dates = ['deleted_at'];
 

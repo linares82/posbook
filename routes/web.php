@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\CortesController;
 use App\Http\Controllers\StocksController;
 use App\Http\Controllers\OutputsController;
 use App\Http\Controllers\PeriodsController;
@@ -23,8 +24,10 @@ use App\Http\Controllers\LnCashBoxesController;
 use App\Http\Controllers\StCashBoxesController;
 use App\Http\Controllers\TypeMovementsController;
 use App\Http\Controllers\PaymentMethodsController;
+use App\Http\Controllers\AccountPlantelsController;
 use App\Http\Controllers\OrderSalesLinesController;
 use App\Http\Controllers\OrderDevolutionsController;
+use App\Http\Controllers\MovementsPartialsController;
 use App\Http\Controllers\Auth\AutenticationsController;
 use App\Http\Controllers\OrderDevolutionLinesController;
 
@@ -252,6 +255,23 @@ Route::prefix('/movements')
     Route::post('/movimientosEntradasConsumosR', 'movimientosEntradasConsumosR')->name('movimientosEntradasConsumosR')->middleware('can:movements.movimientosentradasConsumos');
 });
 
+Route::prefix('/movementsPartials')
+->middleware('auth')
+->name('movementsPartials.')
+->controller(MovementsPartialsController::class)
+->group(function () {
+    Route::get('consultaExistencias', 'consultaExistencias')->name('consultaExistencias');
+    Route::get('', 'index')->name('index')->middleware('can:movementsPartials.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:movementsPartials.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:movementsPartials.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:movementsPartials.show');
+    Route::get('/verEntradas', 'verEntradas')->name('verEntradas');
+    Route::post('/store', 'store')->name('store')->middleware('can:movementsPartials.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:movementsPartials.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:movementsPartials.destroy');
+});
+
+
 Route::prefix('/stPayments')
 ->middleware('auth')
 ->name('stPayments.')
@@ -398,6 +418,7 @@ Route::prefix('/accounts')
     Route::get('/create', 'create')->name('create')->middleware('can:accounts.create');
     Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:accounts.edit');
     Route::get('/show/{id}', 'show')->name('show')->middleware('can:accounts.show');
+    Route::get('/showSaldos/{id}', 'showSaldos')->name('showSaldos')->middleware('can:accounts.showSaldos');
     Route::post('/store', 'store')->name('store')->middleware('can:accounts.create');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:accounts.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:accounts.destroy');
@@ -430,4 +451,33 @@ Route::prefix('/expenses')
     Route::post('/store', 'store')->name('store')->middleware('can:expenses.create');
     Route::post('/edit/{id}', 'update')->name('update')->middleware('can:expenses.update');
     Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:expenses.destroy');
+});
+
+Route::prefix('/cortes')
+->middleware('auth')
+->name('cortes.')
+->controller(CortesController::class)
+->group(function () {
+    Route::get('', 'index')->name('index')->middleware('can:cortes.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:cortes.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:cortes.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:cortes.show');
+    Route::post('/store', 'store')->name('store')->middleware('can:cortes.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:cortes.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:cortes.destroy');
+});
+
+Route::prefix('/accountPlantels')
+->middleware('auth')
+->name('accountPlantels.')
+->controller(AccountPlantelsController::class)
+->group(function () {
+    Route::get('/consultaSaldo', 'consultaSaldo')->name('consultaSaldo');//->middleware('can:accountPlantels.create');
+    Route::get('/{plantel}', 'index')->name('index')->middleware('can:accountPlantels.index');
+    Route::get('/create', 'create')->name('create')->middleware('can:accountPlantels.create');
+    Route::get('/edit/{id}', 'edit')->name('edit')->middleware('can:accountPlantels.edit');
+    Route::get('/show/{id}', 'show')->name('show')->middleware('can:accountPlantels.show');
+    Route::get('/store/{plantel}', 'store')->name('store')->middleware('can:accountPlantels.create');
+    Route::post('/edit/{id}', 'update')->name('update')->middleware('can:accountPlantels.update');
+    Route::delete('/delete/{id}', 'destroy')->name('destroy')->middleware('can:accountPlantels.destroy');
 });

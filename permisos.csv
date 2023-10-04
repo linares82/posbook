@@ -1,8 +1,8 @@
 id,name,guard_name,created_at,updated_at
-191,expenses.index,web,2023-09-07 00:00:00,2023-09-07 00:00:00
-192,expenses.create,web,2023-09-07 00:00:00,2023-09-07 00:00:00
-193,expenses.show,web,2023-09-07 00:00:00,2023-09-07 00:00:00
-194,expenses.edit,web,2023-09-07 00:00:00,2023-09-07 00:00:00
-195,expenses.store,web,2023-09-07 00:00:00,2023-09-07 00:00:00
-196,expenses.update,web,2023-09-07 00:00:00,2023-09-07 00:00:00
-197,expenses.destroy,web,2023-09-07 00:00:00,2023-09-07 00:00:00
+215,accountPlantels.index,web,07/09/2023 00:00,07/09/2023 00:00
+216,accountPlantels.create,web,07/09/2023 00:00,07/09/2023 00:00
+217,accountPlantels.show,web,07/09/2023 00:00,07/09/2023 00:00
+218,accountPlantels.edit,web,07/09/2023 00:00,07/09/2023 00:00
+219,accountPlantels.store,web,07/09/2023 00:00,07/09/2023 00:00
+220,accountPlantels.update,web,07/09/2023 00:00,07/09/2023 00:00
+221,accountPlantels.destroy,web,07/09/2023 00:00,07/09/2023 00:00

@@ -154,7 +154,7 @@ class OrderSalesController extends Controller
         ->get();
 
         $route_verObservaciones=route('obsEntries.verObservaciones');
-        $route_verEntradas=route('movements.verEntradas');
+        $route_verEntradas=route('movementsPartials.verEntradas');
 
         //dd($lineas);
 
@@ -287,7 +287,7 @@ class OrderSalesController extends Controller
     public function actualizarLineasOrderSales($id){
         return $lineas=OrderSalesLine::select('order_sales_lines.*','p.name as plantel','pro.name as product',
         DB::raw('(select sum(m.cantidad_entrada)
-        from movements as m where m.order_sales_line_id=order_sales_lines.id and
+        from movements_partials as m where m.order_sales_line_id=order_sales_lines.id and
         m.deleted_at is null) as total_entradas'))
         ->join('plantels as p','p.id','order_sales_lines.plantel_id')
         ->join('products as pro','pro.id','order_sales_lines.product_id')

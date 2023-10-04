@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Traits\AuditTrait;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Auth;
 
 class Account extends Model
 {
@@ -33,7 +34,9 @@ class Account extends Model
 		});
 	}
 
-    protected $fillable = ['code','name','bnd_ingreso','bnd_egreso', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
+    protected $fillable = ['code','name','bnd_ingreso','bnd_egreso','saldo_ingresos', 'saldo_egresos',
+    'fecha_inicio',
+    'usu_alta_id', 'usu_mod_id', 'usu_delete_id'];
 
 	protected $dates = ['deleted_at'];
 
@@ -51,4 +54,12 @@ class Account extends Model
 	{
 		return $this->hasOne('App\Models\User', 'id', 'usu_delete_id');
 	} // end
+
+
+    public function setFechaInicioAttribute($value){
+        //dd($value);
+		$this->attributes['fecha_inicio']= Carbon::createFromFormat('Y-m-d\TH:i:s.uZ',$value)->toDateString();
+	}
+
+
 }

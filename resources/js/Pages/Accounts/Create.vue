@@ -9,6 +9,7 @@
 </a-row>
 <a-form :model="formAccount" @submit.prevent="submitF" autocomplete="off" layout="vertical">
     <a-row :gutter="20">
+
         <a-col :md="6">
             <a-form-item label="Codigo" name="code">
                 <a-input v-model:value="formAccount.code"> </a-input>
@@ -45,6 +46,33 @@
             </a-form-item>
         </a-col>
 
+        <a-col :md="7">
+            <a-form-item compact label="Fecha Inicio" name="fecha_inicio" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
+                <a-date-picker v-model:value="formAccount.fecha_inicio" :bordered="true" />
+                <div v-if="errors.fecha_inicio">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.fecha_inicio"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+
+        <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
+            <a-form-item label="Saldo Ingresos" name="saldo_ingresos">
+                <a-input-number v-model:value="formAccount.saldo_ingresos" style="width:100%" :step="0.01"> </a-input-number>
+                <div v-if="errors.saldo_ingresos">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.saldo_ingresos"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+
+        <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
+            <a-form-item label="Saldo Egresos" name="saldo_egresos">
+                <a-input-number v-model:value="formAccount.saldo_egresos" style="width:100%" :step="0.01"> </a-input-number>
+                <div v-if="errors.saldo_egresos">
+                    <div role="alert" class="ant-form-item-explain-error" style="" v-text="errors.saldo_egresos"></div>
+                </div>
+            </a-form-item>
+        </a-col>
+
     </a-row>
 
     <a-form-item>
@@ -70,6 +98,8 @@ import {
     Inertia
 } from "@inertiajs/inertia";
 
+import dayjs from "dayjs";
+
 export default {
     layout: Layout,
     components: {
@@ -78,14 +108,17 @@ export default {
         LockOutlined,
     },
 
-    props: ["errors"],
+    props: ["errors", "planteles"],
 
     setup() {
         let formAccount = reactive({
             code: "",
             name: "",
             bnd_ingreso: false,
-            bnd_egreso:false
+            bnd_egreso:false,
+            fecha_inicio:dayjs(),
+            saldo_ingresos:0,
+            saldo_egresos:0
         });
 
         let processing = ref(false);

@@ -33,7 +33,9 @@ class Payment extends Model
 		});
 	}
 
-    protected $fillable = ['cash_box_id','payment_method_id','monto', 'fecha','st_payment_id', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','porcentaje_descuento'];
+    protected $fillable = ['cash_box_id','payment_method_id','monto', 'fecha','st_payment_id',
+    'corte_id',
+    'usu_alta_id', 'usu_mod_id', 'usu_delete_id','porcentaje_descuento'];
 
 	protected $dates = ['deleted_at'];
 

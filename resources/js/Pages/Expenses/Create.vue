@@ -20,6 +20,18 @@
         </a-col>
 
         <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
+            <a-form-item name="account_id" label="Cuenta Egreso">
+                <a-select v-model:value="formExpense.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOption"></a-select>
+            </a-form-item>
+        </a-col>
+
+        <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
+            <div >
+                <verSaldoCuentaPlantel :plantel="formExpense.plantel_id" :url_consulta_saldo="url_consulta_saldo" :account="formExpense.account_id"></verSaldoCuentaPlantel>
+            </div>
+        </a-col>
+
+        <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
             <a-form-item compact label="Concepto" name="output_id" :rules="[{ required: true, message: 'Por favor captura la información solicitada!' }]">
                 <a-select :options="outputs" show-search v-model:value="formExpense.output_id" style="width: 300px" placeholder="Seleccionar Opción" :filter-option="filterOption">
                 </a-select>
@@ -75,6 +87,7 @@
 
 <script>
 import Layout from "../../shared/Layout";
+import  VerSaldoCuentaPlantel  from "./VerSaldoCuentaPlantel.vue";
 import {
     Link
 } from "@inertiajs/inertia-vue3";
@@ -97,13 +110,15 @@ export default {
         Link,
         UserOutlined,
         LockOutlined,
+        VerSaldoCuentaPlantel,
     },
 
-    props: ["errors", "outputs", "planteles"],
+    props: ["errors", "outputs", "planteles", "accounts","url_consulta_saldo"],
 
     setup() {
         let formExpense = reactive({
             plantel_id: "",
+            account_id: "",
             output_id: "",
             detalle: "",
             fecha: dayjs(),

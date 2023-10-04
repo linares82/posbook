@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Inertia\Inertia;
 use App\Models\Output;
+use App\Models\Account;
 use App\Models\Expense;
 use App\Models\Plantel;
 use Illuminate\Http\Request;
@@ -79,7 +80,17 @@ class ExpensesController extends Controller
             'label' => $output->name,
         ]);
         $outputs->prepend(["value" => null, 'label' => "Selecionar Opción"]);
-        return Inertia::render('Expenses/Create', ['outputs'=>$outputs, 'planteles'=>$planteles]);
+        $accounts=Account::where('bnd_egreso',1)->get()->map(fn ($account) => [
+            'value' => $account->id,
+            'label' => $account->name,
+        ]);
+        $accounts->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+        $url_consulta_saldo=route('accountPlantels.consultaSaldo');
+        return Inertia::render('Expenses/Create', ['outputs'=>$outputs,
+        'accounts'=>$accounts,
+        'planteles'=>$planteles,
+        'url_consulta_saldo'=>$url_consulta_saldo
+    ]);
     }
 
     /**
@@ -134,7 +145,14 @@ class ExpensesController extends Controller
             'label' => $output->name,
         ]);
         $outputs->prepend(["value" => null, 'label' => "Selecionar Opción"]);
-        return Inertia::render('Expenses/Edit', ['expense'=>$expense, 'outputs'=>$outputs, 'planteles'=>$planteles]);
+        $accounts=Account::where('bnd_egreso',1)->get()->map(fn ($account) => [
+            'value' => $account->id,
+            'label' => $account->name,
+        ]);
+        $accounts->prepend(["value"=>null,'label'=>"Selecionar Opción"]);
+        return Inertia::render('Expenses/Edit', ['expense'=>$expense, 'outputs'=>$outputs,
+        'accounts'=>$accounts,
+        'planteles'=>$planteles]);
     }
 
     /**
