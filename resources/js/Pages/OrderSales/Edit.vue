@@ -235,7 +235,13 @@ export default {
         };
 
         let submitF = () => {
-            Inertia.post("", formOrderSale, {
+            let ultimaLinea = formOrderSale.lineas[formOrderSale.lineas.length - 1];
+            if (typeof ultimaLinea.producto_id === 'undefined' &&
+                typeof ultimaLinea.plantel_id === 'undefined' &&
+                typeof ultimaLinea.cantidad === 'undefined') {
+                alert("La ultima linea no esta completa");
+            } else {
+                Inertia.post("", formOrderSale, {
                 onStart: () => {
                     processing.value = true;
                 },
@@ -243,6 +249,8 @@ export default {
                     processing.value = false;
                 },
             });
+            }
+
         };
         //Fin formulario edicion cabecera
 
@@ -257,7 +265,7 @@ export default {
             //console.log(editableData[key].current_stock);
             Object.assign(dataSource.value.filter(item => key === item.id)[0], editableData[key]);
 
-            Inertia.post(
+                Inertia.post(
                 "/orderSalesLines/edit/" + editableData[key].id, {
                     plantel_id:editableData[key].plantel_id,
                     product_id:editableData[key].product_id,
@@ -268,8 +276,11 @@ export default {
                     replace: true,
                 }
             );
-
             delete editableData[key];
+
+
+
+
         };
 
         const cancel = key => {

@@ -138,19 +138,32 @@ export default {
         };
 
         const onFinish = values => {
-            console.log('Received values of form:', values);
-            console.log('formOrderSale:', formOrderSale);
+            //console.log('Received values of form:', values);
+            //console.log('formOrderSale:', formOrderSale);
         };
 
         let submitF = () => {
-            Inertia.post("/orderSales/store", formOrderSale, {
-                onStart: () => {
-                    processing.value = true;
-                },
-                onFinish: () => {
-                    processing.value = false;
-                },
-            });
+            let ultimaLinea = formOrderSale.lineas[formOrderSale.lineas.length - 1];
+            //console.log(ultimaLinea);
+            //console.log(typeof ultimaLinea.plantel_id === 'undefined');
+            //console.log(typeof ultimaLinea.producto_id === 'undefined');
+            //alert(linea);
+            //console.log(formOrderSale.lineas);
+            if (typeof ultimaLinea.producto_id === 'undefined' &&
+                typeof ultimaLinea.plantel_id === 'undefined' &&
+                typeof ultimaLinea.cantidad === 'undefined') {
+                alert("La ultima linea no esta completa");
+            } else {
+                Inertia.post("/orderSales/store", formOrderSale, {
+                    onStart: () => {
+                        processing.value = true;
+                    },
+                    onFinish: () => {
+                        processing.value = false;
+                    },
+                });
+            }
+
         };
         /*
     const onFinish = (values) => {
