@@ -214,6 +214,7 @@ class ProductsController extends Controller
             }
             $product->bnd_ofertable=$datos['bnd_ofertable'];
             $product->product_id=$datos['product_id'];
+            $product->exam_id=$datos['exam_id'];
             $product->period_id=$datos['period_id'];
             $product->cash_box_to_assign_id=$datos['cash_box_to_assign_id'];
             $product->account_id=$datos['account_id'];

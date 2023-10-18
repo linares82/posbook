@@ -107,6 +107,11 @@ class OrderSalesLinesController extends Controller
 
         if(count($movements)>0){
             return redirect()->route('orderSales.edit', $cabecera)->with('sysMessage', 'Registro con movimientos, no puede ser borrar.');
+        }else{
+            $movements=Movement::where('order_sales_line_id', $orderSalesLine->id)->where('cantidad_salida', 0)->get();
+            foreach($movements as $movement){
+                $movement->delete();
+            }
         }
         //dd($user);
         try{

@@ -8,7 +8,7 @@
     </a-col>
 </a-row>
 <a-form :model="formProduct" @submit.prevent="submitF" autocomplete="off" layout="vertical">
-    <a-row>
+    <a-row :gutter="20">
         <a-col :md="7">
             <a-form-item label="Nombre" name="name">
                 <a-input v-model:value="formProduct.name"> </a-input>
@@ -18,7 +18,7 @@
             </a-form-item>
         </a-col>
 
-        <a-col :span="1"></a-col>
+
 
         <a-col :md="7">
             <a-form-item label="Costo" name="costo">
@@ -29,7 +29,7 @@
             </a-form-item>
         </a-col>
 
-        <a-col :span="1"></a-col>
+
 
         <a-col :md="7">
             <a-form-item label="Precio" name="precio">
@@ -46,7 +46,7 @@
             </a-form-item>
         </a-col>
 
-        <a-col :span="1"></a-col>
+
 
         <a-col :md="7">
             <a-form-item name="bnd_ofertable">
@@ -54,37 +54,44 @@
             </a-form-item>
         </a-col>
 
-        <a-col :span="1"></a-col>
+
 
         <a-col :md="7">
             <a-form-item name="period_id" label="Periodo">
-                <a-select v-model:value="formProduct.period_id" show-search placeholder="Seleccionar opción" :options="periods" :filter-option="filterOptionPeriods"></a-select>
+                <a-select v-model:value="formProduct.period_id" show-search placeholder="Seleccionar opción" :options="periods" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
 
-        <a-col :span="1"></a-col>
+
 
         <a-col :md="7">
             <a-form-item name="product_id" label="Libro">
-                <a-select v-model:value="formProduct.product_id" show-search placeholder="Seleccionar opción" :options="books" :filter-option="filterOptionProducts"></a-select>
+                <a-select v-model:value="formProduct.product_id" show-search placeholder="Seleccionar opción" :options="books" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
 
-        <a-col :span="1"></a-col>
+        <a-col :md="7">
+            <a-form-item name="exam_id" label="Examen">
+                <a-select v-model:value="formProduct.exam_id" show-search placeholder="Seleccionar opción" :options="books" :filter-option="filterOption"></a-select>
+            </a-form-item>
+        </a-col>
+
+
 
         <a-col :md="7">
             <a-form-item name="cash_box_to_assign_id" label="Caja">
-                <a-select v-model:value="formProduct.cash_box_to_assign_id" show-search placeholder="Seleccionar opción" :options="cashBoxes" :filter-option="filterOptionCashBoxes"></a-select>
+                <a-select v-model:value="formProduct.cash_box_to_assign_id" show-search placeholder="Seleccionar opción" :options="cashBoxes" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
 
-        <a-col :span="1"></a-col>
+
 
         <a-col :md="7">
-            <a-form-item name="account_id" label="Cuenta Ingreso">
-                <a-select v-model:value="formProduct.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOpttionsAccounts"></a-select>
+            <a-form-item name="account_id" label="Cuenta Egreso">
+                <a-select v-model:value="formProduct.account_id" show-search placeholder="Seleccionar opción" :options="accounts" :filter-option="filterOption"></a-select>
             </a-form-item>
         </a-col>
+
     </a-row>
 
     <a-form-item>
@@ -129,6 +136,7 @@ export default {
             bnd_activo: props.product.bnd_activo,
             bnd_ofertable: props.product.bnd_ofertable,
             product_id: props.product.product_id,
+            exam_id: props.product.exam_id,
             period_id: props.product.period_id,
             cash_box_to_assign_id: props.product.cash_box_to_assign_id,
             account_id: props.product.account_id

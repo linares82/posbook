@@ -33,7 +33,10 @@ class Product extends Model
 		});
 	}
 
-    protected $fillable = ['name','costo','precio','bnd_activo','bnd_ofertable','period_id','product_id', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','cash_box_to_assign_id','account_id'];
+    protected $fillable = ['name','costo','precio','bnd_activo','bnd_ofertable','period_id',
+    'product_id', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','cash_box_to_assign_id','account_id',
+    'exam_id'
+];
 
 	protected $dates = ['deleted_at'];
 

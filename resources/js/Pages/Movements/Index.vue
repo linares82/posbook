@@ -86,7 +86,9 @@
                                     <th @click="orderColumn('product_id')" class="ant-table-cell" colstart="1" colend="1">Producto</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Entrada</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Salida</th>
+                                    <th class="ant-table-cell" colstart="1" colend="1">Diferencia</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Caja</th>
+                                    <th class="ant-table-cell" colstart="1" colend="1">Devolucion</th>
                                     <th class="ant-table-cell" colstart="3" colend="4">Acciones</th>
                                 </thead>
                                 <tbody class="ant-table-tbody">
@@ -100,7 +102,9 @@
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.producto }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.entrada }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ movement.salida }}</td>
+                                        <td class="ant-table-cell" colstart="1" colend="1">{{ movement.entrada-movement.salida }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">Caja: {{ movement.cash_box_id }} Cantidad: {{ movement.quantity }}</td>
+                                        <td class="ant-table-cell" colstart="1" colend="1">Devolución: {{ movement.order_devolution_id }} Cantidad: {{ movement.cantidad_devolucion }}</td>
                                         <td class="ant-table-cell" colstart="3" colend="4">
                                            <!--
                                             <a-dropdown-button>

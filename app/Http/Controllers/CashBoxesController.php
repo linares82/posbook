@@ -468,7 +468,8 @@ class CashBoxesController extends Controller
 
     public function rptCajasApartadasF(Request $request){
 
-        $planteles = Plantel::get()->map(fn ($plantel) => [
+
+        $planteles = $planteles = Plantel::whereIn('id', Auth::user()->plantels->pluck('id'))->get()->map(fn ($plantel) => [
             'value' => $plantel->id,
             'label' => $plantel->name,
         ]);

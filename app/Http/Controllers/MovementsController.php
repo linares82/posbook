@@ -81,10 +81,13 @@ class MovementsController extends Controller
                 $query->orderBy($filtros['column'], $filtros['direction']);
             });
         }
-        $movements = $m->select('movements.*', 'lnc.quantity', 'lnc.cash_box_id')->orderBy('movements.id', 'desc')
+        $movements = $m->select('movements.*', 'lnc.quantity', 'lnc.cash_box_id',
+            'odl.cantidad as cantidad_devolucion','odl.order_devolution_id',
+            )->orderBy('movements.id', 'desc')
             ->join('users as u', 'u.id', 'movements.usu_alta_id')
             ->join('order_sales_lines as osl', 'osl.id', 'movements.order_sales_line_id')
             ->leftJoin('ln_cash_boxes as lnc', 'lnc.movement_id', 'movements.id')
+            ->leftJoin('order_devolution_lines as odl', 'odl.movement_id', 'movements.id')
             ->whereNull('lnc.deleted_at')
             ->with('plantel', 'typeMovement', 'reason')
             ->whereNull('osl.deleted_at')
@@ -104,7 +107,9 @@ class MovementsController extends Controller
                 'costo' => $movement->costo,
                 'precio' => $movement->precio,
                 'entrada' => $movement->cantidad_entrada,
-                'salida' => $movement->cantidad_salida
+                'salida' => $movement->cantidad_salida,
+                'order_devolution_id'=>$movement->order_devolution_id,
+                'cantidad_devolucion'=>$movement->cantidad_devolucion,
             ]);
         //dd($movements->toArray());
 
@@ -597,11 +602,12 @@ class MovementsController extends Controller
                 //dd($group->toArray());
                 foreach ($group as $line) {
                     $linea['plantel'] = $line->plantel;
-                    //dd($line->toArray());
+                    //dd($linea);
                     $linea['costo'] = $line->costo;
                     $linea['precio'] = $line->precio;
                     $linea['movement_id'] = $line->movement_id;
                     $linea['cantidad_pedida'] = $linea['cantidad_pedida'] + $line->cantidad_entrada;
+
                     $vendidos = $vendidos + LnCashBox::where('movement_id', $line->movement_id)->sum('quantity');
                     /*if($line->movement_id==82){
                         dd($vendidos);
@@ -615,6 +621,7 @@ class MovementsController extends Controller
                         //->wereNull('deleted_at')
                         ->get();
                     $linea['existencia_por_vender'] = $linea['cantidad_pedida'] - $linea['vendidos'] - $linea['devueltos'];
+
                     $linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos'];
                     $linea['dinero_existencia_por_devolver'] = $linea['existencia_por_vender'] * $line->costo;
                     $linea['dinero_vendidos_costo'] = $line->costo * $linea['vendidos'];
@@ -625,6 +632,7 @@ class MovementsController extends Controller
                 $lin_gral['dinero_cantidad_vendida'] = $lin_gral['dinero_cantidad_vendida'] + $linea['dinero_cantidad_vendida'];
                 $lin_gral['dinero_existencia_por_devolver'] = $lin_gral['dinero_existencia_por_devolver'] + $linea['dinero_existencia_por_devolver'];
                 $lin_gral['dinero_vendidos_costo'] = $lin_gral['dinero_vendidos_costo'] + $linea['dinero_vendidos_costo'];
+
                 array_push($detalle, $linea);
             }
             //dd($detalle);

@@ -359,6 +359,21 @@ export default {
                         });
                     });
             }
+            if (consultaProductos.exam_id > 0 && consultaProductos.exam_id !== null) {
+                axios.get(props.ruta_productos_findById + "?producto=" + consultaProductos.exam_id + "&plantel="+formCashBox.plantel_id)
+                    .then(response => {
+                        //formCashBox.precio = response.data.precio;
+                        //consultaProductos=response.data;
+                        //console.log(response.data);
+                        formCashBox.lineas.push({
+                            product_id: response.data.producto.id,
+                            quantity: 1,
+                            precio: 0,
+                            totalLinea: 0,
+                            existencia:response.data
+                        });
+                    });
+            }
             let total = 0;
             for (let linea in formCashBox.lineas) {
                 total = total + parseFloat(formCashBox.lineas[linea].totalLinea);
