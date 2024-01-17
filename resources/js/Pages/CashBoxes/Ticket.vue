@@ -20,7 +20,7 @@
                                                     <a-col :span="24" style="text-align:center;"> {{cashBox.director}} </a-col>
                                                     <a-col :span="24" style="text-align:center;"> {{cashBox.address}} </a-col>
                                                     <a-col :span="24" style="text-align:center;"> Tel. {{cashBox.phone}} </a-col>
-                                                    <a-col :span="24" style="text-align:center;"> {{cashBox.created_at}} </a-col>
+                                                    <a-col :span="24" style="text-align:center;">Caja {{ cashBox.id }} creada el {{cashBox.created_at}} </a-col>
                                                 </a-row>
                                             </th>
                                         </tr>
@@ -56,6 +56,7 @@
                                             <td colspan="2">
                                                 <a-row type="flex" justify="center" align="top">
                                                     <a-col :span="24" style="text-align:center;"> Estado Actual: {{cashBox.estatus}} </a-col>
+                                                    <a-col :span="24" style="text-align:center;"> Alumno: {{cashBox.customer}} </a-col>
                                                 </a-row>
                                             </td>
 

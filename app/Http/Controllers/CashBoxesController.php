@@ -52,6 +52,11 @@ class CashBoxesController extends Controller
                     $query->where('movements.name', $name);
                 });
             }
+            if (isset($filtros['id'])) {
+                $m->when($filtros['id'], function ($query, $id) {
+                    $query->where('cash_boxes.id', $id);
+                });
+            }
             if (isset($filtros['plantel_id'])) {
                 $m->when($filtros['plantel_id'], function ($query, $plantel_id) {
                     $query->where('cash_boxes.plantel_id', $plantel_id);
@@ -103,7 +108,7 @@ class CashBoxesController extends Controller
         ]);
         $estatus->prepend(["value" => null, 'label' => "Selecionar Opción"]);
 
-        $productos = Product::get()->map(fn ($producto) => [
+        $productos = Product::where('bnd_ofertable',1)->get()->map(fn ($producto) => [
             'value' => $producto->id,
             'label' => $producto->name,
         ]);
@@ -281,7 +286,7 @@ class CashBoxesController extends Controller
         ]);
         $estatus->prepend(["value" => null, 'label' => "Selecionar Opción"]);
 
-        $productos = Product::get()->map(fn ($producto) => [
+        $productos = Product::where('bnd_ofertable',1)->get()->map(fn ($producto) => [
             'value' => $producto->id,
             'label' => $producto->name,
         ]);

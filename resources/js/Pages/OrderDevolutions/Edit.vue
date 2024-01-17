@@ -8,8 +8,8 @@
     </a-col>
   </a-row>
   <a-form :model="formOrderDevolution" @submit.prevent="submitF" autocomplete="off" layout="vertical">
-    <a-row>
-      <a-col :md="7">
+    <a-row :gutter="20">
+        <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
         <a-form-item label="Nombre" name="name">
           <a-input v-model:value="formOrderDevolution.name"> </a-input>
           <div v-if="errors.name">
@@ -23,9 +23,7 @@
         </a-form-item>
       </a-col>
 
-      <a-col :span="1"></a-col>
-
-      <a-col :md="7">
+      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
             <a-form-item label="Fecha" name="fecha">
                 <a-date-picker v-model:value="formOrderDevolution.fecha" :bordered="true" />
                 <div v-if="errors.fecha">
@@ -34,9 +32,7 @@
             </a-form-item>
         </a-col>
 
-      <a-col :span="1"></a-col>
-
-      <a-col :md="7">
+        <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
         <a-form-item label="Motivo" name="motivo">
           <a-input v-model:value="formOrderDevolution.motivo"> </a-input>
           <div v-if="errors.motivo">
@@ -45,6 +41,20 @@
               class="ant-form-item-explain-error"
               style=""
               v-text="errors.motivo"
+            ></div>
+          </div>
+        </a-form-item>
+      </a-col>
+
+      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
+        <a-form-item label="Descripcion" name="desc">
+          <a-input v-model:value="formOrderDevolution.desc"> </a-input>
+          <div v-if="errors.desc">
+            <div
+              role="alert"
+              class="ant-form-item-explain-error"
+              style=""
+              v-text="errors.desc"
             ></div>
           </div>
         </a-form-item>
@@ -92,6 +102,7 @@ export default {
       id: props.orderDevolution.id,
       name: props.orderDevolution.name,
       fecha: dayjs(props.orderDevolution.fecha, 'YYYY/MM/DD'),
+      desc: props.orderDevolution.desc,
       motivo: props.orderDevolution.motivo,
       order_sale_id:props.orderSale.id
     });

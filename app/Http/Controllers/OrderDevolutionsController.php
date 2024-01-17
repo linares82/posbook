@@ -36,25 +36,42 @@ class OrderDevolutionsController extends Controller
     {
 
         $sysMessage=$request->session()->get('sysMessage');
-        $orderDevolutions=OrderDevolution::query()
-        ->when($request->input('name'), function($query, $item){
-            $query->where('name','like','%'.$item.'%');
-        })->orderBy('id','desc')
+        $m=OrderDevolution::query();
+        $filtros = $request->input('search');
+        //dd($filtros);
+        if (isset($filtros['name'])) {
+            $m->when($filtros['name'], function($query, $name){
+                $query->where('name','like','%'.$name.'%');
+            });
+        }
+        /*if (isset($filtros['plantel_id'])) {
+            $m->join('order_sales as os', 'os.id', 'order_devolutions.order_sale_id')
+            //->join('plantels as p','p.id', 'os.plantel_id')
+            ->when($filtros['plantel_id'], function($query, $plantel_id){
+                $query->where('os.plantel_id','like','%'.$plantel_id.'%');
+            });
+        }*/
+        $orderDevolutions=$m->orderBy('order_devolutions.id','desc')
         ->paginate(100)
         ->withQueryString()
         ->through(fn($orderDevolution)=>[
             'id'=>$orderDevolution->id,
             'name'=>$orderDevolution->name,
             'fecha'=>$orderDevolution->fecha,
-            'motivo'=>$orderDevolution->motivo
+            'motivo'=>$orderDevolution->motivo,
+            'desc'=>$orderDevolution->desc,
+            'plantel_compra'=>$orderDevolution->plantel_id
         ]);
+        $planteles=Plantel::plantelCmb();
+        //dd($planteles);
         //dd($orderDevolutions);
 
         return Inertia::render('OrderDevolutions/Index',[
             'orderDevolutions'=>$orderDevolutions,
             'filters'=>$request->only(['name']),
             'sysMessage'=>$sysMessage,
-            'permissions'=>$this->getPermissions()
+            'permissions'=>$this->getPermissions(),
+            'planteles'=>$planteles
         ]);
     }
 
@@ -118,6 +135,7 @@ class OrderDevolutionsController extends Controller
             $input=array('fecha'=>$datos['fecha'],
             'name'=>$datos['name'],
             'motivo'=>$datos['motivo'],
+            'desc'=>$datos['desc'],
             //'order_sale_id'=>$datos['order_sale_id']['value']);
             'order_sale_id'=>$datos['order_sale_id']);
             $orderDevolution=OrderDevolution::create($input);
@@ -210,6 +228,7 @@ class OrderDevolutionsController extends Controller
             $orderDevolution->name=$datos['name'];
             $orderDevolution->fecha=$datos['fecha'];
             $orderDevolution->motivo=$datos['motivo'];
+            $orderDevolution->desc=$datos['desc'];
             $orderDevolution->save();
 
         }catch(Exception $e){

@@ -17,17 +17,18 @@
         <a-collapse-panel key="1" header="Buscar">
             <a-row>
                 <a-col :span="6">
-                    <a-input v-model:value="name" size="small" placeholder="Buscar..">
+                    <a-input v-model:value="search.name" size="small" placeholder="Buscar..">
                         <template #prefix>
                             <search-outlined />
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Buscar Tipo Movimiento">
+                            <a-tooltip title="Buscar ...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
                     </a-input>
                 </a-col>
+
             </a-row>
         </a-collapse-panel>
     </a-collapse>
@@ -45,6 +46,7 @@
                                     <th class="ant-table-cell" colstart="0" colend="0">Id</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">O. Devolucion</th>
                                     <th class="ant-table-cell" colstart="1" colend="1">Fecha</th>
+                                    <th class="ant-table-cell" colstart="1" colend="1">Desc.</th>
                                     <th class="ant-table-cell" colstart="3" colend="4">Acciones</th>
                                 </thead>
                                 <tbody class="ant-table-tbody">
@@ -53,6 +55,7 @@
                                         <td class="ant-table-cell" colstart="0" colend="0">{{ orderDevolution.id }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ orderDevolution.name }}</td>
                                         <td class="ant-table-cell" colstart="1" colend="1">{{ orderDevolution.fecha }}</td>
+                                        <td class="ant-table-cell" colstart="1" colend="1">{{ orderDevolution.desc }}</td>
                                         <td class="ant-table-cell" colstart="3" colend="4">
                                             <a-dropdown-button>
                                                 Acciones
@@ -122,13 +125,15 @@ import {
 } from "@ant-design/icons-vue";
 import { message } from 'ant-design-vue';
 import {
-    watch,
-    ref
-} from "vue";
-import {
     Inertia
 } from "@inertiajs/inertia";
 import debounce from "lodash/debounce";
+import {
+    watch,
+    ref,
+    reactive,
+    mounted
+} from "vue";
 
 export default {
     layout: Layout,
@@ -144,7 +149,7 @@ export default {
         EyeOutlined
     },
 
-    props: ["orderDevolutions", "filters", "sysMessage", 'permissions'],
+    props: ["orderDevolutions", "filters", "sysMessage", 'permissions','planteles'],
 
     setup(props) {
         mounted: {
@@ -160,13 +165,18 @@ export default {
             //}
         };
 
-        let name = ref(props.filters.name);
+        //let name = ref(props.filters.name);
+        let search = reactive({
+            name : props.filters.name,
+            column: props.filters.column,
+            direction: props.filters.direction
+        });
         watch(
-            name,
+            search,
             debounce(function (value) {
                 Inertia.get(
                     "/orderDevolutions", {
-                    name: value
+                    search: value
                 }, {
                     preserveState: true,
                     replace: true,
@@ -176,7 +186,7 @@ export default {
         );
         return {
             borrar,
-            name,
+            search,
             paginator: false,
 
         };

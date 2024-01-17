@@ -62,6 +62,18 @@ class Plantel extends Model
 	{
 		return $this->belongsTo('App\Models\Movement', 'id', 'plantel_id');
 	} // end
+
+    static public function plantelCmb(){
+        $user_plantels=User::find(Auth::user()->id)->plantels->pluck('id');
+        //dd($user_plantels);
+
+        return Plantel::whereIn('id', $user_plantels)
+        ->get()->map(fn ($plantel)=>[
+            'value' => $plantel->id,
+            'label' => $plantel->name,
+        ]);
+
+    }
 }
 
 

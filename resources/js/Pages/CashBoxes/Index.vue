@@ -16,6 +16,18 @@
     <a-collapse-panel key="1" header="Buscar">
         <a-row>
             <a-col :span="6">
+                    <a-input v-model:value="search.id" size="small" placeholder="Buscar id...">
+                        <template #prefix>
+                            <search-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Buscar Id...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                </a-col>
+            <a-col :span="6">
                     <a-select
                     :options="planteles"
                     v-model:value="search.plantel_id"
@@ -24,7 +36,6 @@
                     show-search
                     :filter-option="filterOption"
                     >
-
                     </a-select>
                 </a-col>
         </a-row>
@@ -170,6 +181,7 @@ export default {
         //let name = ref(props.filters.name);
         let search = reactive({
             plantel_id : props.filters.plantel_id,
+            id: props.filters.id,
             //name : props.filters.name,
             column: props.filters.column,
             direction: props.filters.direction

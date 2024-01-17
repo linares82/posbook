@@ -34,7 +34,7 @@ class OrderDevolution extends Model
 		});
 	}
 
-    protected $fillable = ['name', 'fecha', 'motivo', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','order_sale_id'];
+    protected $fillable = ['name', 'fecha', 'motivo', 'desc', 'usu_alta_id', 'usu_mod_id', 'usu_delete_id','order_sale_id'];
 
 	protected $dates = ['deleted_at'];
 
