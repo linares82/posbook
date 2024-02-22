@@ -196,7 +196,7 @@ export default {
     setup(props) {
 
         let dataSource = ref();
-
+        //console.log(props.lineas);
 
         onMounted(() => {
             axios.get(`/orderSales/actualizarLineasOrderSales/${props.orderSale.id}`)

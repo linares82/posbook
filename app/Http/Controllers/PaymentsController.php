@@ -152,22 +152,39 @@ class PaymentsController extends Controller
     {
         $datos=$request->all();
         $payment=Payment::findOrFail($datos['id']);
-        $cash_box=CashBox::findOrFail($payment->cash_box_id);
+        $cashBox=CashBox::findOrFail($payment->cash_box_id);
 
 
         //dd($user);
         try{
             $payment->delete();
-            $sumaPagos=Payment::where('cash_box_id', $payment->cash_box_id)->whereNull('deleted_at')->sum('monto');
-            if($sumaPagos<$cash_box->total and $sumaPagos>0){
+            //$sumaPagos=Payment::where('cash_box_id', $payment->cash_box_id)->whereNull('deleted_at')->sum('monto');
+            $totalPagos = Payment::where('cash_box_id', $payment->cash_box_id)
+                ->where('st_payment_id', 2)
+                ->whereNull('deleted_at')
+                ->sum('total');
+            $totalDescuentos = Payment::where('cash_box_id', $payment->cash_box_id)
+                ->where('st_payment_id', 2)
+                ->whereNull('deleted_at')
+                ->sum('discount');
+            /*if($sumaPagos<$cash_box->total and $sumaPagos>0){
                 $cash_box->st_cash_box_id=3;
             }else if($sumaPagos==0){
                 $cash_box->st_cash_box_id=1;
             }else{
                 $cash_box->st_cash_box_id=2;
+            }*/
+            if($totalPagos+$totalDescuentos==0) {
+                $cashBox->st_cash_box_id=1;
+            }elseif ($cashBox->total <= $totalPagos) {
+                $cashBox->st_cash_box_id = 2;
+            }elseif($cashBox->total <= ($totalPagos+$totalDescuentos)){
+                $cashBox->st_cash_box_id = 2;
+            }elseif ($cashBox->total > $totalPagos) {
+                $cashBox->st_cash_box_id = 3;
             }
             //dd($cashBox->ToArray());
-            $cash_box->save();
+            $cashBox->save();
         }catch(Exception $e){
             dd($e);
         }

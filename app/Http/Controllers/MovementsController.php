@@ -76,11 +76,19 @@ class MovementsController extends Controller
             });
         }
 
+        if (isset($filtros['order_sales_id'])) {
+            $m->when($filtros['order_sales_id'], function ($query, $order_sales_id) {
+                $query->where('osl.order_sale_id', $order_sales_id);
+            });
+        }
+
         if (isset($filtros['column']) and isset($filtros['direction'])) {
             $m->when($filtros, function ($query, $filtros) {
                 $query->orderBy($filtros['column'], $filtros['direction']);
             });
         }
+
+
         $movements = $m->select('movements.*', 'lnc.quantity', 'lnc.cash_box_id',
             'odl.cantidad as cantidad_devolucion','odl.order_devolution_id',
             )->orderBy('movements.id', 'desc')
@@ -570,6 +578,9 @@ class MovementsController extends Controller
                 ->orderBy('movements.product_id')
                 ->whereNull('movements.deleted_at')
                 ->get();
+            /*if($plantel->id==2){
+                dd($lineas->toArray());
+            }*/
             //dd($lineas->toArray());
             //$groupedPlantel = $lineas->groupBy('plantel_id');
 
@@ -595,6 +606,7 @@ class MovementsController extends Controller
                 $linea['costo'] = 0;
                 $linea['precio'] = 0;
                 $linea['movement_id'] = 0;
+                $linea['cajas_parcialmente_pagadas']="";
                 $vendidos=0;
                 $devueltos=0;
 
@@ -608,7 +620,7 @@ class MovementsController extends Controller
                     $linea['movement_id'] = $line->movement_id;
                     $linea['cantidad_pedida'] = $linea['cantidad_pedida'] + $line->cantidad_entrada;
 
-                    $vendidos = $vendidos + LnCashBox::where('movement_id', $line->movement_id)->sum('quantity');
+                    $vendidos = $vendidos + LnCashBox::where('movement_id', $line->movement_id)->whereNull('deleted_at')->sum('quantity');
                     /*if($line->movement_id==82){
                         dd($vendidos);
                     }*/
@@ -622,7 +634,32 @@ class MovementsController extends Controller
                         ->get();
                     $linea['existencia_por_vender'] = $linea['cantidad_pedida'] - $linea['vendidos'] - $linea['devueltos'];
 
-                    $linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos'];
+                    //$linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos'];
+                    //dd($linea);
+                    $lineasCaja=LnCashBox::where('movement_id', $line->movement_id)->get();
+                    foreach($lineasCaja as $lineaCaja){
+                        $caja=CashBox::find($lineaCaja->cash_box_id);
+                        $cantidadPagos=Payment::where('cash_box_id', $lineaCaja->cash_box_id)->count();
+                        if ($cantidadPagos == 1 and $caja->st_cash_box_id==2) {
+                            $pagosArray = $pagos=Payment::where('cash_box_id', $lineaCaja->cash_box_id)->get()->toArray();
+                            $pago = Payment::find($pagosArray[0]['id']);
+                            if ($pago->porcentaje_descuento>0) {
+                                $linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos']-(($line->precio * $linea['vendidos'])*$pago->porcentaje_descuento);
+                            }elseif($pago->porcentaje_descuento==0){
+                                $linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos'];
+                            }
+                        }elseif ($cantidadPagos == 1 and $caja->st_cash_box_id==3) {
+                            $linea['cajas_parcialmente_pagadas']=$linea['cajas_parcialmente_pagadas'] . $caja->id . " ";
+                        }elseif($cantidadPagos>1 and $caja->st_cash_box_id==2){
+                            $linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos'];
+
+                        }elseif($cantidadPagos>1 and $caja->st_cash_box_id==3){
+                            $linea['cajas_parcialmente_pagadas']=$linea['cajas_parcialmente_pagadas'] . $caja->id . " ";
+
+                        }
+                    }
+
+
                     $linea['dinero_existencia_por_devolver'] = $linea['existencia_por_vender'] * $line->costo;
                     $linea['dinero_vendidos_costo'] = $line->costo * $linea['vendidos'];
 

@@ -121,6 +121,7 @@
                                         <th>Plantel</th>
                                         <th>Producto</th>
                                         <th>Numero</th>
+                                        <th>Cajas Parciales</th>
                                         <th>Libros Vendidos Regular</th>
                                         <th>Libros Devueltos</th>
                                         <th>Libros Restantes</th>
@@ -139,6 +140,9 @@
                                             <td class="ant-table-cell column-money" colstart="2" colend="2"> {{
                                                     ln.cantidad_pedida
                                                 }} </td>
+                                            <td>
+                                                {{ ln.cajas_parcialmente_pagadas }}
+                                            </td>
                                             <td class="ant-table-cell column-money" colstart="2" colend="2"> {{ ln.vendidos }}
                                             </td>
                                             <td class="ant-table-cell column-money" colstart="2" colend="2"> {{ ln.devueltos }}

@@ -156,7 +156,7 @@ class OrderSalesController extends Controller
         $route_verObservaciones=route('obsEntries.verObservaciones');
         $route_verEntradas=route('movementsPartials.verEntradas');
 
-        //dd($lineas);
+        //dd($lineas->toArray());
 
         return Inertia::render('OrderSales/Show',
         ['orderSale'=>$orderSale, 'lineas'=>$lineas, 'route_verObservaciones'=>$route_verObservaciones,
@@ -294,6 +294,7 @@ class OrderSalesController extends Controller
         ->where('order_sale_id', $id)
         ->whereIn('plantel_id', Auth::user()->plantels->pluck('id'))
         ->get();
+
     }
 
 }

@@ -46,7 +46,7 @@ class ExpensesController extends Controller
             'plantel_id'=>$expense->plantel_id,
             'plantel'=>$expense->plantel->name,
             'output_id'=>$expense->output_id,
-            'output'=>$expense->output->name,
+            'output'=>!$expense->output->name ? "" : $expense->output->name,
             'fecha'=>$expense->fecha,
             'monto'=>$expense->monto,
             'detalle'=>$expense->detalle

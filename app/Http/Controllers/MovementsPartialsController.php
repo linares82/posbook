@@ -90,6 +90,8 @@ class MovementsPartialsController extends Controller
             ->with('plantel', 'typeMovement', 'reason')
             ->whereNull('osl.deleted_at')
             ->whereIn('movements.plantel_id', $planteles)
+            ->orderBy('movements.id', 'desc')
+            ->orderBy('lnc.cash_box_id', 'desc')
             ->paginate(100)
             ->withQueryString()
             ->through(fn ($movement) => [

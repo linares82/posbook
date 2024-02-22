@@ -178,6 +178,11 @@ class CashBoxesController extends Controller
                 $inputPayment['payment_method_id'] = $payment['payment_method_id'];
                 $inputPayment['porcentaje_descuento'] = $payment['porcentaje_descuento'];
                 $inputPayment['monto'] = $payment['monto'];
+                $inputPayment['subtotal'] = $cashBox->total;
+                if($payment['porcentaje_descuento']>0){
+                    $inputPayment['discount'] = $inputPayment['monto'];
+                }
+                $inputPayment['total'] = $inputPayment['subtotal']-$inputPayment['discount'];
                 $inputPayment['fecha'] = $payment['fecha'];
                 $inputPayment['st_payment_id'] = 2;
                 $payment = Payment::create($inputPayment);
@@ -185,11 +190,17 @@ class CashBoxesController extends Controller
             $totalPagos = Payment::where('cash_box_id', $cashBox->id)
                 ->where('st_payment_id', 2)
                 ->whereNull('deleted_at')
-                ->sum('monto');
+                ->sum('total');
+            $totalDescuentos = Payment::where('cash_box_id', $cashBox->id)
+                ->where('st_payment_id', 2)
+                ->whereNull('deleted_at')
+                ->sum('discount');
             //dd(($totalPagos));
-            if ($cashBox->total == $totalPagos) {
+            if ($cashBox->total == $totalPagos and $inputPayment['porcentaje_descuento']==0) {
                 $cashBox->st_cash_box_id = 2;
-            } elseif ($cashBox->total > $totalPagos) {
+            }elseif($cashBox->total == ($totalPagos+$totalDescuentos) and $inputPayment['porcentaje_descuento']>0){
+                $cashBox->st_cash_box_id = 2;
+            }elseif ($cashBox->total > $totalPagos and $inputPayment['porcentaje_descuento']==0) {
                 $cashBox->st_cash_box_id = 3;
             }
             $cashBox->save();
@@ -265,7 +276,7 @@ class CashBoxesController extends Controller
                 'payment_method_id' => $pago->payment_method_id,
                 'payment_method' => $pago->paymentMethod->name,
                 'porcentaje_descuento' => $pago->porcentaje_descuento,
-                'monto' => $pago->monto,
+                'monto' => $pago->total,
                 'fecha' => $pago->fecha,
                 'st_payment_id' => $pago->st_payment_id,
                 'st_payment' => $pago->stPayment->name,
@@ -373,6 +384,11 @@ class CashBoxesController extends Controller
                     $inputPayment['payment_method_id'] = $payment['payment_method_id'];
                     $inputPayment['porcentaje_descuento'] = $payment['porcentaje_descuento'];
                     $inputPayment['monto'] = $payment['monto'];
+                    $inputPayment['subtotal'] = $cashBox->total;
+                    if($payment['porcentaje_descuento']>0){
+                        $inputPayment['discount'] = $inputPayment['monto'];
+                    }
+                    $inputPayment['total'] = $inputPayment['subtotal']-$inputPayment['discount'];
                     $inputPayment['fecha'] = $payment['fecha'];
                     $inputPayment['st_payment_id'] = 2;
                     $payment = Payment::create($inputPayment);
@@ -382,11 +398,17 @@ class CashBoxesController extends Controller
             $totalPagos = Payment::where('cash_box_id', $cashBox->id)
                 ->where('st_payment_id', 2)
                 ->whereNull('deleted_at')
-                ->sum('monto');
+                ->sum('total');
+            $totalDescuentos = Payment::where('cash_box_id', $cashBox->id)
+                ->where('st_payment_id', 2)
+                ->whereNull('deleted_at')
+                ->sum('discount');
             //dd(($totalPagos));
-            if ($cashBox->total == $totalPagos) {
+            if ($cashBox->total == $totalPagos and $inputPayment['porcentaje_descuento']==0) {
                 $cashBox->st_cash_box_id = 2;
-            } elseif ($cashBox->total > $totalPagos) {
+            }elseif($cashBox->total == ($totalPagos+$totalDescuentos) and $inputPayment['porcentaje_descuento']>0){
+                $cashBox->st_cash_box_id = 2;
+            }elseif ($cashBox->total > $totalPagos and $inputPayment['porcentaje_descuento']==0) {
                 $cashBox->st_cash_box_id = 3;
             }
             $cashBox->save();

@@ -621,7 +621,7 @@ export default {
             }
             formCashBox.total = total;
             formCashBox.monto = total;
-
+            location.reload();
         };
 
         const editarLinea = (linea) => {
@@ -714,6 +714,7 @@ export default {
             if (index !== -1) {
                 formCashBox.payments.splice(index, 1);
             }
+            location.reload();
         };
 
         const editarPayment = (payment) => {

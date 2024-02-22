@@ -18,6 +18,7 @@ class MovementObserver
             ->where('ln.product_id', $movement->product_id)
             ->whereNull('op.movement_id')
             ->whereNull('ln.deleted_at')
+            ->orderBy('ln.cash_box_id', 'asc')
             ->distinct()
             ->get();
 
@@ -54,7 +55,7 @@ class MovementObserver
                     $movement->cantidad_salida = $movement->cantidad_salida + $ln->quantity;
                     $movement->save();
 
-                }else{
+                }/*else{
                     $maximo_entrega=($movement->cantidad_entrada-$movement->cantidad_salida);
                     $linea = LnCashBox::find($ln->id);
                     //dd($linea);
@@ -88,8 +89,7 @@ class MovementObserver
                     $movement->cantidad_salida = $movement->cantidad_entrada;
                     $movement->save();
 
-                }
-
+                }*/
             }
         }
     }

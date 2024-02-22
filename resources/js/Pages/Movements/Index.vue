@@ -15,12 +15,24 @@
 
     <a-collapse>
         <a-collapse-panel key="1" header="Buscar">
-            <a-row>
+            <a-row :gutter="20">
+                <a-col :span="6">
+                    <a-input v-model:value="search.order_sales_id" size="small" placeholder="Id Orden compra...">
+                        <template #prefix>
+                            <search-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Buscar Id Orden Compra...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                </a-col>
                 <a-col :span="6">
                     <a-select
                     :options="planteles"
                     v-model:value="search.plantel_id"
-                    style="width: 200px"
+                    style="width: 100%"
                     placeholder="Seleccionar Plantel..."
                     show-search
                     :filter-option="filterOption"
@@ -28,11 +40,12 @@
 
                     </a-select>
                 </a-col>
+            <!--
                 <a-col :span="6">
                     <a-select
                     :options="motivos"
                     v-model:value="search.reason_id"
-                    style="width: 200px"
+                    style="width: 100%"
                     placeholder="Seleccionar Motivo..."
                     show-search
                     :filter-option="filterOption"
@@ -52,11 +65,12 @@
 
                     </a-select>
                 </a-col>
+            -->
                 <a-col :span="6">
                     <a-select
                     :options="productos"
                     v-model:value="search.product_id"
-                    style="width: 200px"
+                    style="width: 100%"
                     placeholder="Seleccionar Producto..."
                     show-search
                     :filter-option="filterOption"
@@ -64,6 +78,9 @@
 
                     </a-select>
                 </a-col>
+                <a-form-item>
+                <a-button type="primary" @click="actualizarPagina" >Buscar</a-button>
+                </a-form-item>
             </a-row>
         </a-collapse-panel>
     </a-collapse>
@@ -208,6 +225,7 @@ export default {
         let search = reactive({
             plantel_id : props.filters.plantel_id,
             reason_id : props.filters.reason_id,
+            order_sales_id:props.filters.order_sales_id,
             type_movement_id : props.filters.type_movement_id,
             product_id : props.filters.product_id,
             column: props.filters.column,
@@ -243,12 +261,15 @@ export default {
             return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
         };
 
+        let actualizarPagina=()=>{ location.reload();}
+
         return {
             borrar,
             search,
             paginator: false,
             orderColumn,
-            filterOption
+            filterOption,
+            actualizarPagina
         };
     },
 };
