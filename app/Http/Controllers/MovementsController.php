@@ -470,6 +470,7 @@ class MovementsController extends Controller
         $totales['existencia'] = 0;
         $totales['precio'] = 0;
         $totales['efectivo_caja'] = 0;
+        $totales['efectivo_menos_vales']=0;
         $totales['vales'] = 0;
 
         foreach ($grouped as $llave => $group) {
@@ -481,6 +482,7 @@ class MovementsController extends Controller
             $linea['existencia'] = 0;
             $linea['precio'] = 0;
             $linea['efectivo_caja'] = 0;
+            $linea['efectivo_menos_vales']=0;
             $vendidos=0;
             $devueltos=0;
             foreach ($group as $line) {
@@ -509,6 +511,32 @@ class MovementsController extends Controller
                 $linea['existencia'] = $linea['cantidad'] - $linea['vendidos'];
                 $linea['precio'] = $line->precio;
                 $linea['efectivo_caja'] = $line->precio * $linea['vendidos'];
+                $lineasCaja=LnCashBox::where('movement_id', $line->movement_id)->get();
+
+                    foreach($lineasCaja as $lineaCaja){
+                        $caja=CashBox::find($lineaCaja->cash_box_id);
+                        $cantidadPagos=Payment::where('cash_box_id', $lineaCaja->cash_box_id)->count();
+
+                        if ($cantidadPagos == 1 and $caja->st_cash_box_id==2) {
+                            $pagosArray = $pagos=Payment::where('cash_box_id', $lineaCaja->cash_box_id)->get()->toArray();
+                            $pago = Payment::find($pagosArray[0]['id']);
+                            //if($line->movement_id ==244){ dd($pago->toArray());}
+                            if ($pago->porcentaje_descuento>0) {
+                                $linea['efectivo_menos_vales'] = $linea['efectivo_menos_vales']+($line->precio * $lineaCaja->quantity-(($line->precio * $lineaCaja->quantity)*$pago->porcentaje_descuento));
+                            }elseif($pago->porcentaje_descuento==0){
+                                $linea['efectivo_menos_vales'] = $linea['efectivo_menos_vales']+ ($line->precio * $lineaCaja->quantity);
+                            }
+                        }elseif ($cantidadPagos == 1 and $caja->st_cash_box_id==3) {
+                            $linea['cajas_parcialmente_pagadas']=$linea['cajas_parcialmente_pagadas'] . $caja->id . " ";
+                        }elseif($cantidadPagos>1 and $caja->st_cash_box_id==2){
+                            $linea['efectivo_menos_vales'] = $linea['efectivo_menos_vales']+($line->precio * $lineaCaja->quantity);
+
+                        }elseif($cantidadPagos>1 and $caja->st_cash_box_id==3){
+                            $linea['cajas_parcialmente_pagadas']=$linea['cajas_parcialmente_pagadas'] . $caja->id . " ";
+
+                        }
+                        //if($line->movement_id ==244){ dd($linea);}
+                    }
             }
             $totales['cantidad'] = $totales['cantidad'] + $linea['cantidad'];
             $totales['vendidos'] = $totales['vendidos'] + $linea['vendidos'];
@@ -516,9 +544,10 @@ class MovementsController extends Controller
             $totales['existencia'] = $totales['existencia'] + $linea['existencia'];
             $totales['precio'] = $totales['precio'] + $linea['precio'];
             $totales['efectivo_caja'] = $totales['efectivo_caja'] + $linea['efectivo_caja'];
+            $totales['efectivo_menos_vales'] = $totales['efectivo_menos_vales'] + $linea['efectivo_menos_vales'];
             $totales['vales'] = $totales['vales'] + $linea['vales'];
             array_push($resumen, $linea);
-            //dd($linea);
+            //dd($resumen);
         }
         $datos['fecha_f'] = new DateTime($datos['fecha_f']);
         $datos['fecha_t'] = new DateTime($datos['fecha_t']);

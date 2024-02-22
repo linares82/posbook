@@ -34,13 +34,16 @@
                                             <th>Existencia despues de ventas</th>
                                             <th>P.U.</th>
                                             <th>Efectivo</th>
+                                            <th>Efectivo Menos Vales</th>
                                         </thead>
                                         <tbody class="ant-table-tbody">
                                             <tr class="ant-table-row ant-table-row-level-0" v-for="ln in resumen"
                                                 :key="ln.movement_id">
                                                 <td class="ant-table-cell" colstart="0" colend="0">{{ ln.producto }}</td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.cantidad }} </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.vales }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.vales }} - {{ Intl.NumberFormat('es-Mx', {
+                                                        style: 'currency', currency: 'MXN'
+                                                    }).format(ln.efectivo_caja-ln.efectivo_menos_vales) }} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.vendidos }} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.devueltos }} </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ ln.existencia - ln.devueltos}} </td>
@@ -56,14 +59,21 @@
                                                     {{ Intl.NumberFormat('es-Mx', {
                                                         style: 'currency', currency: 'MXN'
                                                     }).format(ln.efectivo_caja) }} </td>
-
+                                                <td class="ant-table-cell column-money" colstart="2" colend="2">
+                                                    {{ Intl.NumberFormat('es-Mx', {
+                                                        style: 'currency', currency: 'MXN'
+                                                    }).format(ln.efectivo_menos_vales) }} </td>
 
                                             </tr>
                                             <tr class="ant-table-row ant-table-row-level-0">
                                                 <td class="ant-table-cell" colstart="0" colend="0">Totales</td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.cantidad }}
                                                 </td>
-                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.vales }} </td>
+                                                <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.vales }} -
+                                                    {{Intl.NumberFormat('es-Mx', {
+                                                        style: 'currency', currency: 'MXN'
+                                                    }).format(totales.efectivo_caja-totales.efectivo_menos_vales) }}
+                                                </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.vendidos }}
                                                 </td>
                                                 <td class="ant-table-cell" colstart="2" colend="2"> {{ totales.devueltos }}
@@ -81,6 +91,10 @@
                                                     Intl.NumberFormat('es-Mx', {
                                                         style: 'currency', currency: 'MXN'
                                                     }).format(totales.efectivo_caja) }} </td>
+                                                <td class="ant-table-cell column-money" colstart="2" colend="2"> {{
+                                                    Intl.NumberFormat('es-Mx', {
+                                                        style: 'currency', currency: 'MXN'
+                                                    }).format(totales.efectivo_menos_vales) }} </td>
 
                                             </tr>
                                         </tbody>
