@@ -637,31 +637,37 @@ class MovementsController extends Controller
                     //$linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos'];
                     //dd($linea);
                     $lineasCaja=LnCashBox::where('movement_id', $line->movement_id)->get();
+
                     foreach($lineasCaja as $lineaCaja){
                         $caja=CashBox::find($lineaCaja->cash_box_id);
                         $cantidadPagos=Payment::where('cash_box_id', $lineaCaja->cash_box_id)->count();
+
                         if ($cantidadPagos == 1 and $caja->st_cash_box_id==2) {
                             $pagosArray = $pagos=Payment::where('cash_box_id', $lineaCaja->cash_box_id)->get()->toArray();
                             $pago = Payment::find($pagosArray[0]['id']);
+                            //if($line->movement_id ==244){ dd($pago->toArray());}
                             if ($pago->porcentaje_descuento>0) {
-                                $linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos']-(($line->precio * $linea['vendidos'])*$pago->porcentaje_descuento);
+                                $linea['dinero_cantidad_vendida'] = $linea['dinero_cantidad_vendida']+($line->precio * $lineaCaja->quantity-(($line->precio * $lineaCaja->quantity)*$pago->porcentaje_descuento));
                             }elseif($pago->porcentaje_descuento==0){
-                                $linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos'];
+                                $linea['dinero_cantidad_vendida'] = $linea['dinero_cantidad_vendida']+ ($line->precio * $lineaCaja->quantity);
                             }
                         }elseif ($cantidadPagos == 1 and $caja->st_cash_box_id==3) {
                             $linea['cajas_parcialmente_pagadas']=$linea['cajas_parcialmente_pagadas'] . $caja->id . " ";
                         }elseif($cantidadPagos>1 and $caja->st_cash_box_id==2){
-                            $linea['dinero_cantidad_vendida'] = $line->precio * $linea['vendidos'];
+                            $linea['dinero_cantidad_vendida'] = $linea['dinero_cantidad_vendida']+($line->precio * $lineaCaja->quantity);
 
                         }elseif($cantidadPagos>1 and $caja->st_cash_box_id==3){
                             $linea['cajas_parcialmente_pagadas']=$linea['cajas_parcialmente_pagadas'] . $caja->id . " ";
 
                         }
+                        //if($line->movement_id ==244){ dd($linea);}
                     }
 
 
                     $linea['dinero_existencia_por_devolver'] = $linea['existencia_por_vender'] * $line->costo;
                     $linea['dinero_vendidos_costo'] = $line->costo * $linea['vendidos'];
+
+
 
                     $lin_gral['plantel'] = $linea['plantel'];
                 }
